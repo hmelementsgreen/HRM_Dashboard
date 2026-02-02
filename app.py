@@ -21,7 +21,7 @@ st.markdown(
         --eg-muted: #6b7280;
         --eg-border: #e5e7eb;
         --eg-radius: 12px;
-        --eg-accent: #2563eb;
+        --eg-accent: #0d9488;
         --eg-shadow: 0 2px 8px rgba(0,0,0,0.06);
       }
       .eg-title { text-align: center; margin-top: 0.5rem; margin-bottom: 0.25rem; color: var(--eg-text); font-size: 1.75rem; font-weight: 800; }
@@ -32,7 +32,7 @@ st.markdown(
       div[data-testid="stMetricValue"],
       div[data-testid="stMetricDelta"] { justify-content: center; }
 
-      .eg-section-title { margin-top: 0.25rem; margin-bottom: 0.25rem; border-bottom: 2px solid var(--eg-border); padding-bottom: 0.35rem; }
+      .eg-section-title { margin-top: 0.25rem; margin-bottom: 0.25rem; padding-bottom: 0.35rem; }
 
       .eg-vertical-divider-kpi { border-left: 3px solid var(--eg-border); height: 230px; margin: 0 auto; }
       .eg-vertical-divider-donut { border-left: 3px solid var(--eg-border); height: 520px; margin: 0 auto; }
@@ -58,7 +58,7 @@ st.markdown(
       .js-plotly-plot { margin-top: -0.2rem; }
       [data-baseweb="tab-list"] { gap: 0.25rem; padding: 0.25rem 0; }
       [data-baseweb="tab-list"] button { padding: 0.5rem 1rem; font-weight: 500; }
-      [data-baseweb="tab-list"] button[aria-selected="true"] { font-weight: 700; border-bottom: 2px solid var(--eg-accent); background: rgba(37, 99, 235, 0.06); }
+      [data-baseweb="tab-list"] button[aria-selected="true"] { font-weight: 700; border-bottom: 2px solid var(--eg-accent); background: rgba(13, 148, 136, 0.08); }
       .eg-country-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
       [data-testid="stAlert"] { border: 1px solid var(--eg-border); border-radius: var(--eg-radius); }
     </style>
@@ -745,7 +745,7 @@ def kpi_tile(title: str, value: str, subtitle: str = ""):
     st.markdown(
         f"""
         <div style="
-          border:1px solid var(--eg-border);
+          border:none;
           border-radius:var(--eg-radius);
           padding:14px 16px;
           background:linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%);
@@ -1610,7 +1610,6 @@ with tab_department:
                 y=METRIC_COL,
                 color="absence_category",
                 category_orders={"absence_category": TYPE_ORDER},
-                color_discrete_map=ABSENCE_COLOR_MAP,
             )
             fig_m1.update_layout(
                 barmode="stack",
@@ -1632,7 +1631,6 @@ with tab_department:
                 y=METRIC_COL,
                 color="absence_category",
                 category_orders={"absence_category": TYPE_ORDER},
-                color_discrete_map=ABSENCE_COLOR_MAP,
             )
             fig_m2.update_layout(
                 barmode="stack",
@@ -1651,7 +1649,6 @@ with tab_department:
             y=METRIC_COL,
             color="absence_category",
             category_orders={"absence_category": TYPE_ORDER},
-            color_discrete_map=ABSENCE_COLOR_MAP,
         )
         fig_dept.update_layout(
             barmode="stack",
@@ -1689,7 +1686,6 @@ with tab_country:
     if "selected_country" not in st.session_state:
         st.session_state.selected_country = country_options[0]
 
-    st.markdown('<div class="eg-country-buttons">**Select country**</div>', unsafe_allow_html=True)
     cols = st.columns(len(country_options))
     for i, c in enumerate(country_options):
         if cols[i].button(
@@ -1930,8 +1926,11 @@ with tab_blip:
             Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> · Break = <b>{fmt_hours_minutes(break_total)}</b> · Worked (excl. breaks) = <b>{fmt_hours_minutes(worked_total)}</b>
           </div>
         """
+        st.markdown(" ")
+        st.markdown(" ")
+
         soft_card("Shift totals in selected range", shift_totals_body)
-        st.markdown("---")
+        st.markdown(" ------------------------------------------------------------ ")
 
         st.markdown('<h3 class="eg-section-title">Daily Utilisation (Shift rows only)</h3>', unsafe_allow_html=True)
         daily_blip = f_shift.groupby("date", as_index=False).agg(WorkedHours=("worked_hours", "sum"), Employees=("employee", "nunique"))
@@ -1957,7 +1956,7 @@ with tab_blip:
         st.markdown('<h3 class="eg-section-title">Monthly Hours (Shift rows only)</h3>', unsafe_allow_html=True)
         monthly_blip = f_shift.groupby("month", as_index=False).agg(WorkedHours=("worked_hours", "sum"), BreakHours=("break_hours", "sum"), DurationHours=("duration_hours", "sum"))
         m_long = monthly_blip.melt(id_vars=["month"], value_vars=["WorkedHours", "BreakHours"], var_name="Type", value_name="Hours")
-        fig_monthly = px.bar(m_long, x="month", y="Hours", color="Type")
+        fig_monthly = px.bar(m_long, x="month", y="Hours", color="Type", color_discrete_map={"WorkedHours": "#16a34a", "BreakHours": "#f59e0b"})
         st.plotly_chart(_blip_clean_plot(fig_monthly, "Hours", "Month"), use_container_width=True)
         st.markdown("---")
 
@@ -1997,8 +1996,16 @@ with tab_blip:
                     if seg_df.empty:
                         st.warning("Could not construct Work/Break segments from timestamps. Break rows may lack clock-in/out times or only Shift rows exist.")
                     else:
+                        # Labels for each bar segment: time in hours and mins only
+                        seg_df["TimeLabel"] = seg_df["Hours"].apply(fmt_hours_minutes)
                         seg_order = seg_df.sort_values(["date", "SegIndex"]).groupby("date")["Segment"].apply(list).explode().unique().tolist()
-                        fig_seg = px.bar(seg_df, x="date", y="Hours", color="Segment", barmode="stack", category_orders={"Segment": seg_order}, color_discrete_map={seg: ("red" if "Break" in seg else "green") for seg in seg_df["Segment"].unique()})
+                        # Work = green, Break = amber
+                        _seg_colors = {seg: "#f59e0b" if "Break" in seg else "#16a34a" for seg in seg_df["Segment"].unique()}
+                        fig_seg = px.bar(
+                            seg_df, x="date", y="Hours", color="Segment", text="TimeLabel",
+                            barmode="stack", category_orders={"Segment": seg_order}, color_discrete_map=_seg_colors
+                        )
+                        fig_seg.update_traces(textposition="inside", textfont=dict(size=11), insidetextanchor="middle")
                         max_h_seg = seg_df["Hours"].max() if not seg_df.empty else 8
                         tickvals_s, ticktext_s = _hours_axis_ticks(max_h_seg)
                         fig_seg.update_layout(yaxis=dict(tickvals=tickvals_s, ticktext=ticktext_s))
@@ -2017,11 +2024,13 @@ with tab_blip:
                         st.caption(f"Total hours beyond 6 (selected period): **{fmt_hours_minutes(beyond_6_total)}**")
 
         st.markdown("---")
+        st.markdown("")
         st.markdown('<h3 class="eg-section-title">Exceptions Overview (Shift rows only)</h3>', unsafe_allow_html=True)
         short_shifts = (f_shift["worked_hours"] < short_shift_hours).sum()
         long_shifts = (f_shift["worked_hours"] > long_shift_hours).sum()
         location_mismatch = f_shift["location_mismatch"].sum()
         c1, c2, c3, c4 = st.columns(4)
+        st.markdown("")
         with c1:
             kpi_tile("Missing clock-outs", str(int(missing_clockouts)), "No clock-out time")
         with c2:
@@ -2030,7 +2039,10 @@ with tab_blip:
             kpi_tile(f"Long shifts (> {fmt_hours_minutes(long_shift_hours)})", str(int(long_shifts)), "Worked hours")
         with c4:
             kpi_tile("Location mismatches", str(int(location_mismatch)), "In vs out location")
-        st.markdown("---")
+
+        st.markdown("")
+        st.markdown("--------------------------------")
+
         st.markdown('<h3 class="eg-section-title">Exports</h3>', unsafe_allow_html=True)
         export_ts = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
         sort_cols = ["date", "employee"]
@@ -2050,8 +2062,11 @@ with tab_blip:
         with col_monthly:
             st.download_button("Download Monthly hours summary (CSV)", data=monthly_export.to_csv(index=False).encode("utf-8"), file_name="blip_monthly_hours.csv", mime="text/csv", key="blip_export_monthly")
 
-st.markdown("---")
+        
+        st.markdown("")
+
+st.markdown("")
 st.markdown(
-    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">BrightHR & BLIP Dashboard</div>',
+    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">BrightHR & BLIP Dashboard for UnitedGreen</div>',
     unsafe_allow_html=True,
 )
