@@ -29,5 +29,5 @@ build/
 .DS_Store
 Thumbs.db
 
-# Redundant / archived (optional: remove these lines if you want to track misc/)
-misc/
+# Redundant / archived (optional: add archive/ here to exclude from repo)
+# misc/

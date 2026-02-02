@@ -84,8 +84,7 @@ app.py
 ### 9. **blip_integration folder**
 
 - **Blip_27_28.xlsx**: Keep in `blip_integration/`; app defaults to it.
-- **BlipAppNew.py**: Now redundant for running the app (logic is in app.py). You can move it to `misc/` as a reference or delete it once you’re happy with the integrated version.
-
+- **BlipAppNew.py**: Moved to `archive/blip_integration/` (logic is in app.py; kept for reference).
 ### 10. **Documentation**
 
 - **README.md**: Added (run instructions, tabs, data formats, defaults).
@@ -103,4 +102,4 @@ app.py
 
 ## Quick wins (optional next)
 
-- Move **BlipAppNew.py** to `misc/` (reference only; app.py is the single entry point).
+- ~~Move **BlipAppNew.py** to `archive/blip_integration/`~~ Done: now in `archive/blip_integration/`.
