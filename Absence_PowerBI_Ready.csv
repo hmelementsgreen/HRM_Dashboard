@@ -1,0 +1,924 @@
+first_name,last_name,team_names,leave_entitlement,entitlement_unit,absence_type,absence_duration_total_in_days,absence_duration_for_period_in_days,absence_description,absence_start_date,absence_end_date,organisation,suborganisation,absence_category
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,4.0,Pre-agreed WFH days,2025-07-18,2025-07-23,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-12,2025-09-12,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Medical,1970-01-01,1.0,,2025-04-10,2025-04-10,AG,EG,Medical
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-21,2025-11-21,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-01-15,2025-01-15,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-06-25,2025-06-25,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-27,2025-10-27,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-05-01,2025-05-01,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,5.0,,2025-08-04,2025-08-08,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-04-04,2025-04-04,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-04,2025-12-04,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,6.0,,2025-10-28,2025-11-04,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Medical,1970-01-01,0.1333,,2025-12-08,2025-12-08,AG,EG,Medical
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH as still feeling unwell,2025-12-03,2025-12-03,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-04,2025-09-04,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-02,2025-10-02,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-28,2025-11-28,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-02-03,2025-02-03,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-02-27,2025-02-27,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-01-30,2025-01-30,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-05-15,2025-05-15,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-15,2026-01-15,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,1.5,,2025-03-13,2025-03-14,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-14,2025-11-14,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,1.0,,2025-03-17,2025-03-17,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-10,2025-12-10,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-09,2025-10-09,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-05-23,2025-05-23,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH - dentist appointment near my house in the afternoon,2025-10-23,2025-10-23,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,2.0,,2025-12-22,2025-12-23,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-03-07,2025-03-07,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-15,2025-08-15,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-21,2025-08-21,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Medical,1970-01-01,0.1333,,2025-08-20,2025-08-20,AG,EG,Medical
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,,2025-01-24,2025-01-24,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-13,2025-10-13,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,1.0,Birthday leave,2026-03-16,2026-03-16,AG,EG,Other
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,3.0,,2025-06-20,2025-06-24,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-01,2025-08-01,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,2.0,,2026-06-04,2026-06-05,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH as feeling unwell - will see how I am tomorrow for coming back into the office as I don't want to get others sick,2025-12-02,2025-12-02,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,3.0,Pre- agreed WFH days as I'm going back to my family in Ireland and taking 22nd & 23rd as annual leave days :),2025-12-17,2025-12-19,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Work from home,1970-01-01,1.0,WFH - not feeling well,2025-09-15,2025-09-15,AG,EG,Work From Home
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,4.0,Skiing,2026-03-17,2026-03-20,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,2.0,,2026-01-02,2026-01-05,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,2.5,,2025-06-05,2025-06-09,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Annual,1970-01-01,1.0,,2025-08-22,2025-08-22,AG,EG,Annual
+Stefanie,Lenehan,HR,20.0,days,Others,1970-01-01,2.0,Hamburg,2026-01-21,2026-01-22,AG,EG,Other
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,1.0,Apartment under renovation,2025-09-16,2025-09-16,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,1.0,Holiday,2026-01-02,2026-01-02,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Others,1970-01-01,3.0,H&S course,2025-11-26,2025-11-28,AG,EG,Other
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,2.0,,2025-03-27,2025-03-28,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-16,2025-09-16,AG,EG,Work From Home
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,11.0,,2025-08-11,2025-08-26,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Others,1970-01-01,1.0,"Day off in lieu for Saturday, 4th October (office chairs)",2025-10-10,2025-10-10,AG,EG,Other
+Lisa,Ter-Berg,Operations,20.0,days,Medical,1970-01-01,0.3,I will leave at 3:15 and have no lunch today to reduce the disruption as much as possible.,2025-12-02,2025-12-02,AG,EG,Medical
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,4.0,,2025-05-23,2025-05-29,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,1.0,,2025-04-22,2025-04-22,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Medical,1970-01-01,1.0,,2025-10-23,2025-10-23,AG,EG,Medical
+Lisa,Ter-Berg,Operations,20.0,days,Others,1970-01-01,1.0,Off sick with with fever sore throat earache,2025-10-23,2025-10-23,AG,EG,Other
+Lisa,Ter-Berg,Operations,20.0,days,Others,1970-01-01,1.0,Extra Holiday Birthday,2025-03-26,2025-03-26,AG,EG,Other
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,1.0,vets appointment emergency leave,2025-12-01,2025-12-01,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Work from home,1970-01-01,1.0,Working from home,2025-07-14,2025-07-14,AG,EG,Work From Home
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,1.0,Day off for personal appointment,2026-01-22,2026-01-22,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Others,1970-01-01,1.0,First aid course - Passed,2025-01-24,2025-01-24,AG,EG,Other
+Lisa,Ter-Berg,Operations,20.0,days,Annual,1970-01-01,1.0,Doctors Appointment and parents evening,2025-11-25,2025-11-25,AG,EG,Annual
+Lisa,Ter-Berg,Operations,20.0,days,Others,1970-01-01,1.0,Day in lieu for working a Saturday,2025-11-20,2025-11-20,AG,EG,Other
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,1.0,Road trip to Germany,2025-10-31,2025-10-31,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,5.0,,2025-04-07,2025-04-11,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Others,1970-01-01,1.0,,2025-01-16,2025-01-16,AG,EG,Other
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,1.0,,2026-01-30,2026-01-30,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Medical,1970-01-01,11.0,,2025-10-14,2025-10-28,AG,EG,Medical
+Ecaterina,Turcanu,Operations,28.5,days,Others,1970-01-01,1.0,,2025-02-28,2025-02-28,AG,EG,Other
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,2.0,,2025-12-22,2025-12-23,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH (medical appointment),2025-09-15,2025-09-15,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,6.0,,2026-01-02,2026-01-09,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,3.0,Working remotely from Italy,2025-07-21,2025-07-23,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,1.0,,2025-02-21,2025-02-21,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Others,1970-01-01,1.0,,2025-03-07,2025-03-07,AG,EG,Other
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,5.0,Turkey,2026-03-27,2026-04-03,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,0.5,Flight to Valencia,2025-11-07,2025-11-07,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH,2025-11-21,2025-11-21,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Others,1970-01-01,1.0,,2025-02-07,2025-02-07,AG,EG,Other
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH,2025-08-15,2025-08-15,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH,2025-12-11,2025-12-11,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,2.0,,2025-05-09,2025-05-12,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,6.0,,2025-06-02,2025-06-09,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,6.0,Greece holiday (family time) :),2025-08-27,2025-09-03,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,Working from Home,2025-03-14,2025-03-14,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Medical,1970-01-01,1.0,Short Term Injury / Illness (non-work related),2025-02-05,2025-02-05,AG,EG,Medical
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,2.0,Travelling in Italy,2025-07-24,2025-07-25,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,1.0,,2025-11-14,2025-11-14,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH,2025-12-12,2025-12-12,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Others,1970-01-01,1.0,,2025-01-30,2025-01-30,AG,EG,Other
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,1.0,Trip to Barcelona with mum,2025-11-28,2025-11-28,AG,EG,Annual
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-03,2025-10-03,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-10,2025-10-10,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Work from home,1970-01-01,1.0,Working from home,2025-08-01,2025-08-01,AG,EG,Work From Home
+Ecaterina,Turcanu,Operations,28.5,days,Annual,1970-01-01,1.0,,2026-02-27,2026-02-27,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Work from home,1970-01-01,1.0,Working From Home,2025-08-08,2025-08-08,AG,EG,Work From Home
+Shafraz,Chatur,Operations,21.0,days,Work from home,1970-01-01,1.0,Medical appointment in the morning then working from home.,2025-11-18,2025-11-18,AG,EG,Work From Home
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,1.0,Annual leave,2025-10-24,2025-10-24,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,2.0,,2025-06-27,2025-06-30,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Others,1970-01-01,1.0,,2025-01-03,2025-01-03,AG,EG,Other
+Shafraz,Chatur,Operations,21.0,days,Others,1970-01-01,1.0,Birthday day off,2025-10-27,2025-10-27,AG,EG,Other
+Shafraz,Chatur,Operations,21.0,days,Medical,1970-01-01,0.4,"Hospital appointment, includes travel to- and from hospital.",2025-09-02,2025-09-02,AG,EG,Medical
+Shafraz,Chatur,Operations,21.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,AG,EG,Work From Home
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,8.0,,2025-09-24,2025-10-03,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Work from home,1970-01-01,1.0,WFH - medical appointment in the morning,2026-01-12,2026-01-12,AG,EG,Work From Home
+Shafraz,Chatur,Operations,21.0,days,Medical,1970-01-01,1.0,Doctors/Hospital,2025-01-17,2025-01-17,AG,EG,Medical
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,1.0,,2026-02-03,2026-02-03,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Work from home,1970-01-01,1.0,Working From Home,2025-11-28,2025-11-28,AG,EG,Work From Home
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,3.0,,2025-03-11,2025-03-13,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,5.0,,2025-05-19,2025-05-23,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Others,1970-01-01,1.0,,2025-05-09,2025-05-09,AG,EG,Other
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,2.5,,2025-12-22,2025-12-24,AG,EG,Annual
+Shafraz,Chatur,Operations,21.0,days,Annual,1970-01-01,1.0,,2025-01-02,2025-01-02,AG,EG,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-02-24,2026-02-24,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-10-15,2025-10-15,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-23,2025-09-23,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-03-31,2026-03-31,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-03-03,2026-03-03,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-04-14,2025-04-14,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-09-01,2025-09-01,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-02-03,2026-02-03,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-09,2025-09-09,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-25,2025-11-25,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-02,2025-12-02,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-12-05,2025-12-05,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-05,2025-08-05,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-02-17,2026-02-17,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-01-03,2025-01-03,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-14,2025-10-14,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,2.0,,2025-09-23,2025-09-24,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-18,2025-11-18,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-07-29,2025-07-29,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-07,2025-10-07,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-12-23,2025-12-23,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-12-18,2025-12-18,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-10-08,2025-10-08,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-16,2025-09-16,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2026-02-20,2026-02-20,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-16,2026-01-16,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-03-10,2026-03-10,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-28,2025-10-28,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-10-31,2025-10-31,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-21,2025-10-21,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-06-06,2025-06-06,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-30,2025-09-30,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,8.0,,2025-08-06,2025-08-15,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-10-02,2025-10-02,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-03-17,2026-03-17,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-04,2025-11-04,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-02,2025-09-02,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-20,2026-01-20,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-19,2025-08-19,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-09-22,2025-09-22,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-11,2025-11-11,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-02-10,2026-02-10,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-09,2025-12-09,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,Work from home in the AM,2025-10-31,2025-10-31,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-01-15,2025-01-15,,,Annual
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-16,2025-12-16,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-03-24,2026-03-24,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-26,2025-08-26,,,Work From Home
+Philip,Woolfson,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-27,2026-01-27,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-09-17,2025-09-17,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,4.0,,2025-10-20,2025-10-23,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-09-02,2025-09-02,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-02-04,2025-02-04,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-07-30,2025-07-30,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,"Holiday, second half",2025-10-06,2025-10-06,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-31,2025-10-31,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-10-24,2025-10-24,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,Annual leave,2025-10-31,2025-10-31,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-11-26,2025-11-26,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,8.0,,2025-08-11,2025-08-20,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-09-12,2025-09-12,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-08-05,2025-08-05,,,Other
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,1.0,,2025-02-17,2025-02-17,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,Extra Holiday Birthday,2025-05-02,2025-05-02,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-02-14,2025-02-14,,,Other
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,Annual leave,2025-11-06,2025-11-06,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,Working from Home,2025-03-17,2025-03-17,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,"Holiday, second half",2025-10-09,2025-10-09,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,Working from Home,2025-01-14,2025-01-14,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-06,2025-10-06,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-07-04,2025-07-04,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2026-01-28,2026-01-28,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,Working from Home,2025-04-29,2025-04-29,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-11-04,2025-11-04,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2026-01-19,2026-01-19,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-04-01,2025-04-01,,,Other
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-05-29,2025-05-29,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-06-19,2025-06-19,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-01-23,2025-01-23,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-12-18,2025-12-18,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2026-01-06,2026-01-06,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-02-20,2025-02-20,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-03-13,2025-03-13,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-11-13,2025-11-13,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-01-10,2025-01-10,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-03-21,2025-03-21,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-03-27,2025-03-27,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-09,2025-10-09,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,2.0,,2025-10-27,2025-10-28,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2026-01-05,2026-01-05,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-01-30,2025-01-30,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-05-08,2025-05-08,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-12-16,2025-12-16,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,Working from Home,2025-04-09,2025-04-09,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-04-17,2025-04-17,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-02-27,2025-02-27,,,Other
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-12-01,2025-12-01,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-04-22,2025-04-22,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-12-02,2025-12-02,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-05-28,2025-05-28,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-09-22,2025-09-22,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-09-25,2025-09-25,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-05-20,2025-05-20,,,Other
+Florina,Stamate,EG Finance,20.5,days,Others,1970-01-01,1.0,,2025-05-30,2025-05-30,,,Other
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-07,2025-10-07,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,0.5,,2025-12-23,2025-12-23,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-08-28,2025-08-28,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-17,2025-10-17,,,Work From Home
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,1.0,,2025-01-06,2025-01-06,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Annual,1970-01-01,1.0,,2025-12-22,2025-12-22,,,Annual
+Florina,Stamate,EG Finance,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-10-02,2025-10-02,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,3.0,WFH - India,2025-12-22,2025-12-24,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,1.0,Hindu New Year,2025-10-22,2025-10-22,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,1.0,India,2025-11-27,2025-11-27,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-08,2025-10-08,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-29,2025-10-29,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,Birthday Day Off,2025-08-26,2025-08-26,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,1.0,Day Off,2025-09-15,2025-09-15,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,1.0,Day Off,2025-09-22,2025-09-22,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-17,2025-09-17,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-11,2025-11-11,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-28,2025-11-28,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-19,2025-11-19,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-08,2025-08-08,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,5.0,India,2025-12-01,2025-12-05,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-17,2025-10-17,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-07-31,2025-07-31,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-08,2025-09-08,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-07,2026-01-07,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-06-25,2025-06-25,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-21,2026-01-21,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-07-11,2025-07-11,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-14,2025-08-14,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,2.0,WFH - India,2025-12-15,2025-12-16,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-07-30,2025-07-30,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,2.0,WFH - India,2025-12-08,2025-12-09,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-07-03,2025-07-03,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-07-16,2025-07-16,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-06-20,2025-06-20,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,3.0,India,2025-12-10,2025-12-12,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-21,2025-10-21,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,3.0,India,2025-12-17,2025-12-19,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-14,2026-01-14,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-26,2025-09-26,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-06-12,2025-06-12,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-01,2025-10-01,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-02,2025-09-02,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-19,2025-08-19,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,2.0,,2025-05-15,2025-05-16,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,1.0,Diwali,2025-10-20,2025-10-20,,,Annual
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-05,2025-11-05,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-07-25,2025-07-25,,,Other
+Rupal,Sutar,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-30,2026-01-30,,,Work From Home
+Rupal,Sutar,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-04-11,2025-04-11,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-06-26,2025-06-26,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-02,2025-12-02,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-12,2025-08-12,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-10-02,2025-10-02,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Others,1970-01-01,1.0,Birthday day off,2025-10-20,2025-10-20,,,Other
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-08-27,2025-08-27,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-23,2026-01-23,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-08,2025-09-08,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-08,2025-08-08,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,2.5,,2025-12-22,2025-12-24,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-08,2025-10-08,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-27,2025-10-27,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Others,1970-01-01,1.0,,2025-09-25,2025-09-25,,,Other
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-13,2026-01-13,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-07-11,2025-07-11,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-07,2026-01-07,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-20,2025-08-20,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-13,2025-11-13,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-27,2025-11-27,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,1.0,,2025-10-31,2025-10-31,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-06,2026-01-06,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-21,2025-10-21,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-08-26,2025-08-26,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-03,2025-09-03,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-12,2025-12-12,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-16,2025-09-16,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-06,2025-11-06,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-03,2025-10-03,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Annual,1970-01-01,0.5,,2025-12-04,2025-12-04,,,Annual
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-16,2025-12-16,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-20,2025-11-20,,,Work From Home
+Senthurgan,Kulendran,EG Finance,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-15,2025-10-15,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Medical,1970-01-01,1.0,,2025-01-20,2025-01-20,,,Medical
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,WFH,2025-12-19,2025-12-19,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,2.0,Annual leave,2025-10-30,2025-10-31,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH due to flu symptoms,2025-11-21,2025-11-21,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,8.0,,2025-07-09,2025-07-18,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,2.0,,2025-07-21,2025-07-22,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-12-17,2025-12-17,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,As per email,2026-01-06,2026-01-06,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,Working from Home,2025-01-07,2025-01-07,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,WFH,2025-09-12,2025-09-12,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,As per email,2026-01-05,2026-01-05,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-01-22,2025-01-22,,,Other
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-04-16,2025-04-16,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,WFH,2025-12-18,2025-12-18,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-02-20,2025-02-20,,,Other
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,Annual leave,2025-11-27,2025-11-27,,,Other
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,4.0,Work remotely as agreed with PW,2025-08-26,2025-08-29,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,2.0,,2025-04-24,2025-04-25,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,High fever and flu symptoms,2025-08-05,2025-08-05,,,Other
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,Ongoing flu symptoms with high fever,2025-10-17,2025-10-17,,,Other
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH due to ongoing illness,2025-08-06,2025-08-06,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,Working from Home,2025-01-02,2025-01-02,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,5.0,39 hours,2025-03-24,2025-03-28,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-04-17,2025-04-17,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,2.0,WFH,2025-12-22,2025-12-23,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,0.5,As per Teams message (wfh),2026-01-30,2026-01-30,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,0.5,WFH,2025-12-19,2025-12-19,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,Working from Home,2025-05-02,2025-05-02,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,3.5,2025-02-05,2025-02-05,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,11.0,Other Absence,2025-06-02,2025-06-16,,,Other
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,0.5,As per Teams message (wfh),2026-01-28,2026-01-28,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,As per Teams message (wfh),2026-01-26,2026-01-26,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,Annual leave,2025-11-03,2025-11-03,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-05-06,2025-05-06,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,3.5,2025-02-07,2025-02-07,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,1.0,Day off,2025-11-28,2025-11-28,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Medical,1970-01-01,1.0,,2025-01-21,2025-01-21,,,Medical
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-16,2025-09-16,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,2.0,,2025-01-03,2025-01-06,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,0.5,Annual leave,2025-12-18,2025-12-18,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,1.0,Day off,2025-09-15,2025-09-15,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,As per Teams message,2026-01-27,2026-01-27,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,As per Teams message,2026-01-29,2026-01-29,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,As per Teams message,2026-01-28,2026-01-28,,,Annual
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,2.0,Working from Home,2025-04-22,2025-04-23,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-26,2025-09-26,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Medical,1970-01-01,2.0,Working from Home,2025-07-07,2025-07-08,,,Medical
+Valentina,Testa,EG Finance,21.0,days,Work from home,1970-01-01,0.5,As per Teams message (wfh),2026-01-27,2026-01-27,,,Work From Home
+Valentina,Testa,EG Finance,21.0,days,Medical,1970-01-01,1.0,,2025-05-22,2025-05-22,,,Medical
+Valentina,Testa,EG Finance,21.0,days,Others,1970-01-01,0.5,Annual leave,2025-12-17,2025-12-17,,,Other
+Valentina,Testa,EG Finance,21.0,days,Annual,1970-01-01,0.5,,2025-09-01,2025-09-01,,,Annual
+Otto,Carlisle,Engineering,25.0,days,Annual,1970-01-01,3.0,,2025-04-15,2025-04-17,AG,EG,Annual
+Otto,Carlisle,Engineering,25.0,days,Medical,1970-01-01,0.5,2.5,2025-05-07,2025-05-07,AG,EG,Medical
+Otto,Carlisle,Engineering,25.0,days,Annual,1970-01-01,3.0,,2025-10-29,2025-10-31,AG,EG,Annual
+Otto,Carlisle,Engineering,25.0,days,Annual,1970-01-01,1.0,,2025-10-03,2025-10-03,AG,EG,Annual
+Otto,Carlisle,Engineering,25.0,days,Annual,1970-01-01,10.0,,2025-08-11,2025-08-22,AG,EG,Annual
+Otto,Carlisle,Engineering,25.0,days,Others,1970-01-01,1.0,Authorised,2025-04-14,2025-04-14,AG,EG,Other
+Otto,Carlisle,Engineering,25.0,days,Medical,1970-01-01,0.5,2 hours,2025-03-18,2025-03-18,AG,EG,Medical
+Otto,Carlisle,Engineering,25.0,days,Annual,1970-01-01,4.0,,2025-04-22,2025-04-25,AG,EG,Annual
+Otto,Carlisle,Engineering,25.0,days,Annual,1970-01-01,4.0,,2025-05-27,2025-05-30,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,0.5,,2025-12-09,2025-12-09,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Others,1970-01-01,1.0,,2025-02-07,2025-02-07,AG,EG,Other
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-02-24,2025-02-24,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Others,1970-01-01,1.0,Birthday day-off.,2025-12-12,2025-12-12,AG,EG,Other
+Barış,Akyüz,Engineering,21.0,days,Others,1970-01-01,5.0,,2025-01-06,2025-01-10,AG,EG,Other
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-08-01,2025-08-01,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,0.5,,2025-10-10,2025-10-10,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-04-17,2025-04-17,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,3.0,,2025-11-05,2025-11-07,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-07-25,2025-07-25,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,3.0,,2025-06-05,2025-06-09,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Others,1970-01-01,1.0,Birthday,2025-01-02,2025-01-02,AG,EG,Other
+Barış,Akyüz,Engineering,21.0,days,Medical,1970-01-01,2.0,,2025-03-31,2025-04-01,AG,EG,Medical
+Barış,Akyüz,Engineering,21.0,days,Others,1970-01-01,1.0,,2025-03-13,2025-03-13,AG,EG,Other
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-06-27,2025-06-27,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-10-27,2025-10-27,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,4.0,,2025-12-18,2025-12-23,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Others,1970-01-01,1.0,,2025-01-30,2025-01-30,AG,EG,Other
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,3.0,,2025-07-07,2025-07-09,AG,EG,Annual
+Barış,Akyüz,Engineering,21.0,days,Annual,1970-01-01,1.0,,2025-08-12,2025-08-12,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-11-03,2025-11-03,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,0.5,,2025-12-05,2025-12-05,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-07-14,2025-07-14,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Medical,1970-01-01,0.2667,,2025-10-14,2025-10-14,AG,EG,Medical
+John,Hetherton,UK BDM,22.0,days,Others,1970-01-01,1.0,"Flu like symptoms, been unwell for over a week.",2025-12-02,2025-12-02,AG,EG,Other
+John,Hetherton,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-08-05,2025-08-05,AG,EG,Other
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-12-01,2025-12-01,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,0.5,,2025-10-10,2025-10-10,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,6.0,,2025-09-15,2025-09-22,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Others,1970-01-01,0.5,Started work as usual but was sick after my first meeting and not feeling well.,2025-08-04,2025-08-04,AG,EG,Other
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-11-17,2025-11-17,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-05-30,2025-05-30,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,3.0,,2025-08-22,2025-08-27,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,0.5,,2026-01-02,2026-01-02,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Annual,1970-01-01,4.0,,2025-02-18,2025-02-21,AG,EG,Annual
+John,Hetherton,UK BDM,22.0,days,Medical,1970-01-01,2.0,Virus/Sickness/Cold/Flu,2025-02-10,2025-02-11,AG,EG,Medical
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2026-01-09,2026-01-09,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-05-08,2025-05-08,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,WFH day,2025-06-13,2025-06-13,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh - need to be home due to contractors coming in and needing detailed instructions,2025-09-01,2025-09-01,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,day off due to sickness,2025-12-16,2025-12-16,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,0.5,,2025-11-10,2025-11-10,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-11-07,2025-11-07,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-04-24,2025-04-24,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-10-10,2025-10-10,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-10-24,2025-10-24,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-19,2025-12-19,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-02-13,2025-02-13,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,10.0,,2025-08-04,2025-08-15,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,0.5,3.5 HOURS,2025-05-23,2025-05-23,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,2.5,,2025-09-17,2025-09-19,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-10-30,2025-10-30,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,10.0,10 working days of unpaid leave as agreed.,2025-09-22,2025-10-03,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-05-16,2025-05-16,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Medical,1970-01-01,1.0,,2025-12-16,2025-12-16,AG,EG,Medical
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh - due to feeling ill,2025-12-02,2025-12-02,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-01,2025-12-01,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,sick leave,2025-08-28,2025-08-28,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,2.0,,2025-01-10,2025-01-13,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,WFH day,2025-02-19,2025-02-19,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,0.5,2.5 hours,2025-03-28,2025-03-28,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-01-27,2025-01-27,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-04-03,2025-04-03,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-01-22,2025-01-22,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-05-15,2025-05-15,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-09-08,2025-09-08,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-01-21,2025-01-21,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-08-29,2025-08-29,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,,2025-04-11,2025-04-11,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,3.0,,2025-03-06,2025-03-10,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,2.0,,2025-04-04,2025-04-07,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-08-01,2025-08-01,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Others,1970-01-01,1.0,Birthday,2025-08-22,2025-08-22,AG,EG,Other
+Elena,Sarieva,UK BDM,22.0,days,Annual,1970-01-01,1.0,,2025-03-14,2025-03-14,AG,EG,Annual
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-11-13,2025-11-13,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-09,2025-12-09,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-10-16,2025-10-16,AG,EG,Work From Home
+Elena,Sarieva,UK BDM,22.0,days,Work from home,1970-01-01,1.0,wfh,2025-11-28,2025-11-28,AG,EG,Work From Home
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,3.0,3 days,2025-07-31,2025-08-05,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,1.0,Due to the way my hours work (25 per week) I've put this down as 1 day ... I propose to be away all day Tuesday and the Xmas Eve morning we are all working. I'll do a separate request for the Monday 22nd Dec now.,2025-12-23,2025-12-24,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,2.0,,2025-04-14,2025-04-15,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,0.5,Birthday day off!,2025-08-21,2025-08-21,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,0.5,Booked as half day though off for full day - so system works with my p/t hours,2025-10-30,2025-10-30,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,3.0,Ski!!,2026-02-09,2026-02-12,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,3.0,So system works with my part time hours - I've programmed it so it's approx 3 days.,2025-10-20,2025-10-23,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,3.0,Ski!!,2026-02-16,2026-02-19,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,0.5,As per last note - logged as half day due to 25 hour week,2025-12-22,2025-12-22,AG,EG,Annual
+Elizabeth,Kinnear-Mellor,UK BDM,16.0,days,Annual,1970-01-01,2.0,,2025-05-27,2025-05-28,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,0.5,,2025-09-11,2025-09-11,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-11-28,2025-11-28,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-11-21,2025-11-21,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-08-07,2025-08-07,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Others,1970-01-01,0.5,Time back for Friday 16th,2026-01-22,2026-01-22,AG,EG,Other
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,1.0,,2025-10-27,2025-10-27,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-10-16,2025-10-16,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-12-04,2025-12-04,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-08-28,2025-08-28,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-09-10,2025-09-10,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,0.5,,2025-09-19,2025-09-19,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Others,1970-01-01,1.0,,2025-01-27,2025-01-27,AG,EG,Other
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,2.0,,2025-06-02,2025-06-03,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Others,1970-01-01,1.0,Birthday :),2025-09-12,2025-09-12,AG,EG,Other
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,Working from Home,2025-01-22,2025-01-22,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,3.0,,2025-05-23,2025-05-28,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-12-11,2025-12-11,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,5.0,,2025-04-11,2025-04-17,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-08-01,2025-08-01,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,0.5,,2025-11-24,2025-11-24,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Work from home,1970-01-01,1.0,wfh,2025-08-21,2025-08-21,AG,EG,Work From Home
+Lizzie,Atkin,UK BDM,20.5,days,Others,1970-01-01,1.0,Migraine,2025-12-15,2025-12-15,AG,EG,Other
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,0.5,,2025-10-24,2025-10-24,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,6.0,,2025-06-25,2025-07-02,AG,EG,Annual
+Lizzie,Atkin,UK BDM,20.5,days,Medical,1970-01-01,1.0,,2025-12-15,2025-12-15,AG,EG,Medical
+Lizzie,Atkin,UK BDM,20.5,days,Annual,1970-01-01,2.0,,2025-02-06,2025-02-07,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Annual,1970-01-01,6.0,,2025-02-07,2025-02-14,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Medical,1970-01-01,1.0,,2025-11-14,2025-11-14,AG,EG,Medical
+Charles,Jones,UK BDM,20.0,days,Annual,1970-01-01,2.0,,2025-08-14,2025-08-15,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-05,2025-12-05,AG,EG,Work From Home
+Charles,Jones,UK BDM,20.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Others,1970-01-01,1.0,Day in Lieu for Saturday work. GNR public consultation event.,2025-08-22,2025-08-22,AG,EG,Other
+Charles,Jones,UK BDM,20.0,days,Annual,1970-01-01,5.0,Holiday,2025-09-29,2025-10-03,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-09-12,2025-09-12,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Others,1970-01-01,1.0,Birthday (day carried over from 24th October 2025),2025-12-23,2025-12-23,AG,EG,Other
+Charles,Jones,UK BDM,20.0,days,Annual,1970-01-01,6.0,,2025-12-15,2025-12-22,AG,EG,Annual
+Charles,Jones,UK BDM,20.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-28,2025-11-28,AG,EG,Work From Home
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-05-19,2025-05-19,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,4.0,,2025-08-29,2025-09-03,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,3.0,,2026-01-30,2026-02-03,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,0.5,,2025-08-22,2025-08-22,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,1.0,Funeral Attendance,2026-01-27,2026-01-27,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-05-12,2025-05-12,AG,EG,Other
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,3.0,,2025-07-24,2025-07-28,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,5.0,Away for Mum's Birthday,2026-01-05,2026-01-09,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2026-04-10,2026-04-10,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-01-02,2025-01-02,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,6.0,,2025-04-07,2025-04-14,AG,EG,Annual
+Ryan,Holland,UK BDM,20.0,days,Annual,1970-01-01,3.0,,2025-11-21,2025-11-25,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,Birthday day off (Birthday is 20th),2025-12-23,2025-12-23,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-04-03,2025-04-03,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,0.5,Annual Leave,2025-12-24,2025-12-24,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-04,2025-12-04,AG,EG,Work From Home
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,6.0,hols,2026-06-12,2026-06-19,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-05-08,2025-05-08,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-10,2025-12-10,AG,EG,Work From Home
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,2.0,,2025-06-03,2025-06-04,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-02-19,2025-02-19,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,0.4667,Time back following D1 submission on Tuesday night.,2025-12-12,2025-12-12,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-01-22,2025-01-22,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-02-14,2025-02-14,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Work from home,1970-01-01,1.0,Working from Home,2025-01-27,2025-01-27,AG,EG,Work From Home
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-03-14,2025-03-14,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-03-27,2025-03-27,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-11-26,2025-11-26,AG,EG,Work From Home
+Tom,Richold,UK BDM,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-22,2025-12-22,AG,EG,Work From Home
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,hols,2026-01-02,2026-01-02,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-04-14,2025-04-14,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Work from home,1970-01-01,1.0,Working from Home,2025-02-06,2025-02-06,AG,EG,Work From Home
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-08-22,2025-08-22,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,0.5,Time back following D2 Submission,2026-01-20,2026-01-20,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-02-27,2025-02-27,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-11-03,2025-11-03,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-04-11,2025-04-11,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,2.0,Hols :),2025-11-14,2025-11-17,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-03-06,2025-03-06,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-01-28,2025-01-28,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-03-19,2025-03-19,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-06-13,2025-06-13,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,5.0,Hols,2025-09-01,2025-09-05,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Others,1970-01-01,1.0,,2025-02-12,2025-02-12,AG,EG,Other
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,4.0,,2025-06-09,2025-06-12,AG,EG,Annual
+Tom,Richold,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-01-02,2025-01-02,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,0.5,,2025-09-04,2025-09-04,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-05-23,2025-05-23,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-12-04,2025-12-04,AG,EG,Work From Home
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,1.0,Agreed with John Hetherton on 08/08/2025,2025-08-27,2025-08-27,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,5.0,,2025-03-17,2025-03-21,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,10.0,,2026-10-12,2026-10-23,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Work from home,1970-01-01,1.0,WFH- Boiler Safety certificate,2025-12-12,2025-12-12,AG,EG,Work From Home
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-06-25,2025-06-25,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Others,1970-01-01,1.0,illness,2025-08-14,2025-08-14,AG,EG,Other
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.1333,,2025-11-03,2025-11-03,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.1667,Follow-up surgery Appt,2025-12-16,2025-12-16,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-01-02,2025-01-02,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.1333,,2025-11-04,2025-11-04,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.2,Physio-,2026-01-06,2026-01-06,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Others,1970-01-01,0.5,Illness,2025-11-27,2025-11-27,AG,EG,Other
+Dominic,Richardson,UK BDM,20.0,days,Work from home,1970-01-01,1.0,wfh,2025-10-31,2025-10-31,AG,EG,Work From Home
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.1333,,2025-08-07,2025-08-07,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Others,1970-01-01,1.0,Extra Holiday,2025-07-04,2025-07-04,AG,EG,Other
+Dominic,Richardson,UK BDM,20.0,days,Others,1970-01-01,10.0,Agreed sick leave following ankle surgery,2025-10-13,2025-10-24,AG,EG,Other
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,2.0,,2025-01-23,2025-01-24,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,6.0,,2025-06-26,2025-07-03,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.1333,,2025-07-24,2025-07-24,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,3.0,,2026-03-04,2026-03-06,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,2.0,,2025-11-20,2025-11-21,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,1.0,,2025-12-05,2025-12-05,AG,EG,Annual
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,0.2667,DR- Post-Op Appt- remove stitches etc.,2026-01-05,2026-01-05,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Medical,1970-01-01,10.0,,2025-10-13,2025-10-24,AG,EG,Medical
+Dominic,Richardson,UK BDM,20.0,days,Work from home,1970-01-01,11.0,DR- WFH post-surgery as discussed with ES and agreed by Stef/Caty,2026-01-02,2026-01-16,AG,EG,Work From Home
+Dominic,Richardson,UK BDM,20.0,days,Annual,1970-01-01,0.5,,2025-12-23,2025-12-23,AG,EG,Annual
+James,Gates,Investment,22.0,days,Annual,1970-01-01,9.0,,2025-08-18,2025-08-29,AG,EG,Annual
+James,Gates,Investment,22.0,days,Annual,1970-01-01,1.0,,2025-09-26,2025-09-26,AG,EG,Annual
+Mark,Wheeler,Investment,20.5,days,Annual,1970-01-01,2.0,Oz,2024-12-23,2024-12-24,AG,EG,Annual
+Mark,Wheeler,Investment,20.5,days,Annual,1970-01-01,7.0,,2025-12-08,2025-12-16,AG,EG,Annual
+Mark,Wheeler,Investment,20.5,days,Annual,1970-01-01,1.0,Dorset,2025-10-10,2025-10-10,AG,EG,Annual
+Mark,Wheeler,Investment,20.5,days,Annual,1970-01-01,1.0,Scotland,2025-06-27,2025-06-27,AG,EG,Annual
+Mark,Wheeler,Investment,20.5,days,Annual,1970-01-01,3.0,NYC,2025-03-28,2025-04-01,AG,EG,Annual
+Mark,Wheeler,Investment,20.5,days,Work from home,1970-01-01,1.0,WFH,2025-09-23,2025-09-23,AG,EG,Work From Home
+Mark,Wheeler,Investment,20.5,days,Annual,1970-01-01,7.0,,2025-01-02,2025-01-10,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,2.0,,2025-05-01,2025-05-02,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Medical,1970-01-01,1.0,,2026-01-26,2026-01-26,AG,EG,Medical
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,5.0,,2025-11-24,2025-11-28,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,1.0,,2025-05-06,2025-05-06,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,5.0,,2025-07-21,2025-07-25,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,0.5,,2025-12-23,2025-12-23,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,1.0,,2025-12-19,2025-12-19,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,1.0,,2025-08-08,2025-08-08,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,5.0,,2025-03-31,2025-04-04,AG,EG,Annual
+Joshua,Mathias,Investment,20.5,days,Annual,1970-01-01,0.5,,2026-01-23,2026-01-23,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,1.0,,2025-07-03,2025-07-03,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,1.0,,2025-02-14,2025-02-14,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,2.0,Morocco,2025-11-06,2025-11-07,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,12.0,,2025-03-26,2025-04-10,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,2.5,2.5,2025-06-26,2025-06-30,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,3.0,,2025-02-06,2025-02-10,AG,EG,Annual
+Dominick,Mahon,Investment,21.0,days,Annual,1970-01-01,3.0,Cornwall,2025-08-06,2025-08-08,AG,EG,Annual
+Rasmus,Friis,Executive,20.0,days,Annual,1970-01-01,1.0,,2025-09-26,2025-09-26,UG,UG,Annual
+Rasmus,Friis,Executive,20.0,days,Annual,1970-01-01,3.0,,2025-10-29,2025-10-31,UG,UG,Annual
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-08-22,2025-08-22,,,Annual
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-01-09,2025-01-09,,,Other
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-11-27,2025-11-27,,,Annual
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-09,2025-12-09,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,4.0,Transport strike,2025-09-09,2025-09-12,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-11,2025-08-11,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-05,2025-12-05,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-01-03,2025-01-03,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-05,2025-09-05,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-05-16,2025-05-16,,,Other
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-06-13,2025-06-13,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-03-14,2025-03-14,,,Annual
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-01-17,2025-01-17,,,Other
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-02-14,2025-02-14,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-23,2025-12-23,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,0.5,WFH,2025-08-22,2025-08-22,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-29,2025-08-29,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-01-24,2025-01-24,,,Other
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-03-07,2025-03-07,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-15,2025-08-15,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-06-06,2025-06-06,,,Other
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,4.0,,2025-11-17,2025-11-20,,,Annual
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-14,2025-11-14,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,Transportation strike,2025-09-08,2025-09-08,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-23,2026-01-23,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-12-02,2025-12-02,,,Other
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,2.0,Conference,2025-02-27,2025-02-28,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-04,2025-08-04,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-05-30,2025-05-30,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-28,2025-11-28,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-10-27,2025-10-27,,,Annual
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,5.0,,2025-10-06,2025-10-10,,,Annual
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-06,2025-11-06,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-05-02,2025-05-02,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-17,2025-10-17,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-05-14,2025-05-14,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-08,2025-08-08,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-03,2025-10-03,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-24,2025-12-24,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-07-25,2025-07-25,,,Annual
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-19,2025-09-19,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-29,2026-01-29,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-04-08,2025-04-08,,,Annual
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-11-21,2025-11-21,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,5.0,,2025-06-16,2025-06-20,,,Annual
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-09-04,2025-09-04,,,Other
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,Conference,2025-03-25,2025-03-25,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-24,2025-10-24,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-02-07,2025-02-07,,,Other
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-09-26,2025-09-26,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-16,2026-01-16,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-19,2025-12-19,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-02,2026-01-02,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-21,2025-08-21,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-10-31,2025-10-31,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Work from home,1970-01-01,1.0,WFH,2025-08-01,2025-08-01,,,Work From Home
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,1.0,,2025-05-27,2025-05-27,,,Other
+Maria,Titova,EG Finance,21.0,days,Others,1970-01-01,0.2,Conference,2025-09-18,2025-09-18,,,Other
+Maria,Titova,EG Finance,21.0,days,Annual,1970-01-01,1.0,,2025-06-09,2025-06-09,,,Annual
+Markus,Heiss,DE BDM,33.0,days,Annual,1970-01-01,4.0,,2025-04-22,2025-04-25,AG,EG,Annual
+Markus,Heiss,DE BDM,33.0,days,Annual,1970-01-01,1.0,,2025-05-30,2025-05-30,AG,EG,Annual
+Markus,Heiss,DE BDM,33.0,days,Annual,1970-01-01,1.0,,2025-06-02,2025-06-02,AG,EG,Annual
+Markus,Heiss,DE BDM,33.0,days,Annual,1970-01-01,1.0,,2025-01-02,2025-01-02,AG,EG,Annual
+Markus,Heiss,DE BDM,33.0,days,Annual,1970-01-01,0.5,,2025-05-16,2025-05-16,AG,EG,Annual
+Markus,Heiss,DE BDM,33.0,days,Annual,1970-01-01,15.0,,2025-09-30,2025-10-21,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2025-03-27,2025-03-28,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2026-01-05,2026-01-05,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,6.0,,2025-09-08,2025-09-15,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,7.0,,2025-07-17,2025-07-25,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2025-05-27,2025-05-28,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-05-30,2025-05-30,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2025-08-21,2025-08-22,AG,EG,Annual
+Michael,Zimmerman,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2025-03-06,2025-03-07,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,3.0,,2026-02-16,2026-02-18,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,5.0,,2026-03-27,2026-04-02,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,3.0,,2025-08-18,2025-08-22,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,3.0,,2025-11-17,2025-11-21,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2026-07-03,2026-07-03,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,7.0,,2026-06-18,2026-06-26,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Others,1970-01-01,1.0,Moving date,2026-02-13,2026-02-13,AG,EG,Other
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,5.0,,2025-02-14,2025-02-20,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Others,1970-01-01,1.0,First Aid training,2025-11-05,2025-11-05,AG,EG,Other
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,5.0,,2026-08-17,2026-08-21,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-12-17,2025-12-17,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2026-05-15,2026-05-15,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-12-12,2025-12-12,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-05-02,2025-05-02,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-04-17,2025-04-17,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,3.5,,2026-12-21,2026-12-24,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,AG,EG,Work From Home
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,0.0,,2025-03-31,2025-03-31,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-10,2025-12-10,AG,EG,Work From Home
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,0.0,,2025-12-15,2025-12-15,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,8.0,,2025-06-16,2025-06-27,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Others,1970-01-01,1.0,Birthday,2026-06-17,2026-06-17,AG,EG,Other
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2026-06-15,2026-06-16,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Michaela,Gerber,DE BDM,28.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-02,2026-01-02,AG,EG,Work From Home
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,Kurzfristiger Termin in der Kinderklinik,2025-08-12,2025-08-12,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,4 hours,2025-03-06,2025-03-06,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,Umzug groÃŸe Tochter,2025-08-27,2025-08-27,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-09-15,2025-09-15,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,3.0,,2025-05-26,2025-05-28,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-11-12,2025-11-12,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,2 hours,2025-03-03,2025-03-03,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-02-21,2025-02-21,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Medical,1970-01-01,1.0,,2025-08-25,2025-08-25,AG,EG,Medical
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-11-19,2025-11-19,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-05-16,2025-05-16,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-11-25,2025-11-25,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,5.0,,2025-09-22,2025-09-26,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-08-26,2025-08-26,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2025-07-31,2025-08-01,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-01-17,2025-01-17,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,2.5,Florina hat keinen Urlaub fÃ1⁄4r diese drei Tage geplant und kann Zahlungen vornehmen. Notebook nehme ich fÃ1⁄4r den Notfall natÃ1⁄4rlich mit. Wir mÃ¶chten gerne Ã1⁄4ber Weihnachten in die Niederlande fliehen.,2025-12-22,2025-12-24,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,2 hours,2025-02-25,2025-02-25,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,2 hours,2025-06-30,2025-06-30,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,4 hours,2025-03-05,2025-03-05,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,4 hours,2025-03-04,2025-03-04,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,0.5,4 hours,2025-02-24,2025-02-24,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-01-31,2025-01-31,AG,EG,Annual
+Stefanie,Dimke,DE BDM,28.0,days,Others,1970-01-01,2.0,,2026-01-09,2026-01-12,AG,EG,Other
+Stefanie,Dimke,DE BDM,28.0,days,Medical,1970-01-01,1.0,,2025-12-12,2025-12-12,AG,EG,Medical
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,12.0,,2025-09-01,2025-09-16,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,1.0,,2025-11-04,2025-11-04,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,4.0,,2025-04-22,2025-04-25,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,6.0,In Absprache mit Michael,2026-01-02,2026-01-09,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,1.0,,2025-04-17,2025-04-17,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,1.0,,2025-11-03,2025-11-03,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,3.0,,2025-12-10,2025-12-12,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,1.0,,2025-05-16,2025-05-16,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,1.5,In Absprache mit Michael,2025-12-23,2025-12-24,AG,EG,Annual
+Nutsa,Kanchashvili,DE BDM,25.5,days,Annual,1970-01-01,1.0,,2025-10-30,2025-10-30,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-05,2025-12-05,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,4 hours,2025-06-27,2025-06-27,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,9.0,,2025-10-20,2025-10-31,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-09-23,2025-09-23,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,Spontan - mit Michaela abgesprochen,2025-09-08,2025-09-08,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-12,2026-01-12,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-11-21,2025-11-21,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-12-11,2025-12-11,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-10-10,2025-10-10,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-16,2026-01-16,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Others,1970-01-01,2.0,London,2025-12-09,2025-12-10,AG,EG,Other
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-22,2025-12-22,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Others,1970-01-01,3.0,"Sick note - Certificate of incapacity for work will be submitted later, as it has not yet been transmitted electronically to Datev.",2025-12-17,2025-12-19,AG,EG,Other
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-12-23,2025-12-23,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-07-23,2025-07-23,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-19,2026-01-19,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Work from home,1970-01-01,1.0,WFH,2025-12-08,2025-12-08,AG,EG,Work From Home
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,1.0,Mit Michaela abgesprochen,2026-01-02,2026-01-02,AG,EG,Annual
+Verena,Stüwe,DE BDM,16.0,days,Annual,1970-01-01,1.0,,2025-10-13,2025-10-13,AG,EG,Annual
+Norman,Dressler,DE BDM,28.0,days,Annual,1970-01-01,10.0,,2026-07-27,2026-08-07,AG,EG,Annual
+Norman,Dressler,DE BDM,28.0,days,Annual,1970-01-01,4.0,,2026-02-11,2026-02-16,AG,EG,Annual
+Norman,Dressler,DE BDM,28.0,days,Annual,1970-01-01,8.0,,2025-07-14,2025-07-23,AG,EG,Annual
+Norman,Dressler,DE BDM,28.0,days,Annual,1970-01-01,2.0,,2025-12-11,2025-12-12,AG,EG,Annual
+Norman,Dressler,DE BDM,28.0,days,Annual,1970-01-01,4.5,,2025-12-18,2025-12-24,AG,EG,Annual
+Norman,Dressler,DE BDM,28.0,days,Annual,1970-01-01,1.0,,2025-07-25,2025-07-25,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-10-30,2025-10-30,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-11-11,2025-11-13,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,Abgesprochen mit Norman,2026-01-05,2026-01-09,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-08-11,2025-08-11,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-11-25,2025-11-27,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-12-02,2025-12-05,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-11-18,2025-11-20,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-12-24,2025-12-24,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-11-03,2025-11-06,AG,EG,Annual
+Jannes,Thomesen,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,10.0,,2025-10-28,2025-11-11,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Medical,1970-01-01,1.0,,2025-10-17,2025-10-17,AG,EG,Medical
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,3.0,,2025-07-17,2025-07-21,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,0.5,,2025-12-17,2025-12-17,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,1.0,,2025-06-30,2025-06-30,AG,EG,Annual
+Fabian,Tippelt,DE BDM,16.0,days,Annual,1970-01-01,2.0,,2025-08-28,2025-08-29,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,1.0,,2026-01-02,2026-01-02,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,,2025-09-01,2025-09-01,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,2.0,,2025-07-24,2025-07-25,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,6.0,In Absprache mit Michael,2026-04-10,2026-04-17,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,4 hours,2025-04-25,2025-04-25,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Work from home,1970-01-01,1.0,WFH,2026-01-05,2026-01-05,AG,EG,Work From Home
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,4 hours,2025-04-01,2025-04-01,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,,2025-11-21,2025-11-21,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,1.0,,2025-10-23,2025-10-23,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,AG,EG,Work From Home
+Charlotta,Personn,DE BDM,23.5,days,Medical,1970-01-01,1.0,,2025-09-19,2025-09-19,AG,EG,Medical
+Charlotta,Personn,DE BDM,23.5,days,Others,1970-01-01,0.5,,2025-10-30,2025-10-30,AG,EG,Other
+Charlotta,Personn,DE BDM,23.5,days,Medical,1970-01-01,1.0,,2025-09-18,2025-09-18,AG,EG,Medical
+Charlotta,Personn,DE BDM,23.5,days,Work from home,1970-01-01,1.0,WFH,2026-01-12,2026-01-12,AG,EG,Work From Home
+Charlotta,Personn,DE BDM,23.5,days,Work from home,1970-01-01,1.0,WFH,2026-01-19,2026-01-19,AG,EG,Work From Home
+Charlotta,Personn,DE BDM,23.5,days,Medical,1970-01-01,2.0,,2025-03-19,2025-03-20,AG,EG,Medical
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,,2025-07-28,2025-07-28,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,15.0,,2025-11-24,2025-12-12,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Others,1970-01-01,1.0,On my way to Grohnde,2026-01-16,2026-01-16,AG,EG,Other
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,4 hours,2025-04-11,2025-04-11,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Medical,1970-01-01,3.0,,2025-06-18,2025-06-20,AG,EG,Medical
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,2.0,,2025-05-06,2025-05-07,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,11.0,In Absprache mit Michael,2026-06-12,2026-06-26,AG,EG,Annual
+Charlotta,Personn,DE BDM,23.5,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Albano,Limas,Engineering,25.0,days,Annual,1970-01-01,5.0,,2025-11-17,2025-11-21,AG,EG,Annual
+Albano,Limas,Engineering,25.0,days,Annual,1970-01-01,4.0,,2025-08-12,2025-08-15,AG,EG,Annual
+Albano,Limas,Engineering,25.0,days,Annual,1970-01-01,4.0,Annual Leave days from 2025,2026-01-13,2026-01-16,AG,EG,Annual
+Albano,Limas,Engineering,25.0,days,Annual,1970-01-01,6.0,,2025-01-17,2025-01-24,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-12-18,2025-12-18,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Medical,NaT,0.0,,2025-11-20,2025-11-20,AG,EG,Medical
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-02-03,2025-02-03,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-08-22,2025-08-22,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-08-18,2025-08-18,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-05-02,2025-05-02,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,Spontaner Termin Montag Nachmittag. Sorry fÃ1⁄4r die kurzfristige Anfrage,2025-09-15,2025-09-15,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-06-13,2025-06-13,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-05-23,2025-05-23,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-09-19,2025-09-19,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-12-23,2025-12-23,AG,EG,Annual
+Elias,Zimmerman,DE BDM,0.0,days,Annual,1970-01-01,0.0,,2025-12-19,2025-12-19,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,3.0,,2026-05-11,2026-05-13,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,10.0,Summer Leave,2026-08-03,2026-08-14,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,1.0,,2025-12-22,2025-12-22,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,5.0,Remaining holidays from 2025,2026-03-09,2026-03-13,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-08,2026-01-08,AG,EG,Work From Home
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,1.0,,2026-05-15,2026-05-15,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,1.0,,2025-12-23,2025-12-23,AG,EG,Annual
+Benjamin,Hahn,DE BDM,7.0,days,Work from home,1970-01-01,1.0,WFH,2026-01-09,2026-01-09,AG,EG,Work From Home
+Benjamin,Hahn,DE BDM,7.0,days,Annual,1970-01-01,0.5,,2026-01-02,2026-01-02,AG,EG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,1.0,,2025-08-08,2025-08-08,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,3.0,,2025-08-20,2025-08-22,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,1.0,,2025-03-20,2025-03-20,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,5.0,,2025-06-09,2025-06-13,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,2.0,,2025-05-26,2025-05-28,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,4.0,,2025-04-16,2025-04-23,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,1.0,Annual Leave,2025-12-03,2025-12-03,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,2.0,,2025-07-04,2025-07-07,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,2.0,Annual Leave,2025-12-18,2025-12-19,AG,AG,Annual
+Selin,Bakare,Group Legal,21.0,days,Others,1970-01-01,1.0,Birthday leave,2025-12-17,2025-12-17,AG,AG,Other
+Selin,Bakare,Group Legal,21.0,days,Annual,1970-01-01,1.0,,2025-07-25,2025-07-25,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,5.0,Holiday,2026-02-09,2026-02-13,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Others,1970-01-01,1.0,Birthday day off,2025-12-15,2025-12-15,AG,AG,Other
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,4.0,,2025-04-22,2025-04-25,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,2.0,,2025-08-21,2025-08-22,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,2.0,,2025-04-16,2025-04-17,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,6.5,,2025-12-16,2025-12-24,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,2.0,,2025-05-07,2025-05-08,AG,AG,Annual
+Hyfa,Azeez,Group Legal,21.5,days,Annual,1970-01-01,3.0,Holiday - approved by SI.,2025-10-29,2025-10-31,AG,AG,Annual
+George,Hanna,Group Legal,20.0,days,Annual,1970-01-01,1.0,,2026-01-30,2026-01-30,AG,AG,Annual
+George,Hanna,Group Legal,20.0,days,Annual,1970-01-01,1.0,,2026-01-16,2026-01-16,AG,AG,Annual
+George,Hanna,Group Legal,20.0,days,Annual,1970-01-01,5.0,,2025-09-22,2025-09-26,AG,AG,Annual
+Yi,Jiang,Agri,20.0,days,Medical,1970-01-01,1.0,,2025-10-27,2025-10-27,AG,AG,Medical
+Yi,Jiang,Agri,20.0,days,Annual,1970-01-01,1.0,,2025-11-27,2025-11-27,AG,AG,Annual
+Yi,Jiang,Agri,20.0,days,Annual,1970-01-01,6.0,,2025-10-31,2025-11-07,AG,AG,Annual
+Yi,Jiang,Agri,20.0,days,Annual,1970-01-01,6.0,,2025-07-23,2025-07-30,AG,AG,Annual
+James,Shelton,Agri,20.0,days,Others,1970-01-01,1.0,Birthday time off,2025-08-22,2025-08-22,AG,AG,Other
+James,Shelton,Agri,20.0,days,Annual,1970-01-01,1.0,,2025-07-07,2025-07-07,AG,AG,Annual
+James,Shelton,Agri,20.0,days,Annual,1970-01-01,2.5,,2025-12-22,2025-12-24,AG,AG,Annual
+James,Shelton,Agri,20.0,days,Annual,1970-01-01,6.0,,2025-09-22,2025-09-29,AG,AG,Annual
+Rodney,Bassett,Agri,0.0,days,Annual,1970-01-01,8.0,,2025-09-08,2025-09-17,AG,AG,Annual
+Rodney,Bassett,Agri,0.0,days,Annual,1970-01-01,10.0,,2025-07-14,2025-07-25,AG,AG,Annual
+Jamie,Rixton,Agri,0.0,days,Annual,1970-01-01,3.0,,2025-09-24,2025-09-26,AG,AG,Annual
+William,Betts,Agri,20.0,days,Annual,1970-01-01,5.0,,2026-02-02,2026-02-06,AG,AG,Annual
+William,Betts,Agri,20.0,days,Annual,1970-01-01,9.0,,2025-07-16,2025-07-28,AG,AG,Annual
+William,Betts,Agri,20.0,days,Annual,1970-01-01,2.0,,2025-09-19,2025-09-22,AG,AG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,2.0,,2025-10-09,2025-10-10,UG,UG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,4.0,,2025-12-18,2025-12-23,UG,UG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,1.0,,2025-11-24,2025-11-24,UG,UG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,1.0,,2025-11-28,2025-11-28,UG,UG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,6.0,,2025-07-16,2025-07-23,UG,UG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,5.0,,2026-02-09,2026-02-13,UG,UG,Annual
+Andreea,Cartianu,UG Business Support,0.0,days,Annual,1970-01-01,0.5,,2025-10-08,2025-10-08,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,1.0,,2025-10-31,2025-10-31,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,1.0,,2025-12-23,2025-12-23,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,0.5,,2025-12-03,2025-12-03,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,0.5,,2025-12-08,2025-12-08,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,0.5,,2025-10-21,2025-10-21,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,2.0,,2025-09-11,2025-09-12,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,0.5,,2025-12-24,2025-12-24,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,0.5,,2025-09-25,2025-09-25,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,1.0,,2025-10-23,2025-10-23,UG,UG,Annual
+Siobhan,Banton,UG Business Support,0.0,days,Annual,1970-01-01,1.0,,2025-09-22,2025-09-22,UG,UG,Annual
+Kelly,Lima,UG Business Support,0.0,days,Annual,1970-01-01,8.0,,2026-03-30,2026-04-10,UG,UG,Annual
+Kelly,Lima,UG Business Support,0.0,days,Annual,1970-01-01,261.0,,2025-01-01,2025-12-31,UG,UG,Annual
+Teddy,Powell,Group Finance,0.0,days,Annual,1970-01-01,5.0,Statutory Leave -2025,2025-11-24,2025-11-28,UG,UG,Annual
+Teddy,Powell,Group Finance,0.0,days,Annual,1970-01-01,11.0,,2025-09-16,2025-09-30,UG,UG,Annual
+Teddy,Powell,Group Finance,0.0,days,Annual,1970-01-01,1.0,,2025-02-10,2025-02-10,UG,UG,Annual
+Teddy,Powell,Group Finance,0.0,days,Annual,1970-01-01,1.0,,2025-07-18,2025-07-18,UG,UG,Annual
+Teddy,Powell,Group Finance,0.0,days,Annual,1970-01-01,1.0,,2025-07-08,2025-07-08,UG,UG,Annual
+Teddy,Powell,Group Finance,0.0,days,Annual,1970-01-01,1.0,,2025-03-14,2025-03-14,UG,UG,Annual
+Daniel,Imran,Group Finance,21.5,days,Annual,1970-01-01,1.0,Just the Christmas Preparation.,2025-12-24,2025-12-24,UG,UG,Annual
+Daniel,Imran,Group Finance,21.5,days,Annual,1970-01-01,14.0,,2025-07-29,2025-08-15,UG,UG,Annual
+Daniel,Imran,Group Finance,21.5,days,Annual,1970-01-01,2.0,Needed a rest,2026-01-05,2026-01-06,UG,UG,Annual
+Daniel,Imran,Group Finance,21.5,days,Medical,1970-01-01,0.5,,2025-10-23,2025-10-23,UG,UG,Medical
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,2.0,,2025-08-22,2025-08-26,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Others,1970-01-01,1.0,birthday,2025-11-24,2025-11-24,UG,UG,Other
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,1.0,,2025-06-06,2025-06-06,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,1.0,,2025-11-21,2025-11-21,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,2.0,Travel,2026-01-05,2026-01-06,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,5.0,,2025-02-10,2025-02-14,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,1.0,Travel,2025-12-23,2025-12-23,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,5.0,,2025-06-09,2025-06-13,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,5.0,,2025-02-03,2025-02-07,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,1.0,,2025-08-21,2025-08-21,UG,UG,Annual
+Nidhi,Daga,Group Finance,20.5,days,Annual,1970-01-01,1.0,travel,2026-01-02,2026-01-02,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,9.0,Annual Leave,2026-03-23,2026-04-03,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,0.5,,2025-03-14,2025-03-14,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,3.0,,2025-08-19,2025-08-22,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,3.5,Annual leave for Christmas - New Year season,2025-12-19,2025-12-24,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,1.0,,2025-03-06,2025-03-06,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,3.0,,2025-08-13,2025-08-15,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,4.0,,2025-09-01,2025-09-05,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,0.5,,2025-04-15,2025-04-15,UG,UG,Annual
+Jae,Seung Lee,Property,22.5,days,Annual,1970-01-01,7.0,,2025-01-02,2025-01-10,UG,UG,Annual
+Max,Kinghorn,Property,20.5,days,Annual,1970-01-01,5.0,,2025-09-08,2025-09-12,UG,UG,Annual
+Eugene,Sun,Engineering,20.0,days,Annual,1970-01-01,0.5,To catch the flight and to meet my parents,2025-12-24,2025-12-24,AG,EG,Annual
+Hamza,Aissani,Agri,20.0,days,Annual,1970-01-01,10.0,,2026-03-26,2026-04-10,AG,AG,Annual
+,,,,,Others,NaT,,,NaT,NaT,,,Other
+,,AG Legal,,,Others,NaT,,,NaT,NaT,AG,AG,Other
