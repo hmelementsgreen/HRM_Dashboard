@@ -16,37 +16,51 @@ st.set_page_config(page_title="BrightHR & BLIP Dashboard", layout="wide")
 st.markdown(
     """
     <style>
-      .eg-title { text-align: center; margin-top: 0.25rem; margin-bottom: 0.25rem; }
-      .eg-subtitle { text-align: center; color: #6b7280; margin-top: 0rem; margin-bottom: 1rem; font-size: 0.95rem; }
+      :root {
+        --eg-text: #111827;
+        --eg-muted: #6b7280;
+        --eg-border: #e5e7eb;
+        --eg-radius: 12px;
+        --eg-accent: #2563eb;
+        --eg-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      }
+      .eg-title { text-align: center; margin-top: 0.5rem; margin-bottom: 0.25rem; color: var(--eg-text); font-size: 1.75rem; font-weight: 800; }
+      .eg-subtitle { text-align: center; color: var(--eg-muted); margin-top: 0rem; margin-bottom: 1.25rem; font-size: 0.95rem; }
 
       div[data-testid="stMetric"] { text-align: center; }
       div[data-testid="stMetricLabel"],
       div[data-testid="stMetricValue"],
       div[data-testid="stMetricDelta"] { justify-content: center; }
 
-      .eg-section-title { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+      .eg-section-title { margin-top: 0.25rem; margin-bottom: 0.25rem; border-bottom: 2px solid var(--eg-border); padding-bottom: 0.35rem; }
 
-      .eg-vertical-divider-kpi{ border-left: 2px solid #e5e7eb; height: 230px; margin: 0 auto; }
-      .eg-vertical-divider-donut{ border-left: 2px solid #e5e7eb; height: 520px; margin: 0 auto; }
+      .eg-vertical-divider-kpi { border-left: 3px solid var(--eg-border); height: 230px; margin: 0 auto; }
+      .eg-vertical-divider-donut { border-left: 3px solid var(--eg-border); height: 520px; margin: 0 auto; }
 
       .eg-hint {
         padding: 0.5rem 0.75rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
+        border: 1px solid var(--eg-border);
+        border-radius: var(--eg-radius);
         background: #fafafa;
-        color: #374151;
+        color: var(--eg-text);
         font-size: 0.9rem;
         margin-bottom: 0.75rem;
       }
-      .block-container { padding-top: 1rem; padding-bottom: 2rem; }
+      .block-container { padding-top: 1.5rem; padding-bottom: 2.5rem; }
       .eg-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
+        border: 1px solid var(--eg-border);
+        border-radius: var(--eg-radius);
         padding: 0.9rem;
         background: white;
         margin-bottom: 1rem;
       }
+      .eg-spacer { height: 1.5rem; }
       .js-plotly-plot { margin-top: -0.2rem; }
+      [data-baseweb="tab-list"] { gap: 0.25rem; padding: 0.25rem 0; }
+      [data-baseweb="tab-list"] button { padding: 0.5rem 1rem; font-weight: 500; }
+      [data-baseweb="tab-list"] button[aria-selected="true"] { font-weight: 700; border-bottom: 2px solid var(--eg-accent); background: rgba(37, 99, 235, 0.06); }
+      .eg-country-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+      [data-testid="stAlert"] { border: 1px solid var(--eg-border); border-radius: var(--eg-radius); }
     </style>
     """,
     unsafe_allow_html=True,
@@ -66,6 +80,15 @@ TYPE_ORDER = [
     "WFH",
     "Travel",
 ]
+
+# Fixed colors for absence types (consistent across all charts)
+ABSENCE_COLOR_MAP = {
+    "Annual Leave": "#2563eb",
+    "Medical + Sickness": "#dc2626",
+    "Other (excl. WFH, Travel)": "#6b7280",
+    "WFH": "#16a34a",
+    "Travel": "#ca8a04",
+}
 
 # Cleaned-pipeline categories (if your CSV already contains these)
 CLEANED_FINAL_TYPES = {"Annual", "Medical", "Work from home", "Travel", "Others"}
@@ -126,6 +149,7 @@ def _blip_clean_plot(fig, y_title=None, x_title=None):
         paper_bgcolor="white",
         margin=dict(l=20, r=20, t=50, b=20),
         showlegend=False,
+        font=dict(family="Inter, system-ui, sans-serif", size=12),
     )
     fig.update_xaxes(showgrid=False, title=x_title)
     fig.update_yaxes(showgrid=True, gridcolor="#f3f4f6", title=y_title)
@@ -717,6 +741,48 @@ def add_export_metadata(df_out: pd.DataFrame, filters_applied: str) -> pd.DataFr
     out["filters_applied"] = filters_applied
     return out
 
+def kpi_tile(title: str, value: str, subtitle: str = ""):
+    st.markdown(
+        f"""
+        <div style="
+          border:1px solid var(--eg-border);
+          border-radius:var(--eg-radius);
+          padding:14px 16px;
+          background:linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%);
+          box-shadow:var(--eg-shadow);
+          ">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="font-size:0.85rem; color:var(--eg-muted); font-weight:600;">{title}</div>
+          </div>
+          <div style="font-size:2.1rem; font-weight:900; color:var(--eg-text); line-height:1.1; margin-top:6px;">
+            {value}
+          </div>
+          <div style="font-size:0.85rem; color:var(--eg-muted); margin-top:6px;">{subtitle}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+def soft_card(title: str, body_html: str = "", footer_html: str = ""):
+    st.markdown(
+        f"""
+        <div style="
+          border:1px solid var(--eg-border);
+          border-radius:var(--eg-radius);
+          padding:14px 16px;
+          background:#ffffff;
+          box-shadow:var(--eg-shadow);
+          ">
+          <div style="font-size:0.95rem; font-weight:800; color:var(--eg-text); margin-bottom:10px;">
+            {title}
+          </div>
+          {body_html}
+          {footer_html}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 # ----------------------------
 # Centered heading (shared)
 # ----------------------------
@@ -773,6 +839,7 @@ with st.sidebar:
     else:
         daily_scope = build_daily_for_months(csv_path, months_tuple)
 
+    st.markdown("---")
     with st.expander("Refine view (filters)", expanded=False):
         employee_q = st.text_input("Employee search", value="", key="emp_q")
         keyword_q = st.text_input("Keyword in purpose/description", value="", key="kw_q")
@@ -815,6 +882,7 @@ with st.sidebar:
 
     st.caption(f"Filters applied: {filter_summary}")
 
+    st.markdown("---")
     with st.expander("Exports", expanded=False):
         st.caption("Exports use the filters above.")
 
@@ -922,6 +990,7 @@ with st.sidebar:
                 else:
                     st.caption("No drilldown daily rows for the selected week (current filters).")
 
+    st.markdown("---")
     # ----------------------------
     # BLIP Utilisation (sidebar section)
     # ----------------------------
@@ -1059,7 +1128,7 @@ with tab_individual:
     # =====================================================
     # 1) Firmwide KPIs — polished layout
     # =====================================================
-    st.markdown("### Firmwide KPIs")
+    st.markdown('<h3 class="eg-section-title">Firmwide KPIs</h3>', unsafe_allow_html=True)
     st.caption("Quick snapshot for the selected period and filters (full-time employees only).")
 
     def _fmt_int(x):
@@ -1073,48 +1142,6 @@ with tab_individual:
             return f"{float(x):,.1f}d"
         except Exception:
             return str(x)
-
-    def kpi_tile(title: str, value: str, subtitle: str = ""):
-        st.markdown(
-            f"""
-            <div style="
-              border:1px solid #e5e7eb;
-              border-radius:18px;
-              padding:14px 16px;
-              background:linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%);
-              box-shadow:0 1px 2px rgba(0,0,0,0.04);
-              ">
-              <div style="display:flex; align-items:center; justify-content:space-between;">
-                <div style="font-size:0.85rem; color:#6b7280; font-weight:600;">{title}</div>
-              </div>
-              <div style="font-size:2.1rem; font-weight:900; color:#111827; line-height:1.1; margin-top:6px;">
-                {value}
-              </div>
-              <div style="font-size:0.85rem; color:#6b7280; margin-top:6px;">{subtitle}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    def soft_card(title: str, body_html: str = "", footer_html: str = ""):
-        st.markdown(
-            f"""
-            <div style="
-              border:1px solid #e5e7eb;
-              border-radius:18px;
-              padding:14px 16px;
-              background:#ffffff;
-              box-shadow:0 1px 2px rgba(0,0,0,0.04);
-              ">
-              <div style="font-size:0.95rem; font-weight:800; color:#111827; margin-bottom:10px;">
-                {title}
-              </div>
-              {body_html}
-              {footer_html}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
     # --- Hero row ---
     h1, h2, h3, h4 = st.columns([1.2, 1.2, 1.2, 1.2])
@@ -1131,7 +1158,7 @@ with tab_individual:
             f"{period_start.strftime('%d/%m/%Y')} → {period_end.strftime('%d/%m/%Y')}"
         )
 
-    st.markdown("")
+    st.markdown('<div class="eg-spacer"></div>', unsafe_allow_html=True)
 
     # --- WFH utilisation + Annual summary ---
     row_a, row_b = st.columns([1.35, 1.65])
@@ -1161,17 +1188,17 @@ with tab_individual:
     with row_b:
         body = f"""
           <div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
-            <div style="border:1px solid #eef2f7; border-radius:14px; padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:#6b7280; font-weight:600;">Annual entitled</div>
-              <div style="font-size:1.25rem; font-weight:900; color:#111827;">{_fmt_days(annual_entitled_fw)}</div>
+            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual entitled</div>
+              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_days(annual_entitled_fw)}</div>
             </div>
-            <div style="border:1px solid #eef2f7; border-radius:14px; padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:#6b7280; font-weight:600;">Annual taken</div>
-              <div style="font-size:1.25rem; font-weight:900; color:#111827;">{_fmt_int(annual_taken_fw)}d</div>
+            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual taken</div>
+              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(annual_taken_fw)}d</div>
             </div>
-            <div style="border:1px solid #eef2f7; border-radius:14px; padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:#6b7280; font-weight:600;">Annual remaining</div>
-              <div style="font-size:1.25rem; font-weight:900; color:#111827;">{_fmt_days(annual_remaining_fw)}</div>
+            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual remaining</div>
+              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-accent);">{_fmt_days(annual_remaining_fw)}</div>
             </div>
           </div>
           <div style="margin-top:10px; font-size:0.85rem; color:#6b7280;">
@@ -1180,7 +1207,7 @@ with tab_individual:
         """
         soft_card("Annual leave", body)
 
-    st.markdown("")
+    st.markdown('<div class="eg-spacer"></div>', unsafe_allow_html=True)
 
     # --- Other leave + Leave mix donut ---
        # --- Other leave + Leave mix (aligned cards + proper pie) ---
@@ -1189,49 +1216,38 @@ with tab_individual:
     with left_card:
         body = f"""
           <div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
-            <div style="border:1px solid #eef2f7; border-radius:14px; padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:#6b7280; font-weight:600;">Sick</div>
-              <div style="font-size:1.25rem; font-weight:900; color:#111827;">{_fmt_int(sick_taken_fw)}d</div>
+            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Sick</div>
+              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(sick_taken_fw)}d</div>
             </div>
-            <div style="border:1px solid #eef2f7; border-radius:14px; padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:#6b7280; font-weight:600;">Travel</div>
-              <div style="font-size:1.25rem; font-weight:900; color:#111827;">{_fmt_int(travel_taken_fw)}d</div>
+            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Travel</div>
+              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(travel_taken_fw)}d</div>
             </div>
-            <div style="border:1px solid #eef2f7; border-radius:14px; padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:#6b7280; font-weight:600;">Other</div>
-              <div style="font-size:1.25rem; font-weight:900; color:#111827;">{_fmt_int(other_taken_fw)}d</div>
+            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Other</div>
+              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(other_taken_fw)}d</div>
             </div>
           </div>
         """
         soft_card("Other leave taken", body)
 
     with right_card:
-        # Card header
-        soft_card(
-            "Leave mix (daily rows)",
-            body_html="""
-              <div style="font-size:0.85rem; color:#6b7280; margin-top:-4px; margin-bottom:6px;">
-                Distribution of daily records in the current scope (full-time only).
-              </div>
-            """
-        )
-
-        # Chart inside a matching card container for alignment
+        # Single card: title, description, and chart in one wrapper
         st.markdown(
             """
             <div style="
-              border:1px solid #e5e7eb;
-              border-top:0;
-              border-radius:0 0 18px 18px;
-              padding:10px 12px 6px 12px;
+              border:1px solid var(--eg-border);
+              border-radius:var(--eg-radius);
+              padding:14px 16px;
               background:#ffffff;
-              box-shadow:0 1px 2px rgba(0,0,0,0.04);
-              margin-top:-10px;
+              box-shadow:var(--eg-shadow);
             ">
+            <div style="font-size:0.95rem; font-weight:800; color:var(--eg-text); margin-bottom:4px;">Leave mix (daily rows)</div>
+            <div style="font-size:0.85rem; color:var(--eg-muted); margin-bottom:10px;">Distribution of daily records in the current scope (full-time only).</div>
             """,
             unsafe_allow_html=True
         )
-
         if firm_daily.empty:
             st.info("No daily rows in scope to show the mix.")
         else:
@@ -1252,8 +1268,8 @@ with tab_individual:
                     names="absence_category",
                     values="count",
                     category_orders={"absence_category": TYPE_ORDER},
+                    color_discrete_map=ABSENCE_COLOR_MAP,
                 )
-                # Proper pie labels (percent + value)
                 fig_mix.update_traces(
                     textinfo="percent+value",
                     texttemplate="%{value:.0f} (%{percent})",
@@ -1264,9 +1280,9 @@ with tab_individual:
                     showlegend=True,
                     legend_title_text="Type",
                     margin=dict(l=10, r=10, t=10, b=10),
+                    font=dict(family="Inter, system-ui, sans-serif", size=12),
                 )
                 st.plotly_chart(fig_mix, use_container_width=True)
-
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
@@ -1274,7 +1290,7 @@ with tab_individual:
     # -----------------------------------------------------
     # 2) Individual leave table (alphabetical, includes remaining days)
     # -----------------------------------------------------
-    st.markdown("### Individual Leave Table (Full-time Employees)")
+    st.markdown('<h3 class="eg-section-title">Individual Leave Table (Full-time Employees)</h3>', unsafe_allow_html=True)
     st.caption("Employee-level summary for the selected period. Sorted alphabetically. Includes Annual remaining (days).")
 
     if balance_ft.empty or not full_time_emps:
@@ -1331,7 +1347,7 @@ with tab_individual:
     # -----------------------------------------------------
     # 3) Optional: Detailed annual leave balances (expander)
     # -----------------------------------------------------
-    st.markdown("### Detailed Annual Leave Balances")
+    st.markdown('<h3 class="eg-section-title">Detailed Annual Leave Balances</h3>', unsafe_allow_html=True)
     with st.expander("Detailed Annual Leave Balances (HR view)", expanded=False):
         if entitlement_conflicts is not None and not entitlement_conflicts.empty:
             st.warning("Entitlement values vary for some employees in the dataset. Review below.")
@@ -1478,7 +1494,7 @@ with tab_department:
     # -----------------------------------------------------
     # Department Rollup (Full-time employees only) — clean view
     # -----------------------------------------------------
-    st.markdown("### Annual Leave Balance (Department Rollup) — Full-time employees")
+    st.markdown('<h3 class="eg-section-title">Annual Leave Balance (Department Rollup) — Full-time employees</h3>', unsafe_allow_html=True)
 
     dept_rollup = rollup_balance(balance_ft, "Team names") if not balance_ft.empty else pd.DataFrame()
 
@@ -1594,12 +1610,14 @@ with tab_department:
                 y=METRIC_COL,
                 color="absence_category",
                 category_orders={"absence_category": TYPE_ORDER},
+                color_discrete_map=ABSENCE_COLOR_MAP,
             )
             fig_m1.update_layout(
                 barmode="stack",
                 title=dict(text=month_1, x=0.5),
                 legend_title_text="Absence type",
-                margin=dict(t=60)
+                margin=dict(t=60),
+                font=dict(family="Inter, system-ui, sans-serif", size=12),
             )
             fig_m1.update_xaxes(tickangle=-35)
             st.plotly_chart(fig_m1, use_container_width=True)
@@ -1614,12 +1632,14 @@ with tab_department:
                 y=METRIC_COL,
                 color="absence_category",
                 category_orders={"absence_category": TYPE_ORDER},
+                color_discrete_map=ABSENCE_COLOR_MAP,
             )
             fig_m2.update_layout(
                 barmode="stack",
                 title=dict(text=month_2, x=0.5),
                 legend_title_text="Absence type",
-                margin=dict(t=60)
+                margin=dict(t=60),
+                font=dict(family="Inter, system-ui, sans-serif", size=12),
             )
             fig_m2.update_xaxes(tickangle=-35)
             st.plotly_chart(fig_m2, use_container_width=True)
@@ -1631,12 +1651,14 @@ with tab_department:
             y=METRIC_COL,
             color="absence_category",
             category_orders={"absence_category": TYPE_ORDER},
+            color_discrete_map=ABSENCE_COLOR_MAP,
         )
         fig_dept.update_layout(
             barmode="stack",
             title=dict(text=month_1, x=0.5),
             legend_title_text="Absence type",
-            margin=dict(t=60)
+            margin=dict(t=60),
+            font=dict(family="Inter, system-ui, sans-serif", size=12),
         )
         fig_dept.update_xaxes(tickangle=-35)
         st.plotly_chart(fig_dept, use_container_width=True)
@@ -1667,7 +1689,7 @@ with tab_country:
     if "selected_country" not in st.session_state:
         st.session_state.selected_country = country_options[0]
 
-    st.markdown("**Select country**")
+    st.markdown('<div class="eg-country-buttons">**Select country**</div>', unsafe_allow_html=True)
     cols = st.columns(len(country_options))
     for i, c in enumerate(country_options):
         if cols[i].button(
@@ -1681,7 +1703,7 @@ with tab_country:
     df_country = df_cases_filt[df_cases_filt["Country"] == selected_country].copy()
 
     st.markdown("---")
-    st.markdown("### Annual Leave Balance (Country Rollup) — Filtered")
+    st.markdown('<h3 class="eg-section-title">Annual Leave Balance (Country Rollup) — Filtered</h3>', unsafe_allow_html=True)
     country_rollup = rollup_balance(employee_balance, "Country") if not employee_balance.empty else pd.DataFrame()
     if country_rollup.empty:
         st.info("No country rollup available for the current filtered scope.")
@@ -1738,9 +1760,9 @@ with tab_country:
         if d.empty:
             st.info(f"No absence data for {selected_country} in {m}.")
             return
-        fig = px.pie(d, names="absence_category", values=METRIC_COL, category_orders={"absence_category": TYPE_ORDER})
+        fig = px.pie(d, names="absence_category", values=METRIC_COL, category_orders={"absence_category": TYPE_ORDER}, color_discrete_map=ABSENCE_COLOR_MAP)
         fig.update_traces(textinfo="percent+value", texttemplate="%{value:.1f}d (%{percent})", textposition="inside", sort=False)
-        fig.update_layout(title=dict(text=f"{selected_country} • {m}", x=0.5), legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10))
+        fig.update_layout(title=dict(text=f"{selected_country} • {m}", x=0.5), legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), font=dict(family="Inter, system-ui, sans-serif", size=12))
         st.plotly_chart(fig, use_container_width=True)
 
     if month_2:
@@ -1858,9 +1880,9 @@ with tab_group:
             st.info(f"No absence days for {m}.")
             return
 
-        fig = px.pie(d, names="absence_category", values=METRIC_COL, hole=0.55, category_orders={"absence_category": TYPE_ORDER})
+        fig = px.pie(d, names="absence_category", values=METRIC_COL, hole=0.55, category_orders={"absence_category": TYPE_ORDER}, color_discrete_map=ABSENCE_COLOR_MAP)
         fig.update_traces(textinfo="percent+value", texttemplate="%{percent} (%{value:.1f}d)", textposition="inside", sort=False)
-        fig.update_layout(showlegend=True, legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), title=dict(text=m, x=0.5, xanchor="center"))
+        fig.update_layout(showlegend=True, legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), title=dict(text=m, x=0.5, xanchor="center"), font=dict(family="Inter, system-ui, sans-serif", size=12))
         st.plotly_chart(fig, use_container_width=True)
 
     if month_2:
@@ -1890,17 +1912,25 @@ with tab_blip:
         avg_worked_shift = f_shift["worked_hours"].mean(skipna=True)
 
         k1, k2, k3, k4, k5, k6 = st.columns(6)
-        k1.metric("Entries (all)", f"{entries_all:,}")
-        k2.metric("Shift entries", f"{entries_shift:,}")
-        k3.metric("Employees", f"{employees_blip:,}")
-        k4.metric("Missing clock-outs", f"{int(missing_clockouts):,}")
-        k5.metric("Worked hours", fmt_hours_minutes(worked_total))
-        k6.metric("Avg worked / shift", fmt_hours_minutes(avg_worked_shift))
+        with k1:
+            kpi_tile("Entries (all)", f"{entries_all:,}", "All BLIP rows")
+        with k2:
+            kpi_tile("Shift entries", f"{entries_shift:,}", "Shift type only")
+        with k3:
+            kpi_tile("Employees", f"{employees_blip:,}", "In selected range")
+        with k4:
+            kpi_tile("Missing clock-outs", f"{int(missing_clockouts):,}", "No clock-out time")
+        with k5:
+            kpi_tile("Worked hours", fmt_hours_minutes(worked_total), "Excl. breaks")
+        with k6:
+            kpi_tile("Avg worked / shift", fmt_hours_minutes(avg_worked_shift), "Per shift")
 
-        st.markdown(
-            f'<div class="eg-hint"><b>Shift totals in selected range:</b> Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> · Break = <b>{fmt_hours_minutes(break_total)}</b> · Worked (excl breaks) = <b>{fmt_hours_minutes(worked_total)}</b></div>',
-            unsafe_allow_html=True,
-        )
+        shift_totals_body = f"""
+          <div style="font-size:0.9rem; color:var(--eg-text);">
+            Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> · Break = <b>{fmt_hours_minutes(break_total)}</b> · Worked (excl. breaks) = <b>{fmt_hours_minutes(worked_total)}</b>
+          </div>
+        """
+        soft_card("Shift totals in selected range", shift_totals_body)
         st.markdown("---")
 
         st.markdown('<h3 class="eg-section-title">Daily Utilisation (Shift rows only)</h3>', unsafe_allow_html=True)
@@ -1992,10 +2022,14 @@ with tab_blip:
         long_shifts = (f_shift["worked_hours"] > long_shift_hours).sum()
         location_mismatch = f_shift["location_mismatch"].sum()
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Missing clock-outs", int(missing_clockouts))
-        c2.metric(f"Short shifts (worked < {fmt_hours_minutes(short_shift_hours)})", int(short_shifts))
-        c3.metric(f"Long shifts (worked > {fmt_hours_minutes(long_shift_hours)})", int(long_shifts))
-        c4.metric("Location mismatches", int(location_mismatch))
+        with c1:
+            kpi_tile("Missing clock-outs", str(int(missing_clockouts)), "No clock-out time")
+        with c2:
+            kpi_tile(f"Short shifts (< {fmt_hours_minutes(short_shift_hours)})", str(int(short_shifts)), "Worked hours")
+        with c3:
+            kpi_tile(f"Long shifts (> {fmt_hours_minutes(long_shift_hours)})", str(int(long_shifts)), "Worked hours")
+        with c4:
+            kpi_tile("Location mismatches", str(int(location_mismatch)), "In vs out location")
         st.markdown("---")
         st.markdown('<h3 class="eg-section-title">Exports</h3>', unsafe_allow_html=True)
         export_ts = pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -2004,10 +2038,20 @@ with tab_blip:
             sort_cols = ["date", BLIP_COL_TEAM, "employee"]
         shift_export = f_shift[show_cols].sort_values(sort_cols).copy()
         shift_export["generated_at"] = export_ts
-        st.download_button("Download Shift-level table (CSV)", data=shift_export.to_csv(index=False).encode("utf-8"), file_name="blip_shift_table.csv", mime="text/csv", key="blip_export_shift")
         weekly_export = weekly_blip.copy()
         weekly_export["generated_at"] = export_ts
-        st.download_button("Download Weekly utilisation summary (CSV)", data=weekly_export.to_csv(index=False).encode("utf-8"), file_name="blip_weekly_utilisation.csv", mime="text/csv", key="blip_export_weekly")
         monthly_export = monthly_blip.copy()
         monthly_export["generated_at"] = export_ts
-        st.download_button("Download Monthly hours summary (CSV)", data=monthly_export.to_csv(index=False).encode("utf-8"), file_name="blip_monthly_hours.csv", mime="text/csv", key="blip_export_monthly")
+        col_shift, col_weekly, col_monthly = st.columns(3)
+        with col_shift:
+            st.download_button("Download Shift-level table (CSV)", data=shift_export.to_csv(index=False).encode("utf-8"), file_name="blip_shift_table.csv", mime="text/csv", key="blip_export_shift")
+        with col_weekly:
+            st.download_button("Download Weekly utilisation summary (CSV)", data=weekly_export.to_csv(index=False).encode("utf-8"), file_name="blip_weekly_utilisation.csv", mime="text/csv", key="blip_export_weekly")
+        with col_monthly:
+            st.download_button("Download Monthly hours summary (CSV)", data=monthly_export.to_csv(index=False).encode("utf-8"), file_name="blip_monthly_hours.csv", mime="text/csv", key="blip_export_monthly")
+
+st.markdown("---")
+st.markdown(
+    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">BrightHR & BLIP Dashboard</div>',
+    unsafe_allow_html=True,
+)
