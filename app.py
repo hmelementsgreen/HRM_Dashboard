@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 
 # ----------------------------
 # Page config + global styling
@@ -132,7 +133,8 @@ BLIP_COL_IN_LOC = "Clock In Location"
 BLIP_COL_OUT_LOC = "Clock Out Location"
 BLIP_COL_DURATION = "Total Duration"
 BLIP_COL_WORKED = "Total Excluding Breaks"
-BLIP_XLSX_DEFAULT = os.path.join(_APP_DIR, "blip_integration", "Blip_27_28.xlsx")
+BLIP_XLSX_DEFAULT = r"C:\Users\HarshMalhotra\OneDrive - United Green\Documents\Blip\blipTimesheet_27Jan_onwards_clean.xlsx"
+WFH_ASSUMED_HOURS = 8.0  # 9 to 5
 
 def _blip_to_timedelta_safe(s: pd.Series) -> pd.Series:
     x = s.astype(str).replace({"NaT": np.nan, "nan": np.nan, "": np.nan, "None": np.nan})
@@ -143,14 +145,19 @@ def _blip_combine_date_time(d, t):
     t = t.astype(str).replace({"NaT": np.nan, "nan": np.nan, "": np.nan, "None": np.nan})
     return pd.to_datetime(d.dt.strftime("%Y-%m-%d") + " " + t, errors="coerce")
 
-def _blip_clean_plot(fig, y_title=None, x_title=None):
-    fig.update_layout(
-        plot_bgcolor="white",
-        paper_bgcolor="white",
-        margin=dict(l=20, r=20, t=50, b=20),
-        showlegend=False,
-        font=dict(family="Inter, system-ui, sans-serif", size=12),
-    )
+def _blip_clean_plot(fig, y_title=None, x_title=None, show_legend=None):
+    """Clean plot styling. If show_legend is None, preserves existing legend setting."""
+    layout_updates = {
+        "plot_bgcolor": "white",
+        "paper_bgcolor": "white",
+        "margin": dict(l=20, r=20, t=50, b=20),
+        "font": dict(family="Inter, system-ui, sans-serif", size=12),
+    }
+    if show_legend is not None:
+        layout_updates["showlegend"] = show_legend
+    elif "showlegend" not in fig.layout:
+        layout_updates["showlegend"] = False
+    fig.update_layout(**layout_updates)
     fig.update_xaxes(showgrid=False, title=x_title)
     fig.update_yaxes(showgrid=True, gridcolor="#f3f4f6", title=y_title)
     return fig
@@ -167,6 +174,7 @@ def _blip_process_raw_df(df: pd.DataFrame) -> pd.DataFrame:
         + df.get(BLIP_COL_LAST, pd.Series(index=df.index, dtype="object")).fillna("").astype(str).str.strip()
     ).str.strip()
     df["date"] = pd.to_datetime(df.get(BLIP_COL_IN_DATE), errors="coerce")
+    df["is_weekend"] = df["date"].dt.weekday >= 5
     df["week_start"] = df["date"] - pd.to_timedelta(df["date"].dt.weekday, unit="D")
     df["month"] = df["date"].dt.to_period("M").astype(str)
     df["duration_td"] = _blip_to_timedelta_safe(df.get(BLIP_COL_DURATION, pd.Series(index=df.index, dtype="object")))
@@ -998,8 +1006,10 @@ with st.sidebar:
         st.markdown("---")
         blip_uploaded = st.file_uploader("Upload BLIP export (Excel)", type=["xlsx", "xls"], key="blip_upload", help="Upload a file to use instead of a path.")
         blip_xlsx_path = st.text_input("Or enter Excel file path", value=BLIP_XLSX_DEFAULT, disabled=blip_uploaded is not None, key="blip_path")
+        if st.button("Hard reload BLIP", key="blip_hard_reload", help="Clear BLIP cache and reload data from file."):
+            _blip_load_data.clear()
+            st.rerun()
         expected_daily_hours = st.number_input("Expected daily hours", 0.0, 24.0, 7.5, 0.5, key="blip_expected_hours")
-        include_weekends = st.checkbox("Include weekends (utilisation expected uses selected days)", value=False, key="blip_weekends")
         with st.expander("Exception thresholds", expanded=False):
             short_shift_hours = st.number_input("Short shift threshold (hours)", 0.0, 24.0, 2.0, 0.5, key="blip_short")
             long_shift_hours = st.number_input("Long shift threshold (hours)", 0.0, 24.0, 10.0, 0.5, key="blip_long")
@@ -1021,8 +1031,8 @@ with st.sidebar:
                     d1_blip, d2_blip = st.date_input("Date range", value=(min_dt_blip.date(), max_dt_blip.date()), key="blip_daterange")
                     f_blip = df_blip[(df_blip["date"].dt.date >= d1_blip) & (df_blip["date"].dt.date <= d2_blip)].copy()
                     f_shift = f_blip[f_blip["blip_type_norm"].eq("shift")].copy()
-                    if not include_weekends:
-                        f_shift = f_shift[f_shift["date"].dt.weekday < 5].copy()
+                    # Remove weekends from all BLIP graphs and tables (Mon=0 .. Fri=4 only)
+                    f_shift = f_shift[f_shift["date"].dt.dayofweek < 5].copy()
             except Exception as e:
                 st.warning(f"Failed to load BLIP file: {e}")
                 df_blip, f_blip, f_shift = None, None, None
@@ -1905,21 +1915,30 @@ with tab_blip:
         worked_total = f_shift["worked_hours"].sum(skipna=True)
         duration_total = f_shift["duration_hours"].sum(skipna=True)
         break_total = f_shift["break_hours"].sum(skipna=True)
-        avg_worked_shift = f_shift["worked_hours"].mean(skipna=True)
+        # Calculate WFH days (weekdays with no shift entry) - treat as 8-hour shifts
+        all_dates_kpi = pd.date_range(start=pd.Timestamp(d1_blip), end=pd.Timestamp(d2_blip), freq="D")
+        weekday_dates_kpi = [pd.Timestamp(d).date() for d in all_dates_kpi if getattr(d, "dayofweek", d.weekday()) < 5]
+        dates_with_shifts = set(pd.to_datetime(f_shift["date"]).dt.date.unique()) if not f_shift.empty else set()
+        wfh_days_count = sum(1 for d in weekday_dates_kpi if d not in dates_with_shifts)
+        # Total worked hours incl. WFH (WFH days = 8-hour shifts)
+        total_worked_incl_wfh = worked_total + (wfh_days_count * WFH_ASSUMED_HOURS)
+        # Avg worked / shift: include WFH days as 8-hour shifts in the average
+        total_shifts_incl_wfh = len(f_shift) + wfh_days_count
+        avg_worked_shift = total_worked_incl_wfh / total_shifts_incl_wfh if total_shifts_incl_wfh > 0 else 0.0
 
         k1, k2, k3, k4, k5, k6 = st.columns(6)
         with k1:
             kpi_tile("Entries (all)", f"{entries_all:,}", "All BLIP rows")
         with k2:
-            kpi_tile("Shift entries", f"{entries_shift:,}", "Shift type only")
+            kpi_tile("Shift entries", f"{int(total_shifts_incl_wfh):,}", "Incl. WFH as shifts")
         with k3:
             kpi_tile("Employees", f"{employees_blip:,}", "In selected range")
         with k4:
             kpi_tile("Missing clock-outs", f"{int(missing_clockouts):,}", "No clock-out time")
         with k5:
-            kpi_tile("Worked hours", fmt_hours_minutes(worked_total), "Excl. breaks")
+            kpi_tile("Worked hours (incl. WFH)", fmt_hours_minutes(total_worked_incl_wfh), "Weekdays only")
         with k6:
-            kpi_tile("Avg worked / shift", fmt_hours_minutes(avg_worked_shift), "Per shift")
+            kpi_tile("Avg worked / shift", fmt_hours_minutes(avg_worked_shift), "Incl. WFH as shifts")
 
         shift_totals_body = f"""
           <div style="font-size:0.9rem; color:var(--eg-text);">
@@ -1930,22 +1949,120 @@ with tab_blip:
         st.markdown(" ")
 
         soft_card("Shift totals in selected range", shift_totals_body)
+        st.caption("Recorded totals above (clock-in only). KPIs above include WFH: weekdays with no entry = 8 hrs each. Daily/weekly/overall utilisation below include WFH.")
         st.markdown(" ------------------------------------------------------------ ")
 
-        st.markdown('<h3 class="eg-section-title">Daily Utilisation (Shift rows only)</h3>', unsafe_allow_html=True)
-        daily_blip = f_shift.groupby("date", as_index=False).agg(WorkedHours=("worked_hours", "sum"), Employees=("employee", "nunique"))
+        st.markdown('<h3 class="eg-section-title">Daily Utilisation (incl. WFH, weekdays only)</h3>', unsafe_allow_html=True)
+        all_dates_daily = pd.date_range(start=pd.Timestamp(d1_blip), end=pd.Timestamp(d2_blip), freq="D")
+        # Only weekdays: Mon=0 .. Fri=4; Sat=5, Sun=6 excluded
+        weekday_dates = [pd.Timestamp(d).normalize() for d in all_dates_daily if getattr(d, "dayofweek", d.weekday()) < 5]
+        full_daily = pd.DataFrame({"date": weekday_dates})
+        # Detect WFH days from Notes column (if present)
+        notes_col = f_shift.get("Notes", pd.Series(index=f_shift.index, dtype=object)).fillna("").astype(str).str.upper()
+        f_shift["_is_wfh_note"] = notes_col.str.contains("WFH", na=False)
+        wfh_dates_set = set()
+        if f_shift["_is_wfh_note"].any():
+            wfh_date_norm = pd.to_datetime(f_shift.loc[f_shift["_is_wfh_note"], "date"]).dt.normalize()
+            if hasattr(wfh_date_norm.dtype, "tz") and wfh_date_norm.dtype.tz is not None:
+                wfh_date_norm = wfh_date_norm.dt.tz_localize(None)
+            wfh_dates_set = set(wfh_date_norm.dropna().unique())
+        daily_agg = f_shift.groupby("date", as_index=False).agg(WorkedHours=("worked_hours", "sum"), Employees=("employee", "nunique"))
+        daily_agg["date"] = pd.to_datetime(daily_agg["date"]).dt.normalize()
+        daily_blip = full_daily.merge(daily_agg, on="date", how="left")
+        daily_blip["date"] = pd.to_datetime(daily_blip["date"])
+        daily_blip["WorkedHours"] = daily_blip["WorkedHours"].fillna(0)
+        daily_blip["Employees"] = daily_blip["Employees"].fillna(0).astype(int)
+        
+        # Mark WFH days from Notes BEFORE calculating Expected
+        daily_blip["_date_norm"] = pd.to_datetime(daily_blip["date"]).dt.normalize()
+        if hasattr(daily_blip["_date_norm"].dtype, "tz") and daily_blip["_date_norm"].dtype.tz is not None:
+            daily_blip["_date_norm"] = daily_blip["_date_norm"].dt.tz_localize(None)
+        daily_blip["IsWFHDay"] = daily_blip["_date_norm"].isin(wfh_dates_set)
+        
+        # Calculate Expected: Employees * expected_daily_hours
+        # Only calculate for days that have actual employees (Employees > 0)
         daily_blip["Expected"] = daily_blip["Employees"] * expected_daily_hours
+        
+        # Calculate utilisation: WorkedHours / Expected
+        # This will be NaN for days with no employees (Expected = 0)
         daily_blip["Utilisation"] = _blip_safe_divide(daily_blip["WorkedHours"].values, daily_blip["Expected"].values)
-        fig_daily = px.bar(daily_blip, x="date", y="Utilisation", color=daily_blip["Utilisation"] >= 1.0, color_discrete_map={True: "green", False: "red"})
-        fig_daily.add_hline(y=1.0, line_dash="dash")
+        
+        # Only treat days as WFH/100% if:
+        # 1. They are explicitly marked as WFH in Notes AND have no employees (true WFH day)
+        # 2. OR they have employees but are marked as WFH (mixed day - calculate normally)
+        wfh_explicit_mask = daily_blip["IsWFHDay"] == True
+        # For explicit WFH days with no employees, set to 100% (8 hours)
+        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "WorkedHours"] = WFH_ASSUMED_HOURS
+        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "Expected"] = WFH_ASSUMED_HOURS
+        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "Utilisation"] = 1.0
+        
+        # Filter out days with no employees and not marked as WFH (missing data, not workdays)
+        # Keep only days with Employees > 0 OR explicitly marked as WFH
+        daily_blip = daily_blip[(daily_blip["Employees"] > 0) | (daily_blip["IsWFHDay"] == True)].copy()
+        
+        def _blip_day_type(row):
+            if row.get("IsWFHDay") is True and row["Employees"] == 0:
+                return "WFH / On leave"
+            u = row["Utilisation"]
+            if pd.isna(u):
+                return "Workday (<100%)"  # Default to <100% if calculation failed
+            return "Workday (≥100%)" if u >= 1.0 else "Workday (<100%)"
+        daily_blip["DayType"] = daily_blip.apply(_blip_day_type, axis=1)
+        daily_blip = daily_blip.drop(columns=["_date_norm"])
+        # Exclude weekends: keep only Mon (0) .. Fri (4); drop Sat (5) and Sun (6)
+        daily_blip = daily_blip[daily_blip["date"].dt.dayofweek < 5].copy()
+        # week_start (Monday) for weekly aggregation including WFH
+        daily_blip["week_start"] = daily_blip["date"] - pd.to_timedelta(daily_blip["date"].dt.dayofweek, unit="D")
+        # Add percentage labels for display
+        daily_blip["UtilisationPct"] = (daily_blip["Utilisation"] * 100).round(1)
+        daily_blip["UtilisationLabel"] = daily_blip["UtilisationPct"].apply(lambda x: f"{x:.1f}%")
+        # Create custom color mapping: red below 90%, green gradient from 90% to 100%
+        def get_color_for_util(u):
+            if pd.isna(u) or u < 0.9:
+                return "#dc2626"  # Red
+            elif u >= 1.0:
+                return "#15803d"  # Dark green at 100%
+            else:
+                # Green gradient from 90% to 100%
+                # Interpolate between light green (#22c55e) at 90% and dark green (#15803d) at 100%
+                ratio = (u - 0.9) / 0.1  # 0 at 90%, 1 at 100%
+                # Interpolate RGB values
+                r1, g1, b1 = 0x22, 0xc5, 0x5e  # Light green
+                r2, g2, b2 = 0x15, 0x80, 0x3d  # Dark green
+                r = int(r1 + (r2 - r1) * ratio)
+                g = int(g1 + (g2 - g1) * ratio)
+                b = int(b1 + (b2 - b1) * ratio)
+                return f"#{r:02x}{g:02x}{b:02x}"
+        daily_blip["BarColor"] = daily_blip["Utilisation"].apply(get_color_for_util)
+        # Use graph_objects for better color control
+        fig_daily = go.Figure(data=[
+            go.Bar(
+                x=daily_blip["date"],
+                y=daily_blip["Utilisation"],
+                marker_color=daily_blip["BarColor"],
+                text=daily_blip["UtilisationLabel"],
+                textposition="outside",
+                hovertemplate="Date: %{x}<br>Utilisation: %{y:.1%}<extra></extra>",
+            )
+        ])
+        fig_daily.add_hline(y=0.9, line_dash="dash", line_color="#f59e0b", annotation_text="TH: 90%", annotation_position="right")
+        fig_daily.add_hline(y=1.0, line_dash="dash", line_color="#6b7280")
         fig_daily.update_yaxes(tickformat=".0%")
+        fig_daily.update_xaxes(dtick=86400000, tickformat="%d %b")
+        # Hide weekend days on x-axis (Sat through Sun; bounds are left-inclusive, right-exclusive so 'mon' keeps Monday)
+        fig_daily.update_xaxes(rangebreaks=[dict(bounds=["sat", "mon"])])
+        fig_daily.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Utilisation",
+            showlegend=False,
+            hovermode="x unified",
+        )
         st.plotly_chart(_blip_clean_plot(fig_daily, "Utilisation"), use_container_width=True)
         st.markdown("---")
 
-        st.markdown('<h3 class="eg-section-title">Weekly Utilisation (Shift rows only)</h3>', unsafe_allow_html=True)
-        weekly_blip = f_shift.groupby("week_start", as_index=False).agg(WorkedHours=("worked_hours", "sum"), Employees=("employee", "nunique"))
-        expected_days = 7 if include_weekends else 5
-        weekly_blip["Expected"] = weekly_blip["Employees"] * expected_daily_hours * expected_days
+        st.markdown('<h3 class="eg-section-title">Weekly Utilisation (incl. WFH)</h3>', unsafe_allow_html=True)
+        # Derive weekly from daily so WFH days (8 hrs, 100%) are included
+        weekly_blip = daily_blip.groupby("week_start", as_index=False).agg(WorkedHours=("WorkedHours", "sum"), Expected=("Expected", "sum"))
         weekly_blip["Utilisation"] = _blip_safe_divide(weekly_blip["WorkedHours"].values, weekly_blip["Expected"].values)
         fig_weekly = px.line(weekly_blip, x="week_start", y="Utilisation", markers=True)
         fig_weekly.add_hline(y=1.0, line_dash="dash")
@@ -1953,11 +2070,39 @@ with tab_blip:
         st.plotly_chart(_blip_clean_plot(fig_weekly, "Utilisation"), use_container_width=True)
         st.markdown("---")
 
-        st.markdown('<h3 class="eg-section-title">Monthly Hours (Shift rows only)</h3>', unsafe_allow_html=True)
+        # Overall hours & utilisation (weekdays only, incl. WFH)
+        total_worked_incl_wfh = daily_blip["WorkedHours"].sum()
+        total_expected_incl_wfh = daily_blip["Expected"].sum()
+        overall_utilisation = _blip_safe_divide(total_worked_incl_wfh, total_expected_incl_wfh)
+        overall_utilisation_pct = (float(overall_utilisation) * 100) if pd.notna(overall_utilisation) and total_expected_incl_wfh > 0 else 0.0
+        overall_body = f"""
+          <div style="font-size:0.9rem; color:var(--eg-text);">
+            Total worked (incl. WFH) = <b>{fmt_hours_minutes(total_worked_incl_wfh)}</b> · 
+            Total expected = <b>{fmt_hours_minutes(total_expected_incl_wfh)}</b> · 
+            Overall utilisation = <b>{overall_utilisation_pct:.1f}%</b>
+          </div>
+          <div style="font-size:0.8rem; color:var(--eg-muted); margin-top:0.25rem;">Weekdays only; weekends not considered. WFH = 8 hrs (9–5) per day with no clock-in.</div>
+        """
+        soft_card("Overall hours & utilisation (weekdays only, incl. WFH)", overall_body)
+        st.markdown("---")
+
+        st.markdown('<h3 class="eg-section-title">Monthly Hours</h3>', unsafe_allow_html=True)
+        # Monthly: incl. WFH (weekdays only) from daily_blip
+        daily_blip["month"] = daily_blip["date"].dt.to_period("M").astype(str)
+        monthly_incl_wfh = daily_blip.groupby("month", as_index=False).agg(WorkedHours=("WorkedHours", "sum"), Expected=("Expected", "sum"))
+        monthly_incl_wfh["Utilisation"] = _blip_safe_divide(monthly_incl_wfh["WorkedHours"].values, monthly_incl_wfh["Expected"].values)
+        m_long_wfh = monthly_incl_wfh[["month", "WorkedHours"]].rename(columns={"WorkedHours": "Hours"})
+        m_long_wfh["Type"] = "Worked (incl. WFH)"
+        fig_monthly_wfh = px.bar(m_long_wfh, x="month", y="Hours", color="Type", color_discrete_map={"Worked (incl. WFH)": "#16a34a"})
+        st.plotly_chart(_blip_clean_plot(fig_monthly_wfh, "Hours", "Month"), use_container_width=True)
+        st.caption("Month totals: weekdays only; WFH = 8 hrs per day with no clock-in.")
+        st.markdown("")
+        # Monthly: recorded shifts only (weekdays; f_shift is already weekday-only)
         monthly_blip = f_shift.groupby("month", as_index=False).agg(WorkedHours=("worked_hours", "sum"), BreakHours=("break_hours", "sum"), DurationHours=("duration_hours", "sum"))
         m_long = monthly_blip.melt(id_vars=["month"], value_vars=["WorkedHours", "BreakHours"], var_name="Type", value_name="Hours")
         fig_monthly = px.bar(m_long, x="month", y="Hours", color="Type", color_discrete_map={"WorkedHours": "#16a34a", "BreakHours": "#f59e0b"})
         st.plotly_chart(_blip_clean_plot(fig_monthly, "Hours", "Month"), use_container_width=True)
+        st.caption("From clock-in data only (weekdays); WFH days not included.")
         st.markdown("---")
 
         with st.expander("View Shift-level table (selected range)"):
@@ -1979,49 +2124,123 @@ with tab_blip:
             else:
                 sel_emp = st.selectbox("Select employee", options=emp_list, index=0, key="blip_emp")
                 emp_all = f_blip[f_blip["employee"].eq(sel_emp)].copy()
-                emp_all = emp_all[emp_all["clockin_dt"].notna() & emp_all["clockout_dt"].notna()].copy()
-                if emp_all.empty:
-                    st.warning("No valid clock-in/clock-out timestamps found for this employee in the selected range.")
+                emp_all_valid = emp_all[emp_all["clockin_dt"].notna() & emp_all["clockout_dt"].notna()].copy()
+                
+                # Build weekdays only in range (Mon=0 .. Fri=4; Sat/Sun excluded)
+                all_dates_emp = pd.date_range(start=pd.Timestamp(d1_blip), end=pd.Timestamp(d2_blip), freq="D")
+                weekday_dates_emp = [d for d in all_dates_emp if getattr(d, "dayofweek", d.weekday()) < 5]
+                rows_seg = []
+                
+                # Check for WFH days from Notes column
+                emp_all_notes = emp_all.get("Notes", pd.Series(index=emp_all.index, dtype=object)).fillna("").astype(str).str.upper()
+                emp_all["_is_wfh_note"] = emp_all_notes.str.contains("WFH", na=False)
+                wfh_dates_emp = set()
+                if emp_all["_is_wfh_note"].any():
+                    wfh_dates_emp = {pd.Timestamp(d).normalize() for d in emp_all.loc[emp_all["_is_wfh_note"], "date"].dt.date.unique()}
+                
+                # Add segments for days with valid clock-in/out data (weekdays only)
+                if not emp_all_valid.empty:
+                    emp_all_valid["day"] = emp_all_valid["clockin_dt"].dt.date
+                    for day, day_df in emp_all_valid.groupby("day"):
+                        d_ts = pd.Timestamp(day).normalize()
+                        if getattr(d_ts, "dayofweek", d_ts.weekday()) >= 5:
+                            continue  # skip Sat/Sun
+                        # If this day is marked as WFH in Notes, add as WFH instead of segments
+                        if d_ts in wfh_dates_emp:
+                            rows_seg.append({"date": pd.to_datetime(day), "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0})
+                        else:
+                            segs = _blip_build_authentic_day_segments(day_df)
+                            for idx, s in enumerate(segs, start=1):
+                                hrs = (s["end"] - s["start"]).total_seconds() / 3600
+                                if hrs <= 0:
+                                    continue
+                                rows_seg.append({"date": pd.to_datetime(day), "Segment": f"{idx:02d} {s['kind']}", "Kind": s["kind"], "Hours": hrs, "SegIndex": idx})
+                
+                # Add missing weekdays only (WFH / On leave) — no weekends in graph
+                if not emp_all_valid.empty:
+                    dates_with_segments = {pd.Timestamp(d).normalize() for d in emp_all_valid["clockin_dt"].dt.date.unique()}
                 else:
-                    emp_all["day"] = emp_all["clockin_dt"].dt.date
-                    rows_seg = []
-                    for day, day_df in emp_all.groupby("day"):
-                        segs = _blip_build_authentic_day_segments(day_df)
-                        for idx, s in enumerate(segs, start=1):
-                            hrs = (s["end"] - s["start"]).total_seconds() / 3600
-                            if hrs <= 0:
-                                continue
-                            rows_seg.append({"date": pd.to_datetime(day), "Segment": f"{idx:02d} {s['kind']}", "Kind": s["kind"], "Hours": hrs, "SegIndex": idx})
-                    seg_df = pd.DataFrame(rows_seg)
-                    if seg_df.empty:
-                        st.warning("Could not construct Work/Break segments from timestamps. Break rows may lack clock-in/out times or only Shift rows exist.")
-                    else:
-                        # Labels for each bar segment: time in hours and mins only
-                        seg_df["TimeLabel"] = seg_df["Hours"].apply(fmt_hours_minutes)
-                        seg_order = seg_df.sort_values(["date", "SegIndex"]).groupby("date")["Segment"].apply(list).explode().unique().tolist()
-                        # Work = green, Break = amber
-                        _seg_colors = {seg: "#f59e0b" if "Break" in seg else "#16a34a" for seg in seg_df["Segment"].unique()}
-                        fig_seg = px.bar(
-                            seg_df, x="date", y="Hours", color="Segment", text="TimeLabel",
-                            barmode="stack", category_orders={"Segment": seg_order}, color_discrete_map=_seg_colors
+                    dates_with_segments = set()
+                for d in weekday_dates_emp:
+                    d_ts = pd.Timestamp(d).normalize()
+                    if d_ts in dates_with_segments or d_ts in wfh_dates_emp:
+                        continue
+                    rows_seg.append({"date": d_ts, "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0})
+                
+                seg_df = pd.DataFrame(rows_seg)
+                if seg_df.empty:
+                    st.warning("Could not construct Work/Break segments from timestamps. Break rows may lack clock-in/out times or only Shift rows exist.")
+                else:
+                    seg_df["date"] = pd.to_datetime(seg_df["date"])
+                    seg_df = seg_df[seg_df["date"].dt.dayofweek < 5].copy()
+                    seg_df["TimeLabel"] = seg_df["Hours"].apply(fmt_hours_minutes)
+                    # Sort by date and SegIndex to ensure breaks appear between work sessions chronologically
+                    seg_df = seg_df.sort_values(["date", "SegIndex"]).copy()
+                    # Use "Kind" for colors but need to ensure stacking order respects SegIndex
+                    # The key is that Plotly stacks segments in the order they appear in the data
+                    # So we'll create separate traces for each segment to control stacking order
+                    _kind_colors = {
+                        "Work": "#16a34a",
+                        "Break": "#f59e0b",
+                        "WFH / On leave": "#93c5fd"
+                    }
+                    # Create figure with proper stacking order - segments stack in data order
+                    # This ensures breaks appear between work sessions based on SegIndex
+                    fig_seg = go.Figure()
+                    legend_added = {"Work": False, "Break": False, "WFH / On leave": False}
+                    
+                    # Group by date and add segments in SegIndex order (chronological)
+                    # This way breaks will stack in the middle between work sessions
+                    for date in sorted(seg_df["date"].unique()):
+                        date_segs = seg_df[seg_df["date"] == date].sort_values("SegIndex")
+                        for _, row in date_segs.iterrows():
+                            kind = row["Kind"]
+                            show_legend = not legend_added[kind]
+                            legend_added[kind] = True
+                            
+                            # Add each segment as a separate trace to control stacking order
+                            fig_seg.add_trace(go.Bar(
+                                x=[row["date"]],
+                                y=[row["Hours"]],
+                                name=kind,
+                                text=[row["TimeLabel"]],
+                                textposition="inside",
+                                textfont=dict(size=11),
+                                insidetextanchor="middle",
+                                marker_color=_kind_colors[kind],
+                                legendgroup=kind,
+                                showlegend=show_legend,  # Show legend only once per kind
+                            ))
+                    
+                    fig_seg.update_layout(barmode="stack")
+                    # Set y-axis to go up to 9 hours
+                    tickvals_s, ticktext_s = _hours_axis_ticks(9.0, step=1.0)
+                    fig_seg.update_layout(
+                        yaxis=dict(tickvals=tickvals_s, ticktext=ticktext_s, range=[0, 9]),
+                        showlegend=True,
+                        legend=dict(
+                            title="Segment Type",
+                            orientation="h",
+                            yanchor="bottom",
+                            y=1.02,
+                            xanchor="right",
+                            x=1
                         )
-                        fig_seg.update_traces(textposition="inside", textfont=dict(size=11), insidetextanchor="middle")
-                        max_h_seg = seg_df["Hours"].max() if not seg_df.empty else 8
-                        tickvals_s, ticktext_s = _hours_axis_ticks(max_h_seg)
-                        fig_seg.update_layout(yaxis=dict(tickvals=tickvals_s, ticktext=ticktext_s))
-                        st.plotly_chart(_blip_clean_plot(fig_seg, y_title="Hours", x_title="Date"), use_container_width=True)
-                        daily_totals = seg_df.groupby(["date", "Kind"], as_index=False)["Hours"].sum()
-                        piv = daily_totals.pivot(index="date", columns="Kind", values="Hours").fillna(0).reset_index()
-                        piv["Total"] = piv.get("Work", 0) + piv.get("Break", 0)
-                        piv["Hours beyond 6"] = (piv.get("Work", 0) - 6).clip(lower=0)
-                        with st.expander("View daily totals (from timestamps)"):
-                            piv_display = piv.sort_values("date").copy()
-                            for col in ["Work", "Break", "Total", "Hours beyond 6"]:
-                                if col in piv_display.columns:
-                                    piv_display[col] = piv_display[col].apply(lambda x: fmt_hours_minutes(x) if pd.notna(x) else "")
-                            st.dataframe(piv_display, use_container_width=True)
-                        beyond_6_total = piv["Hours beyond 6"].sum()
-                        st.caption(f"Total hours beyond 6 (selected period): **{fmt_hours_minutes(beyond_6_total)}**")
+                    )
+                    fig_seg.update_xaxes(rangebreaks=[dict(bounds=["sat", "mon"])])
+                    st.plotly_chart(_blip_clean_plot(fig_seg, y_title="Hours", x_title="Date", show_legend=True), use_container_width=True)
+                    daily_totals = seg_df.groupby(["date", "Kind"], as_index=False)["Hours"].sum()
+                    piv = daily_totals.pivot(index="date", columns="Kind", values="Hours").fillna(0).reset_index()
+                    piv["Total"] = piv.get("Work", 0) + piv.get("Break", 0)
+                    piv["Hours beyond 6"] = (piv.get("Work", 0) - 6).clip(lower=0)
+                    with st.expander("View daily totals (from timestamps)"):
+                        piv_display = piv.sort_values("date").copy()
+                        for col in ["Work", "Break", "Total", "Hours beyond 6"]:
+                            if col in piv_display.columns:
+                                piv_display[col] = piv_display[col].apply(lambda x: fmt_hours_minutes(x) if pd.notna(x) else "")
+                        st.dataframe(piv_display, use_container_width=True)
+                    beyond_6_total = piv["Hours beyond 6"].sum()
+                    st.caption(f"Total hours beyond 6 (selected period): **{fmt_hours_minutes(beyond_6_total)}**")
 
         st.markdown("---")
         st.markdown("")
