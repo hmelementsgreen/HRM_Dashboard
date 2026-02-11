@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 # ----------------------------
 # Page config + global styling
 # ----------------------------
-st.set_page_config(page_title="Leave Management & Time Utilisation", layout="wide")
+st.set_page_config(page_title="Leave Management & Time Utilisation System ", layout="wide")
 
 st.markdown(
     """
@@ -1789,12 +1789,12 @@ with main_leave:
                 delta_str = f"{(diff / days_m1 * 100):.1f}%"
 
             sp_l, c1, c2, c3, sp_r = st.columns([1, 2, 2, 2, 1])
-            with c1: st.metric(f"Absence days ({month_1})", fmt_num(days_m1))
-            with c2: st.metric(f"Absence days ({month_2})", fmt_num(days_m2))
-            with c3: st.metric("Change", fmt_num(diff), delta_str)
+            with c1: st.markdown(f"**Absence days ({month_1})**"); st.metric("", fmt_num(days_m1))
+            with c2: st.markdown(f"**Absence days ({month_2})**"); st.metric("", fmt_num(days_m2))
+            with c3: st.markdown("**Change**"); st.metric("", fmt_num(diff), delta_str)
         else:
             sp_l, c1, sp_r = st.columns([2, 3, 2])
-            with c1: st.metric(f"Absence days ({month_1})", fmt_num(days_m1))
+            with c1: st.markdown(f"**Absence days ({month_1})**"); st.metric("", fmt_num(days_m1))
 
         st.markdown("---")
 
@@ -1825,9 +1825,11 @@ with main_leave:
                         pct_str = "N/A" if v != 0 else "0.0%"
                     else:
                         pct_str = f"{(d / v0 * 100):+.1f}%"
-                    cols[i].metric(cat, fmt_num(v), f"{d:+.1f}d ({pct_str})")
+                    cols[i].markdown(f"**{cat}**")
+                    cols[i].metric("", fmt_num(v), f"{d:+.1f}d ({pct_str})")
                 else:
-                    cols[i].metric(cat, fmt_num(v))
+                    cols[i].markdown(f"**{cat}**")
+                    cols[i].metric("", fmt_num(v))
 
         if month_2:
             left, sep, right = st.columns([5, 0.25, 5])
@@ -2258,6 +2260,6 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
 
 st.markdown("")
 st.markdown(
-    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">Leave Management & Time Utilisation ? UnitedGreen</div>',
+    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">Leave Management & Time Utilisation - UnitedGreen</div>',
     unsafe_allow_html=True,
 )
