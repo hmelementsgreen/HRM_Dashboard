@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 # ----------------------------
 # Page config + global styling
 # ----------------------------
-st.set_page_config(page_title="BrightHR & BLIP Dashboard", layout="wide")
+st.set_page_config(page_title="Leave Management & Time Utilisation", layout="wide")
 
 st.markdown(
     """
@@ -164,6 +164,13 @@ def _blip_clean_plot(fig, y_title=None, x_title=None, show_legend=None):
 
 def _blip_safe_divide(n, d):
     return np.where(d > 0, n / d, np.nan)
+
+
+def _datetime_to_hour_of_day(ts) -> float:
+    """Convert datetime to decimal hours from midnight (e.g. 09:30 -> 9.5)."""
+    if pd.isna(ts):
+        return np.nan
+    return ts.hour + ts.minute / 60.0 + ts.second / 3600.0
 
 def _blip_process_raw_df(df: pd.DataFrame) -> pd.DataFrame:
     """Apply BLIP column parsing and derived fields to a raw Excel DataFrame."""
@@ -561,7 +568,7 @@ def apply_global_filters(
     if use_custom_date and date_range and not daily.empty and "date" in daily.columns:
         d1, d2 = date_range
         daily = daily[(daily["date"].dt.date >= d1) & (daily["date"].dt.date <= d2)]
-        summary_date = f"Custom date: {d1.strftime('%d/%m/%Y')} → {d2.strftime('%d/%m/%Y')}"
+        summary_date = f"Custom date: {d1.strftime('%d/%m/%Y')} to {d2.strftime('%d/%m/%Y')}"
 
     if not daily.empty and "case_id" in daily.columns and "case_id" in cases.columns:
         case_ids = set(daily["case_id"].unique().tolist())
@@ -750,58 +757,36 @@ def add_export_metadata(df_out: pd.DataFrame, filters_applied: str) -> pd.DataFr
     return out
 
 def kpi_tile(title: str, value: str, subtitle: str = ""):
-    st.markdown(
-        f"""
-        <div style="
-          border:none;
-          border-radius:var(--eg-radius);
-          padding:14px 16px;
-          background:linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%);
-          box-shadow:var(--eg-shadow);
-          ">
-          <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div style="font-size:0.85rem; color:var(--eg-muted); font-weight:600;">{title}</div>
-          </div>
-          <div style="font-size:2.1rem; font-weight:900; color:var(--eg-text); line-height:1.1; margin-top:6px;">
-            {value}
-          </div>
-          <div style="font-size:0.85rem; color:var(--eg-muted); margin-top:6px;">{subtitle}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    html = f"""<div style="border:none; border-radius:var(--eg-radius); padding:14px 16px; background:linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%); box-shadow:var(--eg-shadow);">
+<div style="display:flex; align-items:center; justify-content:space-between;">
+<div style="font-size:0.85rem; color:var(--eg-muted); font-weight:600;">{title}</div>
+</div>
+<div style="font-size:2.1rem; font-weight:900; color:var(--eg-text); line-height:1.1; margin-top:6px;">{value}</div>
+<div style="font-size:0.85rem; color:var(--eg-muted); margin-top:6px;">{subtitle}</div>
+</div>"""
+    st.markdown(html, unsafe_allow_html=True)
 
 def soft_card(title: str, body_html: str = "", footer_html: str = ""):
-    st.markdown(
-        f"""
-        <div style="
-          border:1px solid var(--eg-border);
-          border-radius:var(--eg-radius);
-          padding:14px 16px;
-          background:#ffffff;
-          box-shadow:var(--eg-shadow);
-          ">
-          <div style="font-size:0.95rem; font-weight:800; color:var(--eg-text); margin-bottom:10px;">
-            {title}
-          </div>
-          {body_html}
-          {footer_html}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Strip leading whitespace from each line so Markdown doesn't render as code block
+    raw = f"""<div style="border:1px solid var(--eg-border); border-radius:var(--eg-radius); padding:14px 16px; background:#ffffff; box-shadow:var(--eg-shadow);">
+<div style="font-size:0.95rem; font-weight:800; color:var(--eg-text); margin-bottom:10px;">{title}</div>
+{body_html}
+{footer_html}
+</div>"""
+    html = "\n".join(line.lstrip() for line in raw.split("\n"))
+    st.markdown(html, unsafe_allow_html=True)
 
 # ----------------------------
 # Centered heading (shared)
 # ----------------------------
-st.markdown('<h1 class="eg-title">BrightHR & BLIP Dashboard</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="eg-title">Leave Management & Time Utilisation</h1>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="eg-subtitle">Absence: Individual → Department → Country → Group / ExCo  |  BLIP: Utilisation</div>',
+    '<div class="eg-subtitle">Leave: Individual - Department - Country - ExCo  /  Time: Utilisation</div>',
     unsafe_allow_html=True
 )
 
 # ----------------------------
-# Sidebar: simple layout (Data & period → Refine view → Exports → BLIP)
+# Sidebar: simple layout (Data & period - Refine view - Exports - BLIP)
 # ----------------------------
 with st.sidebar:
     st.header("Data & period")
@@ -1009,7 +994,7 @@ with st.sidebar:
         if st.button("Hard reload BLIP", key="blip_hard_reload", help="Clear BLIP cache and reload data from file."):
             _blip_load_data.clear()
             st.rerun()
-        expected_daily_hours = st.number_input("Expected daily hours", 0.0, 24.0, 7.5, 0.5, key="blip_expected_hours")
+        expected_daily_hours = st.number_input("Expected daily hours", 0.0, 24.0, 8.0, 0.5, key="blip_expected_hours")
         with st.expander("Exception thresholds", expanded=False):
             short_shift_hours = st.number_input("Short shift threshold (hours)", 0.0, 24.0, 2.0, 0.5, key="blip_short")
             long_shift_hours = st.number_input("Long shift threshold (hours)", 0.0, 24.0, 10.0, 0.5, key="blip_long")
@@ -1038,871 +1023,858 @@ with st.sidebar:
                 df_blip, f_blip, f_shift = None, None, None
 
 # ----------------------------
-# Tabs (bottom-up flow)
+# Main tabs: Leave Management (4 sections) | Time Utilisation (BLIP)
 # ----------------------------
-tab_individual, tab_department, tab_country, tab_group, tab_blip = st.tabs(
-    ["Individual (Daily Log)", "Department", "Country", "Group / ExCo", "BLIP Utilisation"]
-)
-# =========================================================
-# TAB 1: INDIVIDUAL (Firmwide KPIs + Individual table + Optional balances + Evidence)
-# =========================================================
-with tab_individual:
-    if use_custom_date:
-        st.markdown(
-            '<div class="eg-hint">Custom date range is ON: evidence tables + exports follow the custom range. Monthly charts elsewhere still follow the month selector.</div>',
-            unsafe_allow_html=True
-        )
+main_leave, main_time = st.tabs(["Leave Management", "Time Utilisation"])
 
-    # -----------------------------------------------------
-    # Compute annual leave balance (used for: headcount + full-time list + optional detailed expander)
-    # -----------------------------------------------------
-    employee_balance, entitlement_conflicts, _ = compute_annual_employee_balance(
-        df,
-        daily_filt,
-        weekday_only=True
+with main_leave:
+    tab_individual, tab_department, tab_country, tab_group = st.tabs(
+        ["Individual (Daily Log)", "Department", "Country", "Group / ExCo"]
     )
-
-    # -----------------------------------------------------
-    # Full-time employee list (entitlement > 0) + headcount KPIs
-    # -----------------------------------------------------
-    full_time_emps = []
-    full_time = 0
-    external_consultants = 0
-
-    if employee_balance is not None and not employee_balance.empty:
-        eb = employee_balance.copy()
-        eb["Entitlement (days)"] = pd.to_numeric(eb["Entitlement (days)"], errors="coerce").fillna(0)
-
-        full_time_emps = (
-            eb.loc[eb["Entitlement (days)"] > 0, "employee"]
-            .fillna("")
-            .astype(str)
-            .tolist()
-        )
-        full_time_emps = [e for e in full_time_emps if e.strip()]
-
-        full_time = int((eb["Entitlement (days)"] > 0).sum())
-        external_consultants = int((eb["Entitlement (days)"] == 0).sum())
-
-    # -----------------------------------------------------
-    # Period bounds + weeks in selected period (for WFH allowance)
-    # -----------------------------------------------------
-    periods = [pd.Period(m, freq="M") for m in months_in_scope]
-    period_start = min(p.start_time for p in periods).normalize()
-    period_end = max(p.end_time for p in periods).normalize()
-
-    all_days = pd.date_range(period_start, period_end, freq="D")
-    week_starts = (all_days - pd.to_timedelta(all_days.weekday, unit="D")).normalize()
-    weeks_in_period = int(pd.Series(week_starts).nunique())  # strict: 1 WFH per week
-
-    # -----------------------------------------------------
-    # Firmwide daily scope (full-time only)
-    # -----------------------------------------------------
-    firm_daily = daily_scope.copy()
-    if full_time_emps:
-        firm_daily = firm_daily[firm_daily["employee"].isin(full_time_emps)].copy()
-
-    taken_fw = {}
-    if not firm_daily.empty and "absence_category" in firm_daily.columns:
-        taken_fw = firm_daily.groupby("absence_category").size().to_dict()
-
-    wfh_taken_fw = int(taken_fw.get("WFH", 0))
-    annual_taken_fw = int(taken_fw.get("Annual Leave", 0))
-    sick_taken_fw = int(taken_fw.get("Medical + Sickness", 0))
-    travel_taken_fw = int(taken_fw.get("Travel", 0))
-    other_taken_fw = int(taken_fw.get("Other (excl. WFH, Travel)", 0))
-
-    # -----------------------------------------------------
-    # Annual entitled + remaining (firmwide) from employee_balance (full-time)
-    # -----------------------------------------------------
-    annual_entitled_fw = 0.0
-    annual_remaining_fw = 0.0
-    if employee_balance is not None and not employee_balance.empty:
-        balance_ft = employee_balance.copy()
-        balance_ft["Entitlement (days)"] = pd.to_numeric(
-            balance_ft["Entitlement (days)"], errors="coerce"
-        ).fillna(0)
-        balance_ft = balance_ft[balance_ft["Entitlement (days)"] > 0].copy()
-
-        annual_entitled_fw = float(
-            pd.to_numeric(balance_ft["Entitlement (days)"], errors="coerce").fillna(0).sum()
-        )
-        annual_remaining_fw = float(
-            pd.to_numeric(balance_ft["Remaining (days)"], errors="coerce").fillna(0).sum()
-        )
-    else:
-        balance_ft = pd.DataFrame()
-
-    wfh_allowed_fw = int(weeks_in_period * (len(full_time_emps) if full_time_emps else 0))
-
-    # =====================================================
-    # 1) Firmwide KPIs — polished layout
-    # =====================================================
-    st.markdown('<h3 class="eg-section-title">Firmwide KPIs</h3>', unsafe_allow_html=True)
-    st.caption("Quick snapshot for the selected period and filters (full-time employees only).")
-
-    def _fmt_int(x):
-        try:
-            return f"{int(x):,}"
-        except Exception:
-            return str(x)
-
-    def _fmt_days(x):
-        try:
-            return f"{float(x):,.1f}d"
-        except Exception:
-            return str(x)
-
-    # --- Hero row ---
-    h1, h2, h3, h4 = st.columns([1.2, 1.2, 1.2, 1.2])
-    with h1:
-        kpi_tile("Full-time employees", _fmt_int(full_time), "Entitlement > 0 days")
-    with h2:
-        kpi_tile("External consultants", _fmt_int(external_consultants), "Entitlement = 0 days")
-    with h3:
-        kpi_tile("Absence days taken", _fmt_int(len(firm_daily)) if not firm_daily.empty else "0", "Daily rows in scope")
-    with h4:
-        kpi_tile(
-            "Weeks in period",
-            _fmt_int(weeks_in_period),
-            f"{period_start.strftime('%d/%m/%Y')} → {period_end.strftime('%d/%m/%Y')}"
-        )
-
-    st.markdown('<div class="eg-spacer"></div>', unsafe_allow_html=True)
-
-    # --- WFH utilisation + Annual summary ---
-    row_a, row_b = st.columns([1.35, 1.65])
-
-    wfh_allowed = int(wfh_allowed_fw)
-    wfh_taken = int(wfh_taken_fw)
-    wfh_pct = 0.0 if wfh_allowed == 0 else min(100.0, (wfh_taken / wfh_allowed) * 100.0)
-
-    with row_a:
-        progress_html = f"""
-          <div style="display:flex; gap:14px; align-items:flex-end; margin-bottom:10px;">
-            <div style="flex:1;">
-              <div style="font-size:0.85rem; color:#6b7280; font-weight:600;">WFH utilisation</div>
-              <div style="font-size:1.6rem; font-weight:900; color:#111827; line-height:1.1;">{wfh_pct:.0f}%</div>
-            </div>
-            <div style="text-align:right;">
-              <div style="font-size:0.85rem; color:#6b7280;">Allowed</div>
-              <div style="font-size:1.1rem; font-weight:800; color:#111827;">{_fmt_int(wfh_allowed)}</div>
-              <div style="font-size:0.85rem; color:#6b7280; margin-top:6px;">Taken</div>
-              <div style="font-size:1.1rem; font-weight:800; color:#111827;">{_fmt_int(wfh_taken)}</div>
-            </div>
-          </div>
-        """
-        soft_card("Work-from-home", progress_html)
-        st.progress(wfh_pct / 100.0)
-
-    with row_b:
-        body = f"""
-          <div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
-            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual entitled</div>
-              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_days(annual_entitled_fw)}</div>
-            </div>
-            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual taken</div>
-              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(annual_taken_fw)}d</div>
-            </div>
-            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual remaining</div>
-              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-accent);">{_fmt_days(annual_remaining_fw)}</div>
-            </div>
-          </div>
-          <div style="margin-top:10px; font-size:0.85rem; color:#6b7280;">
-            Remaining is summed from employee balances (full-time only).
-          </div>
-        """
-        soft_card("Annual leave", body)
-
-    st.markdown('<div class="eg-spacer"></div>', unsafe_allow_html=True)
-
-    # --- Other leave + Leave mix donut ---
-       # --- Other leave + Leave mix (aligned cards + proper pie) ---
-    left_card, right_card = st.columns([1.05, 1.95])
-
-    with left_card:
-        body = f"""
-          <div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
-            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Sick</div>
-              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(sick_taken_fw)}d</div>
-            </div>
-            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Travel</div>
-              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(travel_taken_fw)}d</div>
-            </div>
-            <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
-              <div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Other</div>
-              <div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(other_taken_fw)}d</div>
-            </div>
-          </div>
-        """
-        soft_card("Other leave taken", body)
-
-    with right_card:
-        # Single card: title, description, and chart in one wrapper
-        st.markdown(
-            """
-            <div style="
-              border:1px solid var(--eg-border);
-              border-radius:var(--eg-radius);
-              padding:14px 16px;
-              background:#ffffff;
-              box-shadow:var(--eg-shadow);
-            ">
-            <div style="font-size:0.95rem; font-weight:800; color:var(--eg-text); margin-bottom:4px;">Leave mix (daily rows)</div>
-            <div style="font-size:0.85rem; color:var(--eg-muted); margin-bottom:10px;">Distribution of daily records in the current scope (full-time only).</div>
-            """,
-            unsafe_allow_html=True
-        )
-        if firm_daily.empty:
-            st.info("No daily rows in scope to show the mix.")
-        else:
-            mix = (
-                firm_daily.groupby("absence_category")
-                .size()
-                .reindex(TYPE_ORDER)
-                .fillna(0)
-                .reset_index(name="count")
+    # =========================================================
+    # TAB 1: INDIVIDUAL (Firmwide KPIs + Individual table + Optional balances + Evidence)
+    # =========================================================
+    with tab_individual:
+        if use_custom_date:
+            st.markdown(
+                '<div class="eg-hint">Custom date range is ON: evidence tables + exports follow the custom range. Monthly charts elsewhere still follow the month selector.</div>',
+                unsafe_allow_html=True
             )
-            mix = mix[mix["count"] > 0]
 
-            if mix.empty:
-                st.info("No leave categories present in the current scope.")
+        # -----------------------------------------------------
+        # Compute annual leave balance (used for: headcount + full-time list + optional detailed expander)
+        # -----------------------------------------------------
+        employee_balance, entitlement_conflicts, _ = compute_annual_employee_balance(
+            df,
+            daily_filt,
+            weekday_only=True
+        )
+
+        # -----------------------------------------------------
+        # Full-time employee list (entitlement > 0) + headcount KPIs
+        # -----------------------------------------------------
+        full_time_emps = []
+        full_time = 0
+        external_consultants = 0
+
+        if employee_balance is not None and not employee_balance.empty:
+            eb = employee_balance.copy()
+            eb["Entitlement (days)"] = pd.to_numeric(eb["Entitlement (days)"], errors="coerce").fillna(0)
+
+            full_time_emps = (
+                eb.loc[eb["Entitlement (days)"] > 0, "employee"]
+                .fillna("")
+                .astype(str)
+                .tolist()
+            )
+            full_time_emps = [e for e in full_time_emps if e.strip()]
+
+            full_time = int((eb["Entitlement (days)"] > 0).sum())
+            external_consultants = int((eb["Entitlement (days)"] == 0).sum())
+
+        # -----------------------------------------------------
+        # Period bounds + weeks in selected period (for WFH allowance)
+        # -----------------------------------------------------
+        periods = [pd.Period(m, freq="M") for m in months_in_scope]
+        period_start = min(p.start_time for p in periods).normalize()
+        period_end = max(p.end_time for p in periods).normalize()
+
+        all_days = pd.date_range(period_start, period_end, freq="D")
+        week_starts = (all_days - pd.to_timedelta(all_days.weekday, unit="D")).normalize()
+        weeks_in_period = int(pd.Series(week_starts).nunique())  # strict: 1 WFH per week
+
+        # -----------------------------------------------------
+        # Firmwide daily scope (full-time only)
+        # -----------------------------------------------------
+        firm_daily = daily_scope.copy()
+        if full_time_emps:
+            firm_daily = firm_daily[firm_daily["employee"].isin(full_time_emps)].copy()
+
+        taken_fw = {}
+        if not firm_daily.empty and "absence_category" in firm_daily.columns:
+            taken_fw = firm_daily.groupby("absence_category").size().to_dict()
+
+        wfh_taken_fw = int(taken_fw.get("WFH", 0))
+        annual_taken_fw = int(taken_fw.get("Annual Leave", 0))
+        sick_taken_fw = int(taken_fw.get("Medical + Sickness", 0))
+        travel_taken_fw = int(taken_fw.get("Travel", 0))
+        other_taken_fw = int(taken_fw.get("Other (excl. WFH, Travel)", 0))
+
+        # -----------------------------------------------------
+        # Annual entitled + remaining (firmwide) from employee_balance (full-time)
+        # -----------------------------------------------------
+        annual_entitled_fw = 0.0
+        annual_remaining_fw = 0.0
+        if employee_balance is not None and not employee_balance.empty:
+            balance_ft = employee_balance.copy()
+            balance_ft["Entitlement (days)"] = pd.to_numeric(
+                balance_ft["Entitlement (days)"], errors="coerce"
+            ).fillna(0)
+            balance_ft = balance_ft[balance_ft["Entitlement (days)"] > 0].copy()
+
+            annual_entitled_fw = float(
+                pd.to_numeric(balance_ft["Entitlement (days)"], errors="coerce").fillna(0).sum()
+            )
+            annual_remaining_fw = float(
+                pd.to_numeric(balance_ft["Remaining (days)"], errors="coerce").fillna(0).sum()
+            )
+        else:
+            balance_ft = pd.DataFrame()
+
+        wfh_allowed_fw = int(weeks_in_period * (len(full_time_emps) if full_time_emps else 0))
+
+        # =====================================================
+        # 1) Firmwide KPIs - polished layout
+        # =====================================================
+        st.markdown('<h3 class="eg-section-title">Firmwide KPIs</h3>', unsafe_allow_html=True)
+        st.caption("Quick snapshot for the selected period and filters (full-time employees only).")
+
+        def _fmt_int(x):
+            try:
+                return f"{int(x):,}"
+            except Exception:
+                return str(x)
+
+        def _fmt_days(x):
+            try:
+                return f"{float(x):,.1f}d"
+            except Exception:
+                return str(x)
+
+        # --- Hero row ---
+        h1, h2, h3, h4 = st.columns([1.2, 1.2, 1.2, 1.2])
+        with h1:
+            kpi_tile("Full-time employees", _fmt_int(full_time), "Entitlement > 0 days")
+        with h2:
+            kpi_tile("External consultants", _fmt_int(external_consultants), "Entitlement = 0 days")
+        with h3:
+            kpi_tile("Absence days taken", _fmt_int(len(firm_daily)) if not firm_daily.empty else "0", "Daily rows in scope")
+        with h4:
+            kpi_tile(
+                "Weeks in period",
+                _fmt_int(weeks_in_period),
+                f"{period_start.strftime('%d/%m/%Y')} to {period_end.strftime('%d/%m/%Y')}"
+            )
+
+        st.markdown('<div class="eg-spacer"></div>', unsafe_allow_html=True)
+
+        # --- WFH utilisation + Annual summary ---
+        row_a, row_b = st.columns([1.35, 1.65])
+
+        wfh_allowed = int(wfh_allowed_fw)
+        wfh_taken = int(wfh_taken_fw)
+        wfh_pct = 0.0 if wfh_allowed == 0 else min(100.0, (wfh_taken / wfh_allowed) * 100.0)
+
+        with row_a:
+            progress_html = f"""<div style="display:flex; gap:14px; align-items:flex-end; margin-bottom:10px;">
+<div style="flex:1;">
+<div style="font-size:0.85rem; color:#6b7280; font-weight:600;">WFH utilisation</div>
+<div style="font-size:1.6rem; font-weight:900; color:#111827; line-height:1.1;">{wfh_pct:.0f}%</div>
+</div>
+<div style="text-align:right;">
+<div style="font-size:0.85rem; color:#6b7280;">Allowed</div>
+<div style="font-size:1.1rem; font-weight:800; color:#111827;">{_fmt_int(wfh_allowed)}</div>
+<div style="font-size:0.85rem; color:#6b7280; margin-top:6px;">Taken</div>
+<div style="font-size:1.1rem; font-weight:800; color:#111827;">{_fmt_int(wfh_taken)}</div>
+</div>
+</div>"""
+            soft_card("Work-from-home", progress_html)
+            st.progress(wfh_pct / 100.0)
+
+        with row_b:
+            body = f"""<div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
+<div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+<div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual entitled</div>
+<div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_days(annual_entitled_fw)}</div>
+</div>
+<div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+<div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual taken</div>
+<div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(annual_taken_fw)}d</div>
+</div>
+<div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+<div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual remaining</div>
+<div style="font-size:1.25rem; font-weight:900; color:var(--eg-accent);">{_fmt_days(annual_remaining_fw)}</div>
+</div>
+</div>
+<div style="margin-top:10px; font-size:0.85rem; color:#6b7280;">Remaining is summed from employee balances (full-time only).</div>"""
+            soft_card("Annual leave", body)
+
+        st.markdown('<div class="eg-spacer"></div>', unsafe_allow_html=True)
+
+        # --- Other leave + Leave mix donut ---
+           # --- Other leave + Leave mix (aligned cards + proper pie) ---
+        left_card, right_card = st.columns([1.05, 1.95])
+
+        with left_card:
+            body = f"""<div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
+<div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+<div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Sick</div>
+<div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(sick_taken_fw)}d</div>
+</div>
+<div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+<div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Travel</div>
+<div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(travel_taken_fw)}d</div>
+</div>
+<div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;">
+<div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Other</div>
+<div style="font-size:1.25rem; font-weight:900; color:var(--eg-text);">{_fmt_int(other_taken_fw)}d</div>
+</div>
+</div>"""
+            soft_card("Other leave taken", body)
+
+        with right_card:
+            # Single card: title, description, and chart in one wrapper
+            st.markdown(
+                """<div style="border:1px solid var(--eg-border); border-radius:var(--eg-radius); padding:14px 16px; background:#ffffff; box-shadow:var(--eg-shadow);">
+<div style="font-size:0.95rem; font-weight:800; color:var(--eg-text); margin-bottom:4px;">Leave mix (daily rows)</div>
+<div style="font-size:0.85rem; color:var(--eg-muted); margin-bottom:10px;">Distribution of daily records in the current scope (full-time only).</div>""",
+                unsafe_allow_html=True
+            )
+            if firm_daily.empty:
+                st.info("No daily rows in scope to show the mix.")
             else:
-                fig_mix = px.pie(
-                    mix,
-                    names="absence_category",
-                    values="count",
-                    category_orders={"absence_category": TYPE_ORDER},
-                    color_discrete_map=ABSENCE_COLOR_MAP,
+                mix = (
+                    firm_daily.groupby("absence_category")
+                    .size()
+                    .reindex(TYPE_ORDER)
+                    .fillna(0)
+                    .reset_index(name="count")
                 )
-                fig_mix.update_traces(
-                    textinfo="percent+value",
-                    texttemplate="%{value:.0f} (%{percent})",
-                    textposition="inside",
-                    sort=False
-                )
-                fig_mix.update_layout(
-                    showlegend=True,
-                    legend_title_text="Type",
-                    margin=dict(l=10, r=10, t=10, b=10),
-                    font=dict(family="Inter, system-ui, sans-serif", size=12),
-                )
-                st.plotly_chart(fig_mix, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+                mix = mix[mix["count"] > 0]
 
-    st.markdown("---")
+                if mix.empty:
+                    st.info("No leave categories present in the current scope.")
+                else:
+                    fig_mix = px.pie(
+                        mix,
+                        names="absence_category",
+                        values="count",
+                        category_orders={"absence_category": TYPE_ORDER},
+                        color_discrete_map=ABSENCE_COLOR_MAP,
+                    )
+                    fig_mix.update_traces(
+                        textinfo="percent+value",
+                        texttemplate="%{value:.0f} (%{percent})",
+                        textposition="inside",
+                        sort=False
+                    )
+                    fig_mix.update_layout(
+                        showlegend=True,
+                        legend_title_text="Type",
+                        margin=dict(l=10, r=10, t=10, b=10),
+                        font=dict(family="Inter, system-ui, sans-serif", size=12),
+                    )
+                    st.plotly_chart(fig_mix, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-    # -----------------------------------------------------
-    # 2) Individual leave table (alphabetical, includes remaining days)
-    # -----------------------------------------------------
-    st.markdown('<h3 class="eg-section-title">Individual Leave Table (Full-time Employees)</h3>', unsafe_allow_html=True)
-    st.caption("Employee-level summary for the selected period. Sorted alphabetically. Includes Annual remaining (days).")
+        st.markdown("---")
 
-    if balance_ft.empty or not full_time_emps:
-        st.info("No full-time employees with leave entitlement found in the current scope.")
-    else:
-        emp_taken = (
-            daily_scope[daily_scope["employee"].isin(full_time_emps)]
-            .groupby(["employee", "absence_category"])
-            .size()
-            .unstack(fill_value=0)
+        # -----------------------------------------------------
+        # 2) Individual leave table (alphabetical, includes remaining days)
+        # -----------------------------------------------------
+        st.markdown('<h3 class="eg-section-title">Individual Leave Table (Full-time Employees)</h3>', unsafe_allow_html=True)
+        st.caption("Employee-level summary for the selected period. Sorted alphabetically. Includes Annual remaining (days).")
+
+        if balance_ft.empty or not full_time_emps:
+            st.info("No full-time employees with leave entitlement found in the current scope.")
+        else:
+            emp_taken = (
+                daily_scope[daily_scope["employee"].isin(full_time_emps)]
+                .groupby(["employee", "absence_category"])
+                .size()
+                .unstack(fill_value=0)
+                .reset_index()
+            )
+
+            for col in ["WFH", "Annual Leave", "Medical + Sickness", "Travel", "Other (excl. WFH, Travel)"]:
+                if col not in emp_taken.columns:
+                    emp_taken[col] = 0
+
+            emp_taken = emp_taken.rename(columns={
+                "WFH": "WFH taken (days)",
+                "Annual Leave": "Annual taken (days)",
+                "Medical + Sickness": "Sick taken (days)",
+                "Travel": "Travel taken (days)",
+                "Other (excl. WFH, Travel)": "Other taken (days)",
+            })
+
+            meta = balance_ft[[
+                "employee", "Team names", "Country",
+                "Entitlement (days)", "Remaining (days)"
+            ]].copy().rename(columns={
+                "Entitlement (days)": "Annual entitled (days)",
+                "Remaining (days)": "Annual remaining (days)"
+            })
+
+            ind_tbl = meta.merge(emp_taken, on="employee", how="left").fillna(0)
+            ind_tbl["WFH allowed (weeks)"] = weeks_in_period
+
+            ind_tbl["employee"] = ind_tbl["employee"].fillna("").astype(str)
+            ind_tbl = ind_tbl.sort_values("employee", ascending=True)
+
+            ind_tbl = ind_tbl[[
+                "employee", "Team names", "Country",
+                "WFH allowed (weeks)", "WFH taken (days)",
+                "Annual entitled (days)", "Annual taken (days)", "Annual remaining (days)",
+                "Sick taken (days)", "Travel taken (days)", "Other taken (days)"
+            ]]
+
+            for c in ["Annual entitled (days)", "Annual remaining (days)"]:
+                ind_tbl[c] = pd.to_numeric(ind_tbl[c], errors="coerce").round(1)
+
+            st.dataframe(ind_tbl, use_container_width=True, hide_index=True)
+
+        st.markdown("---")
+
+        # -----------------------------------------------------
+        # 3) Optional: Detailed annual leave balances (expander)
+        # -----------------------------------------------------
+        st.markdown('<h3 class="eg-section-title">Detailed Annual Leave Balances</h3>', unsafe_allow_html=True)
+        with st.expander("Detailed Annual Leave Balances (HR view)", expanded=False):
+            if entitlement_conflicts is not None and not entitlement_conflicts.empty:
+                st.warning("Entitlement values vary for some employees in the dataset. Review below.")
+                st.dataframe(entitlement_conflicts, use_container_width=True, hide_index=True)
+
+            if balance_ft.empty:
+                st.info("No balance table available in the current scope.")
+            else:
+                view_tbl = balance_ft.sort_values(["Remaining (days)", "Used (days)"], ascending=[True, False])
+                st.dataframe(view_tbl, use_container_width=True, hide_index=True)
+
+        st.markdown("---")
+
+        # -----------------------------------------------------
+        # 4) Daily Evidence (Investigation) - Collapsible (NO case_id)
+        # -----------------------------------------------------
+        st.markdown('<h3 class="eg-section-title">Daily Evidence (Investigation)</h3>', unsafe_allow_html=True)
+        st.caption("Open only when evidence is needed. Filters here do not change the rest of the dashboard.")
+
+        with st.expander("Open evidence log + investigation filters", expanded=False):
+            ev_col1, ev_col2 = st.columns(2)
+            with ev_col1:
+                ev_employee_q = st.text_input("Employee search", value="", key="ev_employee_q")
+            with ev_col2:
+                ev_keyword_q = st.text_input("Keyword in purpose/description", value="", key="ev_keyword_q")
+
+            ev_col3, ev_col4 = st.columns(2)
+            with ev_col3:
+                ev_dept_options = sorted([
+                    d for d in df_scope["Team names"].fillna("").astype(str).unique().tolist() if d.strip()
+                ])
+                ev_depts = st.multiselect("Departments", options=ev_dept_options, default=[], key="ev_depts")
+            with ev_col4:
+                ev_country_options = sorted([
+                    c for c in df_scope["Country"].fillna("").astype(str).unique().tolist() if c.strip()
+                ])
+                ev_countries = st.multiselect("Countries", options=ev_country_options, default=[], key="ev_countries")
+
+            ev_cats = st.multiselect("Absence types", options=TYPE_ORDER, default=[], key="ev_cats")
+            ev_use_custom_date = st.checkbox("Use custom date range (evidence only)", value=False, key="ev_use_custom_date")
+
+            ev_date_range = None
+            if ev_use_custom_date and (not daily_scope.empty) and ("date" in daily_scope.columns):
+                min_dt = pd.to_datetime(daily_scope["date"], errors="coerce").min()
+                max_dt = pd.to_datetime(daily_scope["date"], errors="coerce").max()
+                if not pd.isna(min_dt) and not pd.isna(max_dt):
+                    dr = st.date_input(
+                        "Custom date range",
+                        value=(min_dt.date(), max_dt.date()),
+                        key="ev_date_range"
+                    )
+                    ev_date_range = dr if isinstance(dr, tuple) else (dr, dr)
+
+            ev_daily = daily_scope.copy()
+
+            if ev_employee_q.strip():
+                ev_daily = ev_daily[
+                    ev_daily["employee"].fillna("").astype(str).str.contains(ev_employee_q.strip(), case=False, na=False)
+                ]
+            if ev_keyword_q.strip():
+                ev_daily = ev_daily[
+                    ev_daily["purpose"].fillna("").astype(str).str.contains(ev_keyword_q.strip(), case=False, na=False)
+                ]
+            if ev_depts:
+                ev_daily = ev_daily[ev_daily["Team names"].isin(ev_depts)]
+            if ev_countries:
+                ev_daily = ev_daily[ev_daily["Country"].isin(ev_countries)]
+            if ev_cats:
+                ev_daily = ev_daily[ev_daily["absence_category"].isin(ev_cats)]
+            if ev_use_custom_date and ev_date_range and (not ev_daily.empty) and ("date" in ev_daily.columns):
+                d1, d2 = ev_date_range
+                ev_daily = ev_daily[(ev_daily["date"].dt.date >= d1) & (ev_daily["date"].dt.date <= d2)]
+
+            if ev_daily.empty:
+                st.info("No daily records match the investigation filters.")
+            else:
+                cols_to_show = [
+                    "date_uk",
+                    "employee",
+                    "Team names",
+                    "Country",
+                    "absence_category",
+                    METRIC_COL,
+                    "purpose",
+                    "start_date_uk",
+                    "end_date_uk",
+                ]
+                cols_to_show = [c for c in cols_to_show if c in ev_daily.columns]
+                ev_daily_sorted = ev_daily.sort_values(["date", "Team names", "employee"], ascending=[True, True, True])
+                st.dataframe(ev_daily_sorted[cols_to_show], use_container_width=True, hide_index=True)
+
+    # =========================================================
+    # TAB 2: DEPARTMENT (Step 5 rollup + monthly chart)
+    # =========================================================
+    with tab_department:
+        if use_custom_date:
+            st.markdown(
+                '<div class="eg-hint">Reminder: custom date range affects evidence tables + exports. The chart below uses month selection.</div>',
+                unsafe_allow_html=True
+            )
+
+        st.markdown('<h3 class="eg-section-title">Department Views</h3>', unsafe_allow_html=True)
+
+        # -----------------------------------------------------
+        # Department list (authoritative) from scoped case data
+        # This guarantees depts like "AG Legal" appear if present in df_cases_filt.
+        # -----------------------------------------------------
+        if "Team names" in df_cases_filt.columns:
+            scope_depts_series = (
+                df_cases_filt["Team names"]
+                .fillna("")
+                .astype(str)
+                .str.replace(r"\s+", " ", regex=True)
+                .str.strip()
+            )
+            depts_in_scope = sorted([d for d in scope_depts_series.unique().tolist() if d])
+        else:
+            depts_in_scope = []
+
+        # -----------------------------------------------------
+        # Prepare employee balance (clean + full-time only)
+        # -----------------------------------------------------
+        if employee_balance is None or employee_balance.empty:
+            balance_all = pd.DataFrame()
+            balance_ft = pd.DataFrame()
+        else:
+            balance_all = employee_balance.copy()
+
+            balance_all["Team names"] = (
+                balance_all["Team names"]
+                .fillna("")
+                .astype(str)
+                .str.replace(r"\s+", " ", regex=True)
+                .str.strip()
+            )
+
+            balance_all["Entitlement (days)"] = pd.to_numeric(
+                balance_all["Entitlement (days)"], errors="coerce"
+            ).fillna(0)
+
+            # Full-time employees only
+            balance_ft = balance_all[balance_all["Entitlement (days)"] > 0].copy()
+
+        # -----------------------------------------------------
+        # Department Rollup (Full-time employees only) - clean view
+        # -----------------------------------------------------
+        st.markdown('<h3 class="eg-section-title">Annual Leave Balance (Department Rollup) - Full-time employees</h3>', unsafe_allow_html=True)
+
+        dept_rollup = rollup_balance(balance_ft, "Team names") if not balance_ft.empty else pd.DataFrame()
+
+        if dept_rollup.empty:
+            st.info("No full-time employees with leave entitlement in the current scope.")
+        else:
+            st.dataframe(dept_rollup, use_container_width=True, hide_index=True)
+
+        # -----------------------------------------------------
+        # Department drilldown (ALL departments in scope)
+        # -----------------------------------------------------
+        st.markdown("**Department drilldown (employees)**")
+
+        if not depts_in_scope:
+            st.info("No departments found in the current scope.")
+        else:
+            selected_dept = st.selectbox("Select a department", options=depts_in_scope)
+
+            if balance_all.empty:
+                st.info("Employee balance data unavailable for the current scope.")
+            else:
+                drill_ft = balance_ft[balance_ft["Team names"] == selected_dept].copy()
+
+                if drill_ft.empty:
+                    # Dept exists in scope, but no full-time employees found
+                    drill_all = balance_all[balance_all["Team names"] == selected_dept].copy()
+                    consultants_ct = int((drill_all["Entitlement (days)"] == 0).sum()) if not drill_all.empty else 0
+
+                    st.info(
+                        f"No full-time employees with leave entitlement found for **{selected_dept}** "
+                        f"in the current scope. External consultants: {consultants_ct}."
+                    )
+                else:
+                    drill_ft = drill_ft.sort_values(
+                        ["Remaining (days)", "Used (days)"],
+                        ascending=[True, False]
+                    )
+                    st.dataframe(
+                        drill_ft[["employee", "Entitlement (days)", "Used (days)", "Remaining (days)", "Country"]],
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
+        st.markdown("---")
+        st.markdown('<h3 class="eg-section-title">Department Level Analysis</h3>', unsafe_allow_html=True)
+        st.caption("Absence days by department. Chart filters affect visuals only.")
+
+        # -----------------------------------------------------
+        # Monthly department absence chart (case-level data)
+        # Normalise dept names to keep consistent labels
+        # -----------------------------------------------------
+        df_dept = df_cases_filt.copy()
+        if "Team names" in df_dept.columns:
+            df_dept["Team names"] = (
+                df_dept["Team names"]
+                .fillna("")
+                .astype(str)
+                .str.replace(r"\s+", " ", regex=True)
+                .str.strip()
+            )
+
+        all_depts_chart = sorted([d for d in df_dept["Team names"].dropna().unique().tolist() if d])
+        selected_depts_chart = st.multiselect(
+            "Chart filter: departments",
+            options=all_depts_chart,
+            default=[]
+        )
+
+        if selected_depts_chart:
+            df_dept = df_dept[df_dept["Team names"].isin(selected_depts_chart)]
+
+        dept_type = (
+            df_dept.groupby(["month", "Team names", "absence_category"])[METRIC_COL]
+            .sum()
             .reset_index()
         )
 
-        for col in ["WFH", "Annual Leave", "Medical + Sickness", "Travel", "Other (excl. WFH, Travel)"]:
-            if col not in emp_taken.columns:
-                emp_taken[col] = 0
+        dept_list = sorted([d for d in df_dept["Team names"].dropna().unique().tolist() if d])
+        if not dept_list:
+            st.info("No department data available for the selected scope.")
+            st.stop()
 
-        emp_taken = emp_taken.rename(columns={
-            "WFH": "WFH taken (days)",
-            "Annual Leave": "Annual taken (days)",
-            "Medical + Sickness": "Sick taken (days)",
-            "Travel": "Travel taken (days)",
-            "Other (excl. WFH, Travel)": "Other taken (days)",
-        })
+        dept_grid = pd.MultiIndex.from_product(
+            [months_in_scope, dept_list, TYPE_ORDER],
+            names=["month", "Team names", "absence_category"]
+        ).to_frame(index=False)
 
-        meta = balance_ft[[
-            "employee", "Team names", "Country",
-            "Entitlement (days)", "Remaining (days)"
-        ]].copy().rename(columns={
-            "Entitlement (days)": "Annual entitled (days)",
-            "Remaining (days)": "Annual remaining (days)"
-        })
+        dept_type = dept_grid.merge(
+            dept_type,
+            on=["month", "Team names", "absence_category"],
+            how="left"
+        )
+        dept_type[METRIC_COL] = dept_type[METRIC_COL].fillna(0)
 
-        ind_tbl = meta.merge(emp_taken, on="employee", how="left").fillna(0)
-        ind_tbl["WFH allowed (weeks)"] = weeks_in_period
+        dept_totals = (
+            dept_type.groupby("Team names")[METRIC_COL]
+            .sum()
+            .sort_values(ascending=False)
+        )
+        dept_type["Team names"] = pd.Categorical(
+            dept_type["Team names"],
+            categories=dept_totals.index,
+            ordered=True
+        )
 
-        ind_tbl["employee"] = ind_tbl["employee"].fillna("").astype(str)
-        ind_tbl = ind_tbl.sort_values("employee", ascending=True)
+        if month_2:
+            left, sep, right = st.columns([5, 0.25, 5])
 
-        ind_tbl = ind_tbl[[
-            "employee", "Team names", "Country",
-            "WFH allowed (weeks)", "WFH taken (days)",
-            "Annual entitled (days)", "Annual taken (days)", "Annual remaining (days)",
-            "Sick taken (days)", "Travel taken (days)", "Other taken (days)"
-        ]]
+            with left:
+                fig_m1 = px.bar(
+                    dept_type[dept_type["month"] == month_1],
+                    x="Team names",
+                    y=METRIC_COL,
+                    color="absence_category",
+                    category_orders={"absence_category": TYPE_ORDER},
+                )
+                fig_m1.update_layout(
+                    barmode="stack",
+                    title=dict(text=month_1, x=0.5),
+                    legend_title_text="Absence type",
+                    margin=dict(t=60),
+                    font=dict(family="Inter, system-ui, sans-serif", size=12),
+                )
+                fig_m1.update_xaxes(tickangle=-35)
+                st.plotly_chart(fig_m1, use_container_width=True)
 
-        for c in ["Annual entitled (days)", "Annual remaining (days)"]:
-            ind_tbl[c] = pd.to_numeric(ind_tbl[c], errors="coerce").round(1)
+            with sep:
+                st.markdown('<div class="eg-vertical-divider-donut">&nbsp;</div>', unsafe_allow_html=True)
 
-        st.dataframe(ind_tbl, use_container_width=True, hide_index=True)
+            with right:
+                fig_m2 = px.bar(
+                    dept_type[dept_type["month"] == month_2],
+                    x="Team names",
+                    y=METRIC_COL,
+                    color="absence_category",
+                    category_orders={"absence_category": TYPE_ORDER},
+                )
+                fig_m2.update_layout(
+                    barmode="stack",
+                    title=dict(text=month_2, x=0.5),
+                    legend_title_text="Absence type",
+                    margin=dict(t=60),
+                    font=dict(family="Inter, system-ui, sans-serif", size=12),
+                )
+                fig_m2.update_xaxes(tickangle=-35)
+                st.plotly_chart(fig_m2, use_container_width=True)
 
-    st.markdown("---")
-
-    # -----------------------------------------------------
-    # 3) Optional: Detailed annual leave balances (expander)
-    # -----------------------------------------------------
-    st.markdown('<h3 class="eg-section-title">Detailed Annual Leave Balances</h3>', unsafe_allow_html=True)
-    with st.expander("Detailed Annual Leave Balances (HR view)", expanded=False):
-        if entitlement_conflicts is not None and not entitlement_conflicts.empty:
-            st.warning("Entitlement values vary for some employees in the dataset. Review below.")
-            st.dataframe(entitlement_conflicts, use_container_width=True, hide_index=True)
-
-        if balance_ft.empty:
-            st.info("No balance table available in the current scope.")
         else:
-            view_tbl = balance_ft.sort_values(["Remaining (days)", "Used (days)"], ascending=[True, False])
-            st.dataframe(view_tbl, use_container_width=True, hide_index=True)
-
-    st.markdown("---")
-
-    # -----------------------------------------------------
-    # 4) Daily Evidence (Investigation) — Collapsible (NO case_id)
-    # -----------------------------------------------------
-    st.markdown('<h3 class="eg-section-title">Daily Evidence (Investigation)</h3>', unsafe_allow_html=True)
-    st.caption("Open only when evidence is needed. Filters here do not change the rest of the dashboard.")
-
-    with st.expander("Open evidence log + investigation filters", expanded=False):
-        ev_col1, ev_col2 = st.columns(2)
-        with ev_col1:
-            ev_employee_q = st.text_input("Employee search", value="", key="ev_employee_q")
-        with ev_col2:
-            ev_keyword_q = st.text_input("Keyword in purpose/description", value="", key="ev_keyword_q")
-
-        ev_col3, ev_col4 = st.columns(2)
-        with ev_col3:
-            ev_dept_options = sorted([
-                d for d in df_scope["Team names"].fillna("").astype(str).unique().tolist() if d.strip()
-            ])
-            ev_depts = st.multiselect("Departments", options=ev_dept_options, default=[], key="ev_depts")
-        with ev_col4:
-            ev_country_options = sorted([
-                c for c in df_scope["Country"].fillna("").astype(str).unique().tolist() if c.strip()
-            ])
-            ev_countries = st.multiselect("Countries", options=ev_country_options, default=[], key="ev_countries")
-
-        ev_cats = st.multiselect("Absence types", options=TYPE_ORDER, default=[], key="ev_cats")
-        ev_use_custom_date = st.checkbox("Use custom date range (evidence only)", value=False, key="ev_use_custom_date")
-
-        ev_date_range = None
-        if ev_use_custom_date and (not daily_scope.empty) and ("date" in daily_scope.columns):
-            min_dt = pd.to_datetime(daily_scope["date"], errors="coerce").min()
-            max_dt = pd.to_datetime(daily_scope["date"], errors="coerce").max()
-            if not pd.isna(min_dt) and not pd.isna(max_dt):
-                dr = st.date_input(
-                    "Custom date range",
-                    value=(min_dt.date(), max_dt.date()),
-                    key="ev_date_range"
-                )
-                ev_date_range = dr if isinstance(dr, tuple) else (dr, dr)
-
-        ev_daily = daily_scope.copy()
-
-        if ev_employee_q.strip():
-            ev_daily = ev_daily[
-                ev_daily["employee"].fillna("").astype(str).str.contains(ev_employee_q.strip(), case=False, na=False)
-            ]
-        if ev_keyword_q.strip():
-            ev_daily = ev_daily[
-                ev_daily["purpose"].fillna("").astype(str).str.contains(ev_keyword_q.strip(), case=False, na=False)
-            ]
-        if ev_depts:
-            ev_daily = ev_daily[ev_daily["Team names"].isin(ev_depts)]
-        if ev_countries:
-            ev_daily = ev_daily[ev_daily["Country"].isin(ev_countries)]
-        if ev_cats:
-            ev_daily = ev_daily[ev_daily["absence_category"].isin(ev_cats)]
-        if ev_use_custom_date and ev_date_range and (not ev_daily.empty) and ("date" in ev_daily.columns):
-            d1, d2 = ev_date_range
-            ev_daily = ev_daily[(ev_daily["date"].dt.date >= d1) & (ev_daily["date"].dt.date <= d2)]
-
-        if ev_daily.empty:
-            st.info("No daily records match the investigation filters.")
-        else:
-            cols_to_show = [
-                "date_uk",
-                "employee",
-                "Team names",
-                "Country",
-                "absence_category",
-                METRIC_COL,
-                "purpose",
-                "start_date_uk",
-                "end_date_uk",
-            ]
-            cols_to_show = [c for c in cols_to_show if c in ev_daily.columns]
-            ev_daily_sorted = ev_daily.sort_values(["date", "Team names", "employee"], ascending=[True, True, True])
-            st.dataframe(ev_daily_sorted[cols_to_show], use_container_width=True, hide_index=True)
-
-# =========================================================
-# TAB 2: DEPARTMENT (Step 5 rollup + monthly chart)
-# =========================================================
-with tab_department:
-    if use_custom_date:
-        st.markdown(
-            '<div class="eg-hint">Reminder: custom date range affects evidence tables + exports. The chart below uses month selection.</div>',
-            unsafe_allow_html=True
-        )
-
-    st.markdown('<h3 class="eg-section-title">Department Views</h3>', unsafe_allow_html=True)
-
-    # -----------------------------------------------------
-    # Department list (authoritative) from scoped case data
-    # This guarantees depts like "AG Legal" appear if present in df_cases_filt.
-    # -----------------------------------------------------
-    if "Team names" in df_cases_filt.columns:
-        scope_depts_series = (
-            df_cases_filt["Team names"]
-            .fillna("")
-            .astype(str)
-            .str.replace(r"\s+", " ", regex=True)
-            .str.strip()
-        )
-        depts_in_scope = sorted([d for d in scope_depts_series.unique().tolist() if d])
-    else:
-        depts_in_scope = []
-
-    # -----------------------------------------------------
-    # Prepare employee balance (clean + full-time only)
-    # -----------------------------------------------------
-    if employee_balance is None or employee_balance.empty:
-        balance_all = pd.DataFrame()
-        balance_ft = pd.DataFrame()
-    else:
-        balance_all = employee_balance.copy()
-
-        balance_all["Team names"] = (
-            balance_all["Team names"]
-            .fillna("")
-            .astype(str)
-            .str.replace(r"\s+", " ", regex=True)
-            .str.strip()
-        )
-
-        balance_all["Entitlement (days)"] = pd.to_numeric(
-            balance_all["Entitlement (days)"], errors="coerce"
-        ).fillna(0)
-
-        # Full-time employees only
-        balance_ft = balance_all[balance_all["Entitlement (days)"] > 0].copy()
-
-    # -----------------------------------------------------
-    # Department Rollup (Full-time employees only) — clean view
-    # -----------------------------------------------------
-    st.markdown('<h3 class="eg-section-title">Annual Leave Balance (Department Rollup) — Full-time employees</h3>', unsafe_allow_html=True)
-
-    dept_rollup = rollup_balance(balance_ft, "Team names") if not balance_ft.empty else pd.DataFrame()
-
-    if dept_rollup.empty:
-        st.info("No full-time employees with leave entitlement in the current scope.")
-    else:
-        st.dataframe(dept_rollup, use_container_width=True, hide_index=True)
-
-    # -----------------------------------------------------
-    # Department drilldown (ALL departments in scope)
-    # -----------------------------------------------------
-    st.markdown("**Department drilldown (employees)**")
-
-    if not depts_in_scope:
-        st.info("No departments found in the current scope.")
-    else:
-        selected_dept = st.selectbox("Select a department", options=depts_in_scope)
-
-        if balance_all.empty:
-            st.info("Employee balance data unavailable for the current scope.")
-        else:
-            drill_ft = balance_ft[balance_ft["Team names"] == selected_dept].copy()
-
-            if drill_ft.empty:
-                # Dept exists in scope, but no full-time employees found
-                drill_all = balance_all[balance_all["Team names"] == selected_dept].copy()
-                consultants_ct = int((drill_all["Entitlement (days)"] == 0).sum()) if not drill_all.empty else 0
-
-                st.info(
-                    f"No full-time employees with leave entitlement found for **{selected_dept}** "
-                    f"in the current scope. External consultants: {consultants_ct}."
-                )
-            else:
-                drill_ft = drill_ft.sort_values(
-                    ["Remaining (days)", "Used (days)"],
-                    ascending=[True, False]
-                )
-                st.dataframe(
-                    drill_ft[["employee", "Entitlement (days)", "Used (days)", "Remaining (days)", "Country"]],
-                    use_container_width=True,
-                    hide_index=True
-                )
-
-    st.markdown("---")
-    st.markdown('<h3 class="eg-section-title">Department Level Analysis</h3>', unsafe_allow_html=True)
-    st.caption("Absence days by department. Chart filters affect visuals only.")
-
-    # -----------------------------------------------------
-    # Monthly department absence chart (case-level data)
-    # Normalise dept names to keep consistent labels
-    # -----------------------------------------------------
-    df_dept = df_cases_filt.copy()
-    if "Team names" in df_dept.columns:
-        df_dept["Team names"] = (
-            df_dept["Team names"]
-            .fillna("")
-            .astype(str)
-            .str.replace(r"\s+", " ", regex=True)
-            .str.strip()
-        )
-
-    all_depts_chart = sorted([d for d in df_dept["Team names"].dropna().unique().tolist() if d])
-    selected_depts_chart = st.multiselect(
-        "Chart filter: departments",
-        options=all_depts_chart,
-        default=[]
-    )
-
-    if selected_depts_chart:
-        df_dept = df_dept[df_dept["Team names"].isin(selected_depts_chart)]
-
-    dept_type = (
-        df_dept.groupby(["month", "Team names", "absence_category"])[METRIC_COL]
-        .sum()
-        .reset_index()
-    )
-
-    dept_list = sorted([d for d in df_dept["Team names"].dropna().unique().tolist() if d])
-    if not dept_list:
-        st.info("No department data available for the selected scope.")
-        st.stop()
-
-    dept_grid = pd.MultiIndex.from_product(
-        [months_in_scope, dept_list, TYPE_ORDER],
-        names=["month", "Team names", "absence_category"]
-    ).to_frame(index=False)
-
-    dept_type = dept_grid.merge(
-        dept_type,
-        on=["month", "Team names", "absence_category"],
-        how="left"
-    )
-    dept_type[METRIC_COL] = dept_type[METRIC_COL].fillna(0)
-
-    dept_totals = (
-        dept_type.groupby("Team names")[METRIC_COL]
-        .sum()
-        .sort_values(ascending=False)
-    )
-    dept_type["Team names"] = pd.Categorical(
-        dept_type["Team names"],
-        categories=dept_totals.index,
-        ordered=True
-    )
-
-    if month_2:
-        left, sep, right = st.columns([5, 0.25, 5])
-
-        with left:
-            fig_m1 = px.bar(
+            fig_dept = px.bar(
                 dept_type[dept_type["month"] == month_1],
                 x="Team names",
                 y=METRIC_COL,
                 color="absence_category",
                 category_orders={"absence_category": TYPE_ORDER},
             )
-            fig_m1.update_layout(
+            fig_dept.update_layout(
                 barmode="stack",
                 title=dict(text=month_1, x=0.5),
                 legend_title_text="Absence type",
                 margin=dict(t=60),
                 font=dict(family="Inter, system-ui, sans-serif", size=12),
             )
-            fig_m1.update_xaxes(tickangle=-35)
-            st.plotly_chart(fig_m1, use_container_width=True)
+            fig_dept.update_xaxes(tickangle=-35)
+            st.plotly_chart(fig_dept, use_container_width=True)
 
-        with sep:
-            st.markdown('<div class="eg-vertical-divider-donut">&nbsp;</div>', unsafe_allow_html=True)
 
-        with right:
-            fig_m2 = px.bar(
-                dept_type[dept_type["month"] == month_2],
-                x="Team names",
-                y=METRIC_COL,
-                color="absence_category",
-                category_orders={"absence_category": TYPE_ORDER},
+    # =========================================================
+    # TAB 3: COUNTRY (rollup + evidence drilldown)
+    # =========================================================
+    with tab_country:
+        if use_custom_date:
+            st.markdown(
+                '<div class="eg-hint">Reminder: custom date range affects evidence tables + exports. The charts here use month selection.</div>',
+                unsafe_allow_html=True
             )
-            fig_m2.update_layout(
-                barmode="stack",
-                title=dict(text=month_2, x=0.5),
-                legend_title_text="Absence type",
-                margin=dict(t=60),
-                font=dict(family="Inter, system-ui, sans-serif", size=12),
-            )
-            fig_m2.update_xaxes(tickangle=-35)
-            st.plotly_chart(fig_m2, use_container_width=True)
 
-    else:
-        fig_dept = px.bar(
-            dept_type[dept_type["month"] == month_1],
-            x="Team names",
-            y=METRIC_COL,
-            color="absence_category",
-            category_orders={"absence_category": TYPE_ORDER},
-        )
-        fig_dept.update_layout(
-            barmode="stack",
-            title=dict(text=month_1, x=0.5),
-            legend_title_text="Absence type",
-            margin=dict(t=60),
-            font=dict(family="Inter, system-ui, sans-serif", size=12),
-        )
-        fig_dept.update_xaxes(tickangle=-35)
-        st.plotly_chart(fig_dept, use_container_width=True)
+        st.markdown('<h3 class="eg-section-title">Country View</h3>', unsafe_allow_html=True)
+        st.caption("Country-level rollup (filtered) + evidence drilldown.")
 
+        if "Country" not in df_cases_filt.columns:
+            st.info("No Country field found in the dataset.")
+            st.stop()
 
-# =========================================================
-# TAB 3: COUNTRY (rollup + evidence drilldown)
-# =========================================================
-with tab_country:
-    if use_custom_date:
-        st.markdown(
-            '<div class="eg-hint">Reminder: custom date range affects evidence tables + exports. The charts here use month selection.</div>',
-            unsafe_allow_html=True
-        )
+        country_options = sorted(df_cases_filt["Country"].dropna().unique().tolist())
+        if not country_options:
+            st.info("No country values found for the current filtered scope.")
+            st.stop()
 
-    st.markdown('<h3 class="eg-section-title">Country View</h3>', unsafe_allow_html=True)
-    st.caption("Country-level rollup (filtered) + evidence drilldown.")
+        if "selected_country" not in st.session_state:
+            st.session_state.selected_country = country_options[0]
 
-    if "Country" not in df_cases_filt.columns:
-        st.info("No Country field found in the dataset.")
-        st.stop()
-
-    country_options = sorted(df_cases_filt["Country"].dropna().unique().tolist())
-    if not country_options:
-        st.info("No country values found for the current filtered scope.")
-        st.stop()
-
-    if "selected_country" not in st.session_state:
-        st.session_state.selected_country = country_options[0]
-
-    cols = st.columns(len(country_options))
-    for i, c in enumerate(country_options):
-        if cols[i].button(
-            c,
-            use_container_width=True,
-            type="primary" if st.session_state.selected_country == c else "secondary"
-        ):
-            st.session_state.selected_country = c
-
-    selected_country = st.session_state.selected_country
-    df_country = df_cases_filt[df_cases_filt["Country"] == selected_country].copy()
-
-    st.markdown("---")
-    st.markdown('<h3 class="eg-section-title">Annual Leave Balance (Country Rollup) — Filtered</h3>', unsafe_allow_html=True)
-    country_rollup = rollup_balance(employee_balance, "Country") if not employee_balance.empty else pd.DataFrame()
-    if country_rollup.empty:
-        st.info("No country rollup available for the current filtered scope.")
-    else:
-        st.dataframe(country_rollup, use_container_width=True, hide_index=True)
-
-        st.markdown(f"**Selected country drilldown (employees): {selected_country}**")
-        drill_emp = employee_balance[employee_balance["Country"] == selected_country].copy()
-        if drill_emp.empty:
-            st.info("No employees found for this country in the balance table.")
-        else:
-            drill_emp = drill_emp.sort_values(["Remaining (days)", "Used (days)"], ascending=[True, False])
-            st.dataframe(
-                drill_emp[["employee", "Team names", "Entitlement (days)", "Used (days)", "Remaining (days)"]],
+        cols = st.columns(len(country_options))
+        for i, c in enumerate(country_options):
+            if cols[i].button(
+                c,
                 use_container_width=True,
-                hide_index=True
+                type="primary" if st.session_state.selected_country == c else "secondary"
+            ):
+                st.session_state.selected_country = c
+
+        selected_country = st.session_state.selected_country
+        df_country = df_cases_filt[df_cases_filt["Country"] == selected_country].copy()
+
+        st.markdown("---")
+        st.markdown('<h3 class="eg-section-title">Annual Leave Balance (Country Rollup) - Filtered</h3>', unsafe_allow_html=True)
+        country_rollup = rollup_balance(employee_balance, "Country") if not employee_balance.empty else pd.DataFrame()
+        if country_rollup.empty:
+            st.info("No country rollup available for the current filtered scope.")
+        else:
+            st.dataframe(country_rollup, use_container_width=True, hide_index=True)
+
+            st.markdown(f"**Selected country drilldown (employees): {selected_country}**")
+            drill_emp = employee_balance[employee_balance["Country"] == selected_country].copy()
+            if drill_emp.empty:
+                st.info("No employees found for this country in the balance table.")
+            else:
+                drill_emp = drill_emp.sort_values(["Remaining (days)", "Used (days)"], ascending=[True, False])
+                st.dataframe(
+                    drill_emp[["employee", "Team names", "Entitlement (days)", "Used (days)", "Remaining (days)"]],
+                    use_container_width=True,
+                    hide_index=True
+                )
+
+        st.markdown("---")
+
+        total_days_m1 = float(df_country[df_country["month"] == month_1][METRIC_COL].sum())
+        total_days_m2 = float(df_country[df_country["month"] == month_2][METRIC_COL].sum()) if month_2 else None
+
+        k1, k2, k3 = st.columns(3)
+        with k1:
+            st.metric(f"{selected_country} days ({month_1})", fmt_num(total_days_m1))
+        with k2:
+            if month_2:
+                diff = total_days_m2 - total_days_m1
+                if total_days_m1 == 0:
+                    delta_str = "N/A (baseline 0)" if total_days_m2 != 0 else "0.0%"
+                else:
+                    delta_str = f"{(diff / total_days_m1 * 100):.1f}%"
+                st.metric(f"{selected_country} days ({month_2})", fmt_num(total_days_m2), f"{diff:+.1f}d ({delta_str})")
+            else:
+                st.metric("Departments", str(df_country["Team names"].nunique()))
+        with k3:
+            st.metric("Employees", str(df_country["employee"].nunique()))
+
+        st.markdown("---")
+
+        pie_country = (
+            df_country.groupby(["month", "absence_category"])[METRIC_COL]
+            .sum()
+            .reset_index()
+        )
+        grid = pd.MultiIndex.from_product([months_in_scope, TYPE_ORDER], names=["month", "absence_category"]).to_frame(index=False)
+        pie_country = grid.merge(pie_country, on=["month", "absence_category"], how="left")
+        pie_country[METRIC_COL] = pie_country[METRIC_COL].fillna(0)
+
+        def pie_for_month(m: str):
+            d = pie_country[pie_country["month"] == m].copy()
+            d = d[d[METRIC_COL] > 0]
+            if d.empty:
+                st.info(f"No absence data for {selected_country} in {m}.")
+                return
+            fig = px.pie(d, names="absence_category", values=METRIC_COL, category_orders={"absence_category": TYPE_ORDER}, color_discrete_map=ABSENCE_COLOR_MAP)
+            fig.update_traces(textinfo="percent+value", texttemplate="%{value:.1f}d (%{percent})", textposition="inside", sort=False)
+            fig.update_layout(title=dict(text=f"{selected_country} - {m}", x=0.5), legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), font=dict(family="Inter, system-ui, sans-serif", size=12))
+            st.plotly_chart(fig, use_container_width=True)
+
+        if month_2:
+            c1, c2 = st.columns(2)
+            with c1: pie_for_month(month_1)
+            with c2: pie_for_month(month_2)
+        else:
+            pie_for_month(month_1)
+
+        st.markdown("---")
+
+        st.markdown("**Country drilldown (daily log) - Filtered**")
+        daily_country = daily_filt[daily_filt["Country"] == selected_country].copy() if not daily_filt.empty else pd.DataFrame()
+        drill_cols = ["case_id", "date_uk", "Country", "Team names", "employee", "absence_category", METRIC_COL, "purpose"]
+        drill_cols = [c for c in drill_cols if (not daily_country.empty and c in daily_country.columns)]
+        if daily_country.empty:
+            st.info("No daily records found for the selected country (current filters).")
+        else:
+            daily_country = daily_country.sort_values(["date", "Team names", "employee"])
+            st.dataframe(daily_country[drill_cols], use_container_width=True, hide_index=True)
+
+    # =========================================================
+    # TAB 4: GROUP / EXCO (monthly visuals)
+    # =========================================================
+    with tab_group:
+        if use_custom_date:
+            st.markdown(
+                '<div class="eg-hint">Reminder: custom date range affects evidence tables + exports. ExCo charts use month selection.</div>',
+                unsafe_allow_html=True
             )
 
-    st.markdown("---")
+        st.markdown('<h3 class="eg-section-title">Group / ExCo View</h3>', unsafe_allow_html=True)
+        st.caption("Monthly KPIs and leave mix (filtered), suitable for senior leadership.")
 
-    total_days_m1 = float(df_country[df_country["month"] == month_1][METRIC_COL].sum())
-    total_days_m2 = float(df_country[df_country["month"] == month_2][METRIC_COL].sum()) if month_2 else None
+        st.markdown('<h3 class="eg-section-title">KPIs</h3>', unsafe_allow_html=True)
 
-    k1, k2, k3 = st.columns(3)
-    with k1:
-        st.metric(f"{selected_country} days ({month_1})", fmt_num(total_days_m1))
-    with k2:
+        monthly_days = df_cases_filt.groupby("month")[METRIC_COL].sum()
+        days_m1 = float(monthly_days.get(month_1, 0))
+
         if month_2:
-            diff = total_days_m2 - total_days_m1
-            if total_days_m1 == 0:
-                delta_str = "N/A (baseline 0)" if total_days_m2 != 0 else "0.0%"
+            days_m2 = float(monthly_days.get(month_2, 0))
+            diff = days_m2 - days_m1
+            if days_m1 == 0:
+                delta_str = "N/A (baseline 0)" if days_m2 != 0 else "0.0%"
             else:
-                delta_str = f"{(diff / total_days_m1 * 100):.1f}%"
-            st.metric(f"{selected_country} days ({month_2})", fmt_num(total_days_m2), f"{diff:+.1f}d ({delta_str})")
+                delta_str = f"{(diff / days_m1 * 100):.1f}%"
+
+            sp_l, c1, c2, c3, sp_r = st.columns([1, 2, 2, 2, 1])
+            with c1: st.metric(f"Absence days ({month_1})", fmt_num(days_m1))
+            with c2: st.metric(f"Absence days ({month_2})", fmt_num(days_m2))
+            with c3: st.metric("Change", fmt_num(diff), delta_str)
         else:
-            st.metric("Departments", str(df_country["Team names"].nunique()))
-    with k3:
-        st.metric("Employees", str(df_country["employee"].nunique()))
+            sp_l, c1, sp_r = st.columns([2, 3, 2])
+            with c1: st.metric(f"Absence days ({month_1})", fmt_num(days_m1))
 
-    st.markdown("---")
+        st.markdown("---")
 
-    pie_country = (
-        df_country.groupby(["month", "absence_category"])[METRIC_COL]
-        .sum()
-        .reset_index()
-    )
-    grid = pd.MultiIndex.from_product([months_in_scope, TYPE_ORDER], names=["month", "absence_category"]).to_frame(index=False)
-    pie_country = grid.merge(pie_country, on=["month", "absence_category"], how="left")
-    pie_country[METRIC_COL] = pie_country[METRIC_COL].fillna(0)
+        st.markdown('<h3 class="eg-section-title">Leave-type KPI breakdown</h3>', unsafe_allow_html=True)
 
-    def pie_for_month(m: str):
-        d = pie_country[pie_country["month"] == m].copy()
-        d = d[d[METRIC_COL] > 0]
-        if d.empty:
-            st.info(f"No absence data for {selected_country} in {m}.")
-            return
-        fig = px.pie(d, names="absence_category", values=METRIC_COL, category_orders={"absence_category": TYPE_ORDER}, color_discrete_map=ABSENCE_COLOR_MAP)
-        fig.update_traces(textinfo="percent+value", texttemplate="%{value:.1f}d (%{percent})", textposition="inside", sort=False)
-        fig.update_layout(title=dict(text=f"{selected_country} • {m}", x=0.5), legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), font=dict(family="Inter, system-ui, sans-serif", size=12))
-        st.plotly_chart(fig, use_container_width=True)
-
-    if month_2:
-        c1, c2 = st.columns(2)
-        with c1: pie_for_month(month_1)
-        with c2: pie_for_month(month_2)
-    else:
-        pie_for_month(month_1)
-
-    st.markdown("---")
-
-    st.markdown("**Country drilldown (daily log) — Filtered**")
-    daily_country = daily_filt[daily_filt["Country"] == selected_country].copy() if not daily_filt.empty else pd.DataFrame()
-    drill_cols = ["case_id", "date_uk", "Country", "Team names", "employee", "absence_category", METRIC_COL, "purpose"]
-    drill_cols = [c for c in drill_cols if (not daily_country.empty and c in daily_country.columns)]
-    if daily_country.empty:
-        st.info("No daily records found for the selected country (current filters).")
-    else:
-        daily_country = daily_country.sort_values(["date", "Team names", "employee"])
-        st.dataframe(daily_country[drill_cols], use_container_width=True, hide_index=True)
-
-# =========================================================
-# TAB 4: GROUP / EXCO (monthly visuals)
-# =========================================================
-with tab_group:
-    if use_custom_date:
-        st.markdown(
-            '<div class="eg-hint">Reminder: custom date range affects evidence tables + exports. ExCo charts use month selection.</div>',
-            unsafe_allow_html=True
+        type_month = (
+            df_cases_filt.groupby(["month", "absence_category"])[METRIC_COL]
+            .sum()
+            .reset_index()
         )
 
-    st.markdown('<h3 class="eg-section-title">Group / ExCo View</h3>', unsafe_allow_html=True)
-    st.caption("Monthly KPIs and leave mix (filtered), suitable for senior leadership.")
+        grid = pd.MultiIndex.from_product([months_in_scope, TYPE_ORDER], names=["month", "absence_category"]).to_frame(index=False)
+        type_month = grid.merge(type_month, on=["month", "absence_category"], how="left")
+        type_month[METRIC_COL] = type_month[METRIC_COL].fillna(0)
 
-    st.markdown('<h3 class="eg-section-title">KPIs</h3>', unsafe_allow_html=True)
+        def render_type_kpis_for_month(m: str, show_delta: bool):
+            st.markdown(f"**{m}**")
+            m_series = type_month[type_month["month"] == m].set_index("absence_category")[METRIC_COL].reindex(TYPE_ORDER).fillna(0)
+            baseline = type_month[type_month["month"] == month_1].set_index("absence_category")[METRIC_COL].reindex(TYPE_ORDER).fillna(0)
 
-    monthly_days = df_cases_filt.groupby("month")[METRIC_COL].sum()
-    days_m1 = float(monthly_days.get(month_1, 0))
-
-    if month_2:
-        days_m2 = float(monthly_days.get(month_2, 0))
-        diff = days_m2 - days_m1
-        if days_m1 == 0:
-            delta_str = "N/A (baseline 0)" if days_m2 != 0 else "0.0%"
-        else:
-            delta_str = f"{(diff / days_m1 * 100):.1f}%"
-
-        sp_l, c1, c2, c3, sp_r = st.columns([1, 2, 2, 2, 1])
-        with c1: st.metric(f"Absence days ({month_1})", fmt_num(days_m1))
-        with c2: st.metric(f"Absence days ({month_2})", fmt_num(days_m2))
-        with c3: st.metric("Change", fmt_num(diff), delta_str)
-    else:
-        sp_l, c1, sp_r = st.columns([2, 3, 2])
-        with c1: st.metric(f"Absence days ({month_1})", fmt_num(days_m1))
-
-    st.markdown("---")
-
-    st.markdown('<h3 class="eg-section-title">Leave-type KPI breakdown</h3>', unsafe_allow_html=True)
-
-    type_month = (
-        df_cases_filt.groupby(["month", "absence_category"])[METRIC_COL]
-        .sum()
-        .reset_index()
-    )
-
-    grid = pd.MultiIndex.from_product([months_in_scope, TYPE_ORDER], names=["month", "absence_category"]).to_frame(index=False)
-    type_month = grid.merge(type_month, on=["month", "absence_category"], how="left")
-    type_month[METRIC_COL] = type_month[METRIC_COL].fillna(0)
-
-    def render_type_kpis_for_month(m: str, show_delta: bool):
-        st.markdown(f"**{m}**")
-        m_series = type_month[type_month["month"] == m].set_index("absence_category")[METRIC_COL].reindex(TYPE_ORDER).fillna(0)
-        baseline = type_month[type_month["month"] == month_1].set_index("absence_category")[METRIC_COL].reindex(TYPE_ORDER).fillna(0)
-
-        cols = st.columns(len(TYPE_ORDER))
-        for i, cat in enumerate(TYPE_ORDER):
-            v = float(m_series.loc[cat])
-            if show_delta and month_2 and m == month_2:
-                v0 = float(baseline.loc[cat])
-                d = v - v0
-                if v0 == 0:
-                    pct_str = "N/A" if v != 0 else "0.0%"
+            cols = st.columns(len(TYPE_ORDER))
+            for i, cat in enumerate(TYPE_ORDER):
+                v = float(m_series.loc[cat])
+                if show_delta and month_2 and m == month_2:
+                    v0 = float(baseline.loc[cat])
+                    d = v - v0
+                    if v0 == 0:
+                        pct_str = "N/A" if v != 0 else "0.0%"
+                    else:
+                        pct_str = f"{(d / v0 * 100):+.1f}%"
+                    cols[i].metric(cat, fmt_num(v), f"{d:+.1f}d ({pct_str})")
                 else:
-                    pct_str = f"{(d / v0 * 100):+.1f}%"
-                cols[i].metric(cat, fmt_num(v), f"{d:+.1f}d ({pct_str})")
-            else:
-                cols[i].metric(cat, fmt_num(v))
+                    cols[i].metric(cat, fmt_num(v))
 
-    if month_2:
-        left, sep, right = st.columns([5, 0.25, 5])
-        with left: render_type_kpis_for_month(month_1, show_delta=False)
-        with sep: st.markdown('<div class="eg-vertical-divider-kpi">&nbsp;</div>', unsafe_allow_html=True)
-        with right: render_type_kpis_for_month(month_2, show_delta=True)
-    else:
-        render_type_kpis_for_month(month_1, show_delta=False)
+        if month_2:
+            left, sep, right = st.columns([5, 0.25, 5])
+            with left: render_type_kpis_for_month(month_1, show_delta=False)
+            with sep: st.markdown('<div class="eg-vertical-divider-kpi">&nbsp;</div>', unsafe_allow_html=True)
+            with right: render_type_kpis_for_month(month_2, show_delta=True)
+        else:
+            render_type_kpis_for_month(month_1, show_delta=False)
 
-    st.markdown("---")
+        st.markdown("---")
 
-    st.markdown('<h3 class="eg-section-title">Absence by Type</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="eg-section-title">Absence by Type</h3>', unsafe_allow_html=True)
 
-    pie_df = (
-        df_cases_filt.groupby(["month", "absence_category"])[METRIC_COL]
-        .sum()
-        .reset_index()
-    )
+        pie_df = (
+            df_cases_filt.groupby(["month", "absence_category"])[METRIC_COL]
+            .sum()
+            .reset_index()
+        )
 
-    grid = pd.MultiIndex.from_product([months_in_scope, TYPE_ORDER], names=["month", "absence_category"]).to_frame(index=False)
-    pie_df = grid.merge(pie_df, on=["month", "absence_category"], how="left")
-    pie_df[METRIC_COL] = pie_df[METRIC_COL].fillna(0)
+        grid = pd.MultiIndex.from_product([months_in_scope, TYPE_ORDER], names=["month", "absence_category"]).to_frame(index=False)
+        pie_df = grid.merge(pie_df, on=["month", "absence_category"], how="left")
+        pie_df[METRIC_COL] = pie_df[METRIC_COL].fillna(0)
 
-    def donut_for_month(m: str):
-        d = pie_df[pie_df["month"] == m].copy()
-        d = d[d[METRIC_COL] > 0]
-        if d.empty:
-            st.info(f"No absence days for {m}.")
-            return
+        def donut_for_month(m: str):
+            d = pie_df[pie_df["month"] == m].copy()
+            d = d[d[METRIC_COL] > 0]
+            if d.empty:
+                st.info(f"No absence days for {m}.")
+                return
 
-        fig = px.pie(d, names="absence_category", values=METRIC_COL, hole=0.55, category_orders={"absence_category": TYPE_ORDER}, color_discrete_map=ABSENCE_COLOR_MAP)
-        fig.update_traces(textinfo="percent+value", texttemplate="%{percent} (%{value:.1f}d)", textposition="inside", sort=False)
-        fig.update_layout(showlegend=True, legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), title=dict(text=m, x=0.5, xanchor="center"), font=dict(family="Inter, system-ui, sans-serif", size=12))
-        st.plotly_chart(fig, use_container_width=True)
+            fig = px.pie(d, names="absence_category", values=METRIC_COL, hole=0.55, category_orders={"absence_category": TYPE_ORDER}, color_discrete_map=ABSENCE_COLOR_MAP)
+            fig.update_traces(textinfo="percent+value", texttemplate="%{percent} (%{value:.1f}d)", textposition="inside", sort=False)
+            fig.update_layout(showlegend=True, legend_title_text="Absence type", margin=dict(l=10, r=10, t=40, b=10), title=dict(text=m, x=0.5, xanchor="center"), font=dict(family="Inter, system-ui, sans-serif", size=12))
+            st.plotly_chart(fig, use_container_width=True)
 
-    if month_2:
-        c1, sep2, c2 = st.columns([5, 0.25, 5])
-        with c1: donut_for_month(month_1)
-        with sep2: st.markdown('<div class="eg-vertical-divider-donut">&nbsp;</div>', unsafe_allow_html=True)
-        with c2: donut_for_month(month_2)
-    else:
-        donut_for_month(month_1)
+        if month_2:
+            c1, sep2, c2 = st.columns([5, 0.25, 5])
+            with c1: donut_for_month(month_1)
+            with sep2: st.markdown('<div class="eg-vertical-divider-donut">&nbsp;</div>', unsafe_allow_html=True)
+            with c2: donut_for_month(month_2)
+        else:
+            donut_for_month(month_1)
 
 # =========================================================
-# TAB 5: BLIP Utilisation
+# TIME TAB: BLIP Utilisation
 # =========================================================
-with tab_blip:
+with main_time:
     st.caption("Data and date range are set in the sidebar (BLIP Utilisation section).")
     if f_shift is None or (hasattr(f_shift, "empty") and f_shift.empty):
         st.info("Configure BLIP data source in the sidebar (upload an Excel file or enter a path).")
@@ -1926,7 +1898,7 @@ with tab_blip:
         total_shifts_incl_wfh = len(f_shift) + wfh_days_count
         avg_worked_shift = total_worked_incl_wfh / total_shifts_incl_wfh if total_shifts_incl_wfh > 0 else 0.0
 
-        k1, k2, k3, k4, k5, k6 = st.columns(6)
+        k1, k2, k3, k4, k5 = st.columns(5)
         with k1:
             kpi_tile("Entries (all)", f"{entries_all:,}", "All BLIP rows")
         with k2:
@@ -1934,22 +1906,18 @@ with tab_blip:
         with k3:
             kpi_tile("Employees", f"{employees_blip:,}", "In selected range")
         with k4:
-            kpi_tile("Missing clock-outs", f"{int(missing_clockouts):,}", "No clock-out time")
-        with k5:
             kpi_tile("Worked hours (incl. WFH)", fmt_hours_minutes(total_worked_incl_wfh), "Weekdays only")
-        with k6:
+        with k5:
             kpi_tile("Avg worked / shift", fmt_hours_minutes(avg_worked_shift), "Incl. WFH as shifts")
 
-        shift_totals_body = f"""
-          <div style="font-size:0.9rem; color:var(--eg-text);">
-            Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> · Break = <b>{fmt_hours_minutes(break_total)}</b> · Worked (excl. breaks) = <b>{fmt_hours_minutes(worked_total)}</b>
-          </div>
-        """
+        shift_totals_body = f"""<div style="font-size:0.9rem; color:var(--eg-text);">
+Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_hours_minutes(break_total)}</b> | Worked (excl. breaks) = <b>{fmt_hours_minutes(worked_total)}</b>
+</div>"""
         st.markdown(" ")
         st.markdown(" ")
 
         soft_card("Shift totals in selected range", shift_totals_body)
-        st.caption("Recorded totals above (clock-in only). KPIs above include WFH: weekdays with no entry = 8 hrs each. Daily/weekly/overall utilisation below include WFH.")
+        st.caption("Recorded totals above (clock-in only). KPIs above include WFH: weekdays with no entry = 8 hrs each. Daily utilisation below shows % (TH = 100%, i.e. 8h).")
         st.markdown(" ------------------------------------------------------------ ")
 
         st.markdown('<h3 class="eg-section-title">Daily Utilisation (incl. WFH, weekdays only)</h3>', unsafe_allow_html=True)
@@ -1991,9 +1959,9 @@ with tab_blip:
         # 1. They are explicitly marked as WFH in Notes AND have no employees (true WFH day)
         # 2. OR they have employees but are marked as WFH (mixed day - calculate normally)
         wfh_explicit_mask = daily_blip["IsWFHDay"] == True
-        # For explicit WFH days with no employees, set to 100% (8 hours)
-        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "WorkedHours"] = WFH_ASSUMED_HOURS
-        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "Expected"] = WFH_ASSUMED_HOURS
+        # For explicit WFH days with no employees, set to 100% using selected expected daily hours (7.5 or 8)
+        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "WorkedHours"] = expected_daily_hours
+        daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "Expected"] = expected_daily_hours
         daily_blip.loc[wfh_explicit_mask & (daily_blip["Employees"] == 0), "Utilisation"] = 1.0
         
         # Filter out days with no employees and not marked as WFH (missing data, not workdays)
@@ -2006,50 +1974,41 @@ with tab_blip:
             u = row["Utilisation"]
             if pd.isna(u):
                 return "Workday (<100%)"  # Default to <100% if calculation failed
-            return "Workday (≥100%)" if u >= 1.0 else "Workday (<100%)"
+            return "Workday (>=100%)" if u >= 1.0 else "Workday (<100%)"
         daily_blip["DayType"] = daily_blip.apply(_blip_day_type, axis=1)
         daily_blip = daily_blip.drop(columns=["_date_norm"])
         # Exclude weekends: keep only Mon (0) .. Fri (4); drop Sat (5) and Sun (6)
         daily_blip = daily_blip[daily_blip["date"].dt.dayofweek < 5].copy()
-        # week_start (Monday) for weekly aggregation including WFH
+        # week_start kept for exports
         daily_blip["week_start"] = daily_blip["date"] - pd.to_timedelta(daily_blip["date"].dt.dayofweek, unit="D")
-        # Add percentage labels for display
-        daily_blip["UtilisationPct"] = (daily_blip["Utilisation"] * 100).round(1)
-        daily_blip["UtilisationLabel"] = daily_blip["UtilisationPct"].apply(lambda x: f"{x:.1f}%")
-        # Create custom color mapping: red below 90%, green gradient from 90% to 100%
-        def get_color_for_util(u):
-            if pd.isna(u) or u < 0.9:
-                return "#dc2626"  # Red
-            elif u >= 1.0:
-                return "#15803d"  # Dark green at 100%
-            else:
-                # Green gradient from 90% to 100%
-                # Interpolate between light green (#22c55e) at 90% and dark green (#15803d) at 100%
-                ratio = (u - 0.9) / 0.1  # 0 at 90%, 1 at 100%
-                # Interpolate RGB values
-                r1, g1, b1 = 0x22, 0xc5, 0x5e  # Light green
-                r2, g2, b2 = 0x15, 0x80, 0x3d  # Dark green
-                r = int(r1 + (r2 - r1) * ratio)
-                g = int(g1 + (g2 - g1) * ratio)
-                b = int(b1 + (b2 - b1) * ratio)
-                return f"#{r:02x}{g:02x}{b:02x}"
-        daily_blip["BarColor"] = daily_blip["Utilisation"].apply(get_color_for_util)
-        # Use graph_objects for better color control
+        # Daily utilisation: line chart with kinked y-axis (0-70% compressed at bottom, 70-100% expanded)
+        def _util_to_display(y):
+            """Map utilisation [0,1] to display y: 0-70% -> [0, 0.2], 70-100% -> [0.2, 1] (kink at 70%)."""
+            y = np.clip(float(y) if not np.isnan(y) else 0, 0, 1)
+            if y <= 0.7:
+                return y * (0.2 / 0.7)  # 0-0.7 -> 0-0.2
+            return 0.2 + (y - 0.7) * (0.8 / 0.3)  # 0.7-1 -> 0.2-1
+
+        util_display = daily_blip["Utilisation"].apply(_util_to_display)
         fig_daily = go.Figure(data=[
-            go.Bar(
+            go.Scatter(
                 x=daily_blip["date"],
-                y=daily_blip["Utilisation"],
-                marker_color=daily_blip["BarColor"],
-                text=daily_blip["UtilisationLabel"],
-                textposition="outside",
-                hovertemplate="Date: %{x}<br>Utilisation: %{y:.1%}<extra></extra>",
+                y=util_display,
+                mode="lines+markers",
+                line=dict(color="#16a34a", width=2),
+                marker=dict(size=8),
+                name="Utilisation",
+                customdata=np.column_stack((daily_blip["Utilisation"],)),
+                hovertemplate="Date: %{x|%d %b}<br>Utilisation: %{customdata[0]:.0%}<extra></extra>",
             )
         ])
-        fig_daily.add_hline(y=0.9, line_dash="dash", line_color="#f59e0b", annotation_text="TH: 90%", annotation_position="right")
-        fig_daily.add_hline(y=1.0, line_dash="dash", line_color="#6b7280")
-        fig_daily.update_yaxes(tickformat=".0%")
+        th_label = f"TH: 100% ({expected_daily_hours}h)"
+        fig_daily.add_hline(y=_util_to_display(1.0), line_dash="dash", line_color="#f59e0b", annotation_text=th_label, annotation_position="right")
+        # Ticks at display positions with real % labels (kink: 0-70% in bottom 20% of axis)
+        tickvals_display = [0, _util_to_display(0.35), 0.2, _util_to_display(0.8), _util_to_display(0.9), _util_to_display(1.0)]
+        ticktext_pct = ["0%", "35%", "70%", "80%", "90%", "100%"]
+        fig_daily.update_yaxes(title_text="Utilisation", range=[0, 1], tickvals=tickvals_display, ticktext=ticktext_pct)
         fig_daily.update_xaxes(dtick=86400000, tickformat="%d %b")
-        # Hide weekend days on x-axis (Sat through Sun; bounds are left-inclusive, right-exclusive so 'mon' keeps Monday)
         fig_daily.update_xaxes(rangebreaks=[dict(bounds=["sat", "mon"])])
         fig_daily.update_layout(
             xaxis_title="Date",
@@ -2058,51 +2017,6 @@ with tab_blip:
             hovermode="x unified",
         )
         st.plotly_chart(_blip_clean_plot(fig_daily, "Utilisation"), use_container_width=True)
-        st.markdown("---")
-
-        st.markdown('<h3 class="eg-section-title">Weekly Utilisation (incl. WFH)</h3>', unsafe_allow_html=True)
-        # Derive weekly from daily so WFH days (8 hrs, 100%) are included
-        weekly_blip = daily_blip.groupby("week_start", as_index=False).agg(WorkedHours=("WorkedHours", "sum"), Expected=("Expected", "sum"))
-        weekly_blip["Utilisation"] = _blip_safe_divide(weekly_blip["WorkedHours"].values, weekly_blip["Expected"].values)
-        fig_weekly = px.line(weekly_blip, x="week_start", y="Utilisation", markers=True)
-        fig_weekly.add_hline(y=1.0, line_dash="dash")
-        fig_weekly.update_yaxes(tickformat=".0%")
-        st.plotly_chart(_blip_clean_plot(fig_weekly, "Utilisation"), use_container_width=True)
-        st.markdown("---")
-
-        # Overall hours & utilisation (weekdays only, incl. WFH)
-        total_worked_incl_wfh = daily_blip["WorkedHours"].sum()
-        total_expected_incl_wfh = daily_blip["Expected"].sum()
-        overall_utilisation = _blip_safe_divide(total_worked_incl_wfh, total_expected_incl_wfh)
-        overall_utilisation_pct = (float(overall_utilisation) * 100) if pd.notna(overall_utilisation) and total_expected_incl_wfh > 0 else 0.0
-        overall_body = f"""
-          <div style="font-size:0.9rem; color:var(--eg-text);">
-            Total worked (incl. WFH) = <b>{fmt_hours_minutes(total_worked_incl_wfh)}</b> · 
-            Total expected = <b>{fmt_hours_minutes(total_expected_incl_wfh)}</b> · 
-            Overall utilisation = <b>{overall_utilisation_pct:.1f}%</b>
-          </div>
-          <div style="font-size:0.8rem; color:var(--eg-muted); margin-top:0.25rem;">Weekdays only; weekends not considered. WFH = 8 hrs (9–5) per day with no clock-in.</div>
-        """
-        soft_card("Overall hours & utilisation (weekdays only, incl. WFH)", overall_body)
-        st.markdown("---")
-
-        st.markdown('<h3 class="eg-section-title">Monthly Hours</h3>', unsafe_allow_html=True)
-        # Monthly: incl. WFH (weekdays only) from daily_blip
-        daily_blip["month"] = daily_blip["date"].dt.to_period("M").astype(str)
-        monthly_incl_wfh = daily_blip.groupby("month", as_index=False).agg(WorkedHours=("WorkedHours", "sum"), Expected=("Expected", "sum"))
-        monthly_incl_wfh["Utilisation"] = _blip_safe_divide(monthly_incl_wfh["WorkedHours"].values, monthly_incl_wfh["Expected"].values)
-        m_long_wfh = monthly_incl_wfh[["month", "WorkedHours"]].rename(columns={"WorkedHours": "Hours"})
-        m_long_wfh["Type"] = "Worked (incl. WFH)"
-        fig_monthly_wfh = px.bar(m_long_wfh, x="month", y="Hours", color="Type", color_discrete_map={"Worked (incl. WFH)": "#16a34a"})
-        st.plotly_chart(_blip_clean_plot(fig_monthly_wfh, "Hours", "Month"), use_container_width=True)
-        st.caption("Month totals: weekdays only; WFH = 8 hrs per day with no clock-in.")
-        st.markdown("")
-        # Monthly: recorded shifts only (weekdays; f_shift is already weekday-only)
-        monthly_blip = f_shift.groupby("month", as_index=False).agg(WorkedHours=("worked_hours", "sum"), BreakHours=("break_hours", "sum"), DurationHours=("duration_hours", "sum"))
-        m_long = monthly_blip.melt(id_vars=["month"], value_vars=["WorkedHours", "BreakHours"], var_name="Type", value_name="Hours")
-        fig_monthly = px.bar(m_long, x="month", y="Hours", color="Type", color_discrete_map={"WorkedHours": "#16a34a", "BreakHours": "#f59e0b"})
-        st.plotly_chart(_blip_clean_plot(fig_monthly, "Hours", "Month"), use_container_width=True)
-        st.caption("From clock-in data only (weekdays); WFH days not included.")
         st.markdown("---")
 
         with st.expander("View Shift-level table (selected range)"):
@@ -2114,7 +2028,7 @@ with tab_blip:
                     shift_display[col] = shift_display[col].apply(lambda x: fmt_hours_minutes(x) if pd.notna(x) else "")
             st.dataframe(shift_display, use_container_width=True)
 
-        st.markdown('<h3 class="eg-section-title">Employee View (Work–Break–Work by Day)</h3>', unsafe_allow_html=True)
+        st.markdown('<h3 class="eg-section-title">Employee View (Work / Break / Work by Day)</h3>', unsafe_allow_html=True)
         if f_blip.empty:
             st.info("No rows available for the selected date range.")
         else:
@@ -2147,16 +2061,16 @@ with tab_blip:
                             continue  # skip Sat/Sun
                         # If this day is marked as WFH in Notes, add as WFH instead of segments
                         if d_ts in wfh_dates_emp:
-                            rows_seg.append({"date": pd.to_datetime(day), "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0})
+                            rows_seg.append({"date": pd.to_datetime(day), "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0, "start": None, "end": None})
                         else:
                             segs = _blip_build_authentic_day_segments(day_df)
                             for idx, s in enumerate(segs, start=1):
                                 hrs = (s["end"] - s["start"]).total_seconds() / 3600
                                 if hrs <= 0:
                                     continue
-                                rows_seg.append({"date": pd.to_datetime(day), "Segment": f"{idx:02d} {s['kind']}", "Kind": s["kind"], "Hours": hrs, "SegIndex": idx})
+                                rows_seg.append({"date": pd.to_datetime(day), "Segment": f"{idx:02d} {s['kind']}", "Kind": s["kind"], "Hours": hrs, "SegIndex": idx, "start": s["start"], "end": s["end"]})
                 
-                # Add missing weekdays only (WFH / On leave) — no weekends in graph
+                # Add missing weekdays only (WFH / On leave) - no weekends in graph
                 if not emp_all_valid.empty:
                     dates_with_segments = {pd.Timestamp(d).normalize() for d in emp_all_valid["clockin_dt"].dt.date.unique()}
                 else:
@@ -2165,7 +2079,7 @@ with tab_blip:
                     d_ts = pd.Timestamp(d).normalize()
                     if d_ts in dates_with_segments or d_ts in wfh_dates_emp:
                         continue
-                    rows_seg.append({"date": d_ts, "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0})
+                    rows_seg.append({"date": d_ts, "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0, "start": None, "end": None})
                 
                 seg_df = pd.DataFrame(rows_seg)
                 if seg_df.empty:
@@ -2174,49 +2088,70 @@ with tab_blip:
                     seg_df["date"] = pd.to_datetime(seg_df["date"])
                     seg_df = seg_df[seg_df["date"].dt.dayofweek < 5].copy()
                     seg_df["TimeLabel"] = seg_df["Hours"].apply(fmt_hours_minutes)
-                    # Sort by date and SegIndex to ensure breaks appear between work sessions chronologically
+                    # Compute bar position: y-axis = time of day 8am-7pm; bar starts at clock-in and has height = duration
+                    Y_MIN, Y_MAX = 8.0, 19.0  # 08:00 to 19:00
+
+                    def row_base_and_duration(row):
+                        # WFH / On leave: always 9am-5pm (8h), regardless of start/end in row
+                        if row.get("Kind") == "WFH / On leave":
+                            return 9.0, 8.0
+                        start_val, end_val = row.get("start"), row.get("end")
+                        if pd.notna(start_val) and pd.notna(end_val):
+                            start_h = _datetime_to_hour_of_day(start_val)
+                            end_h = _datetime_to_hour_of_day(end_val)
+                            if np.isnan(start_h) or np.isnan(end_h):
+                                return 9.0, 8.0  # fallback
+                            base = max(Y_MIN, min(start_h, Y_MAX))
+                            end_disp = min(Y_MAX, max(end_h, Y_MIN))
+                            duration = max(0.0, end_disp - base)
+                            return base, duration
+                        return 9.0, 8.0  # fallback
+
+                    seg_df["base"] = np.nan
+                    seg_df["duration"] = np.nan
+                    for i in seg_df.index:
+                        b, d = row_base_and_duration(seg_df.loc[i])
+                        seg_df.loc[i, "base"] = b
+                        seg_df.loc[i, "duration"] = d
+                    seg_df = seg_df[seg_df["duration"] > 0].copy()
                     seg_df = seg_df.sort_values(["date", "SegIndex"]).copy()
-                    # Use "Kind" for colors but need to ensure stacking order respects SegIndex
-                    # The key is that Plotly stacks segments in the order they appear in the data
-                    # So we'll create separate traces for each segment to control stacking order
+
                     _kind_colors = {
                         "Work": "#16a34a",
                         "Break": "#f59e0b",
                         "WFH / On leave": "#93c5fd"
                     }
-                    # Create figure with proper stacking order - segments stack in data order
-                    # This ensures breaks appear between work sessions based on SegIndex
                     fig_seg = go.Figure()
                     legend_added = {"Work": False, "Break": False, "WFH / On leave": False}
-                    
-                    # Group by date and add segments in SegIndex order (chronological)
-                    # This way breaks will stack in the middle between work sessions
+
                     for date in sorted(seg_df["date"].unique()):
                         date_segs = seg_df[seg_df["date"] == date].sort_values("SegIndex")
                         for _, row in date_segs.iterrows():
                             kind = row["Kind"]
                             show_legend = not legend_added[kind]
                             legend_added[kind] = True
-                            
-                            # Add each segment as a separate trace to control stacking order
                             fig_seg.add_trace(go.Bar(
                                 x=[row["date"]],
-                                y=[row["Hours"]],
+                                y=[row["duration"]],
+                                base=[row["base"]],
                                 name=kind,
                                 text=[row["TimeLabel"]],
                                 textposition="inside",
-                                textfont=dict(size=11),
+                                textfont=dict(size=10),
                                 insidetextanchor="middle",
                                 marker_color=_kind_colors[kind],
                                 legendgroup=kind,
-                                showlegend=show_legend,  # Show legend only once per kind
+                                showlegend=show_legend,
+                                width=86400000 * 0.7,  # bar width: 70% of a day (thicker bars)
                             ))
-                    
-                    fig_seg.update_layout(barmode="stack")
-                    # Set y-axis to go up to 9 hours
-                    tickvals_s, ticktext_s = _hours_axis_ticks(9.0, step=1.0)
+
+                    # Y-axis: time of day 8am to 7pm (range extended slightly below 8 so deviation text fits)
+                    tickvals_s = list(range(8, 20))
+                    ticktext_s = [f"{h:02d}:00" for h in range(8, 20)]
+                    y_range_low = 7.2  # space for "deviation from 8hrs" below 8am
                     fig_seg.update_layout(
-                        yaxis=dict(tickvals=tickvals_s, ticktext=ticktext_s, range=[0, 9]),
+                        barmode="overlay",
+                        yaxis=dict(tickvals=tickvals_s, ticktext=ticktext_s, range=[y_range_low, Y_MAX]),
                         showlegend=True,
                         legend=dict(
                             title="Segment Type",
@@ -2227,8 +2162,55 @@ with tab_blip:
                             x=1
                         )
                     )
+                    # X-axis: show all weekday dates in range
+                    all_weekdays = [d for d in pd.date_range(start=pd.Timestamp(d1_blip), end=pd.Timestamp(d2_blip), freq="D") if d.dayofweek < 5]
+                    if all_weekdays:
+                        fig_seg.update_xaxes(
+                            tickvals=all_weekdays,
+                            ticktext=[d.strftime("%d/%m") for d in all_weekdays],
+                            tickangle=-45,
+                            range=[min(all_weekdays) - pd.Timedelta(days=0.5), max(all_weekdays) + pd.Timedelta(days=0.5)],
+                        )
                     fig_seg.update_xaxes(rangebreaks=[dict(bounds=["sat", "mon"])])
-                    st.plotly_chart(_blip_clean_plot(fig_seg, y_title="Hours", x_title="Date", show_legend=True), use_container_width=True)
+
+                    # Deviation from 8hrs below each bar (per date) - show for all weekday dates in range
+                    seg_work = seg_df[seg_df["Kind"].isin(["Work", "WFH / On leave"])].copy()
+                    seg_work["_date_norm"] = seg_work["date"].dt.normalize()
+                    daily_work = seg_work.groupby("_date_norm")["Hours"].sum()
+                    overall_dev_sum = 0.0
+                    annotations_list = []
+                    for date in all_weekdays:
+                        total_worked = float(daily_work.get(pd.Timestamp(date).normalize(), 0.0))
+                        dev = total_worked - 8.0
+                        overall_dev_sum += dev
+                        text = f"+{dev:.1f}h" if dev >= 0 else f"{dev:.1f}h"
+                        annotations_list.append(dict(
+                            x=date,
+                            y=8.0,
+                            text=text,
+                            showarrow=False,
+                            xanchor="center",
+                            yref="y",
+                            font=dict(size=11, color="#000000"),
+                        ))
+                    # Overall deviation at top of graph (paper coords) - bold and capitalised
+                    overall_text = f"+{overall_dev_sum:.1f}h" if overall_dev_sum >= 0 else f"{overall_dev_sum:.1f}h"
+                    annotations_list.append(dict(
+                        x=0.5,
+                        y=1.06,
+                        xref="paper",
+                        yref="paper",
+                        text=f"OVERALL DEVIATION VS 8H: {overall_text}",
+                        showarrow=False,
+                        xanchor="center",
+                        font=dict(size=14, color="#111827", family="Arial Black, sans-serif"),
+                    ))
+                    fig_seg.update_layout(
+                        annotations=annotations_list,
+                        height=620,
+                        margin=dict(t=60, b=50, l=50, r=30),
+                    )
+                    st.plotly_chart(_blip_clean_plot(fig_seg, y_title="Time of day", x_title="Date", show_legend=True), use_container_width=True)
                     daily_totals = seg_df.groupby(["date", "Kind"], as_index=False)["Hours"].sum()
                     piv = daily_totals.pivot(index="date", columns="Kind", values="Hours").fillna(0).reset_index()
                     piv["Total"] = piv.get("Work", 0) + piv.get("Break", 0)
@@ -2269,23 +2251,13 @@ with tab_blip:
             sort_cols = ["date", BLIP_COL_TEAM, "employee"]
         shift_export = f_shift[show_cols].sort_values(sort_cols).copy()
         shift_export["generated_at"] = export_ts
-        weekly_export = weekly_blip.copy()
-        weekly_export["generated_at"] = export_ts
-        monthly_export = monthly_blip.copy()
-        monthly_export["generated_at"] = export_ts
-        col_shift, col_weekly, col_monthly = st.columns(3)
-        with col_shift:
-            st.download_button("Download Shift-level table (CSV)", data=shift_export.to_csv(index=False).encode("utf-8"), file_name="blip_shift_table.csv", mime="text/csv", key="blip_export_shift")
-        with col_weekly:
-            st.download_button("Download Weekly utilisation summary (CSV)", data=weekly_export.to_csv(index=False).encode("utf-8"), file_name="blip_weekly_utilisation.csv", mime="text/csv", key="blip_export_weekly")
-        with col_monthly:
-            st.download_button("Download Monthly hours summary (CSV)", data=monthly_export.to_csv(index=False).encode("utf-8"), file_name="blip_monthly_hours.csv", mime="text/csv", key="blip_export_monthly")
+        st.download_button("Download Shift-level table (CSV)", data=shift_export.to_csv(index=False).encode("utf-8"), file_name="blip_shift_table.csv", mime="text/csv", key="blip_export_shift")
 
         
         st.markdown("")
 
 st.markdown("")
 st.markdown(
-    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">BrightHR & BLIP Dashboard for UnitedGreen</div>',
+    '<div style="text-align:center; font-size:0.8rem; color:var(--eg-muted); padding:0.5rem 0;">Leave Management & Time Utilisation ? UnitedGreen</div>',
     unsafe_allow_html=True,
 )
