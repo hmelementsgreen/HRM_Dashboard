@@ -1,0 +1,7 @@
+{
+  "input_folder": "path/to/week_12_feb",
+  "absence_input": "path/to/this_week_absence_export.csv",
+  "absence_output": "AbsenseReport_Cleaned_Final.csv",
+  "blip_input": "path/to/this_week_blip_timesheet.csv",
+  "blip_output": "path/to/blip_clean.xlsx"
+}
