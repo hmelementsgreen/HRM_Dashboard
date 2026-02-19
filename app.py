@@ -71,7 +71,7 @@ st.markdown(
 # Constants
 # ----------------------------
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_PATH_DEFAULT = os.path.join(_APP_DIR, "AbsenseReport_Cleaned_Final.csv")
+CSV_PATH_DEFAULT = os.path.join(_APP_DIR, "misc", "19th_Feb_2026_output", "Absence report_20260219_1039_output.csv")
 METRIC_COL = "Absence duration for period in days"
 
 TYPE_ORDER = [
@@ -114,12 +114,14 @@ ENTITLEMENT_DAYS_COL = "leave_entitlement_days"
 #     before matching. (4) Both Absence type and Absence description are combined for matching.
 WFH_KEYWORDS = ["wfh", "work from home", "work-from-home", "remote", "home working", "telework", "tele-working"]
 EXTERNAL_ASSIGNMENT_KEYWORDS = [
-    "travel", "business trip", "offsite", "onsite", "client visit", "site visit", "london",
+    "travel", "business trip", "offsite", "onsite", "client visit", "site visit",
+    "london", "hamburg", "berlin", "munich", "frankfurt", "brussels", "amsterdam", "paris",
     "birthday", "birthday leave",
     "training", "event", "events", "conference", "workshop", "course", "training day",
+    "visit", "assignment", "external",
 ]
 ANNUAL_KEYWORDS = ["annual", "holiday", "vacation", "pto"]
-SICK_KEYWORDS = ["sick", "sickness", "medical", "ill", "flu", "gp", "doctor", "hospital", "injury", "migraine", "sick-note"]
+SICK_KEYWORDS = ["sick", "sickness", "medical", "ill", "flu", "gp", "doctor", "hospital", "injury", "migraine", "sick-note", "sick note", "unwell", "incapacity"]
 
 DETAIL_COL_CANDIDATES = [
     "Absence description",
@@ -142,17 +144,9 @@ BLIP_COL_IN_LOC = "Clock In Location"
 BLIP_COL_OUT_LOC = "Clock Out Location"
 BLIP_COL_DURATION = "Total Duration"
 BLIP_COL_WORKED = "Total Excluding Breaks"
-BLIP_XLSX_DEFAULT = r"C:\Users\HarshMalhotra\OneDrive - United Green\Documents\Blip\blipTimesheet_27Jan_onwards_clean.xlsx"
+# Cumulative BLIP sheet: app loads this; preprocessing appends to it (no overlap, missing data can be added).
+BLIP_XLSX_DEFAULT = os.path.join(_APP_DIR, "misc", "19th_Feb_2026_output", "blip_cleaned.csv")
 WFH_ASSUMED_HOURS = 8.0  # 9 to 5
-
-def _blip_to_timedelta_safe(s: pd.Series) -> pd.Series:
-    x = s.astype(str).replace({"NaT": np.nan, "nan": np.nan, "": np.nan, "None": np.nan})
-    return pd.to_timedelta(x, errors="coerce")
-
-def _blip_combine_date_time(d, t):
-    d = pd.to_datetime(d, errors="coerce")
-    t = t.astype(str).replace({"NaT": np.nan, "nan": np.nan, "": np.nan, "None": np.nan})
-    return pd.to_datetime(d.dt.strftime("%Y-%m-%d") + " " + t, errors="coerce")
 
 def _blip_clean_plot(fig, y_title=None, x_title=None, show_legend=None):
     """Clean plot styling. If show_legend is None, preserves existing legend setting."""
@@ -182,46 +176,26 @@ def _datetime_to_hour_of_day(ts) -> float:
     return ts.hour + ts.minute / 60.0 + ts.second / 3600.0
 
 def _blip_process_raw_df(df: pd.DataFrame) -> pd.DataFrame:
-    """Apply BLIP column parsing and derived fields to a raw Excel DataFrame."""
-    df.columns = [str(c).strip() for c in df.columns]
-    df["employee"] = (
-        df.get(BLIP_COL_FIRST, pd.Series(index=df.index, dtype="object")).fillna("").astype(str).str.strip()
-        + " "
-        + df.get(BLIP_COL_LAST, pd.Series(index=df.index, dtype="object")).fillna("").astype(str).str.strip()
-    ).str.strip()
-    df["date"] = pd.to_datetime(df.get(BLIP_COL_IN_DATE), errors="coerce")
-    df["is_weekend"] = df["date"].dt.weekday >= 5
-    df["week_start"] = df["date"] - pd.to_timedelta(df["date"].dt.weekday, unit="D")
-    df["month"] = df["date"].dt.to_period("M").astype(str)
-    df["duration_td"] = _blip_to_timedelta_safe(df.get(BLIP_COL_DURATION, pd.Series(index=df.index, dtype="object")))
-    df["worked_td"] = _blip_to_timedelta_safe(df.get(BLIP_COL_WORKED, pd.Series(index=df.index, dtype="object")))
-    df["duration_hours"] = df["duration_td"].dt.total_seconds() / 3600
-    df["worked_hours"] = df["worked_td"].dt.total_seconds() / 3600
-    df["break_hours"] = (df["duration_hours"] - df["worked_hours"]).clip(lower=0)
-    if BLIP_COL_IN_TIME in df.columns and BLIP_COL_OUT_TIME in df.columns:
-        df["clockin_dt"] = _blip_combine_date_time(df[BLIP_COL_IN_DATE], df[BLIP_COL_IN_TIME])
-        df["clockout_dt"] = _blip_combine_date_time(df[BLIP_COL_OUT_DATE], df[BLIP_COL_OUT_TIME])
-        df["has_clockout"] = df["clockout_dt"].notna() & df["clockin_dt"].notna()
-    else:
-        df["clockin_dt"] = pd.NaT
-        df["clockout_dt"] = pd.NaT
-        df["has_clockout"] = False
-    if BLIP_COL_IN_LOC in df.columns and BLIP_COL_OUT_LOC in df.columns:
-        df["location_mismatch"] = (
-            df[BLIP_COL_IN_LOC].astype(str) != df[BLIP_COL_OUT_LOC].astype(str)
-        ) & df["has_clockout"]
-    else:
-        df["location_mismatch"] = False
-    df["blip_type_norm"] = df.get(BLIP_COL_TYPE, "").astype(str).str.strip().str.lower()
-    return df
+    """Apply BLIP column parsing and anomaly fixes. Delegates to blip_preprocess."""
+    from blip_preprocess import process_blip_df
+    return process_blip_df(df, update_source_for_export=False)
 
 @st.cache_data(show_spinner=False)
 def _blip_load_data(path: str) -> pd.DataFrame:
-    df = pd.read_excel(path, skiprows=1, engine="openpyxl")
+    path_lower = (path or "").strip().lower()
+    if path_lower.endswith(".csv"):
+        df = pd.read_csv(path)
+    else:
+        df = pd.read_excel(path, skiprows=1, engine="openpyxl")
     return _blip_process_raw_df(df)
 
 def _blip_load_data_from_upload(uploaded_file) -> pd.DataFrame:
-    df = pd.read_excel(io.BytesIO(uploaded_file.read()), skiprows=1, engine="openpyxl")
+    name = (getattr(uploaded_file, "name", "") or "").lower()
+    raw = io.BytesIO(uploaded_file.read())
+    if name.endswith(".csv"):
+        df = pd.read_csv(raw)
+    else:
+        df = pd.read_excel(raw, skiprows=1, engine="openpyxl")
     return _blip_process_raw_df(df)
 
 def _blip_merge_consecutive(segments):
@@ -447,6 +421,23 @@ def _process_absence_df(df_raw: pd.DataFrame) -> pd.DataFrame:
             )
         else:
             df["absence_category"] = df.get("Absence type", "").apply(lambda x: map_absence_type(x, ""))
+
+    # Double-layer check for Other: reclassify any row still "Other" using all available description text.
+    # Catches cases where Absence type is "Others" but purpose/description clearly indicates another category
+    # (e.g. purpose "Annual leave", "Flu like symptoms", "London" -> Annual Leave, Medical, External).
+    other_mask = df["absence_category"] == "Other (excl. WFH, Travel)"
+    if other_mask.any():
+        def _details_for_reclass(r):
+            parts = [r.get("purpose", "") or ""]
+            for c in DETAIL_COL_CANDIDATES:
+                if c in r.index and c != (detail_col or ""):
+                    parts.append(str(r.get(c, "") or ""))
+            return " ".join(str(p).strip() for p in parts if p).strip()
+
+        df.loc[other_mask, "absence_category"] = df.loc[other_mask].apply(
+            lambda r: map_absence_type(r.get("Absence type", ""), _details_for_reclass(r)),
+            axis=1
+        )
 
     # Entitlement cleaning (days only)
     if ENTITLEMENT_COL in df.columns:
@@ -1003,8 +994,8 @@ with st.sidebar:
     # ----------------------------
     with st.expander("BLIP Utilisation", expanded=False):
         st.markdown("---")
-        blip_uploaded = st.file_uploader("Upload BLIP export (Excel)", type=["xlsx", "xls"], key="blip_upload", help="Upload a file to use instead of a path.")
-        blip_xlsx_path = st.text_input("Or enter Excel file path", value=BLIP_XLSX_DEFAULT, disabled=blip_uploaded is not None, key="blip_path")
+        blip_uploaded = st.file_uploader("Upload BLIP export (Excel or CSV)", type=["xlsx", "xls", "csv"], key="blip_upload", help="Upload a file to use instead of a path.")
+        blip_xlsx_path = st.text_input("Or enter Excel/CSV file path", value=BLIP_XLSX_DEFAULT, disabled=blip_uploaded is not None, key="blip_path")
         if st.button("Hard reload BLIP", key="blip_hard_reload", help="Clear BLIP cache and reload data from file."):
             _blip_load_data.clear()
             st.rerun()
@@ -1254,7 +1245,8 @@ with main_leave:
                     .fillna(0)
                     .reset_index(name="count")
                 )
-                mix = mix[mix["count"] > 0]
+                # Show all 5 types (including External & additional assignments when 0)
+                mix = mix[mix["absence_category"].notna()]
 
                 if mix.empty:
                     st.info("No leave categories present in the current scope.")
@@ -1903,15 +1895,27 @@ with main_time:
         worked_total = f_shift["worked_hours"].sum(skipna=True)
         duration_total = f_shift["duration_hours"].sum(skipna=True)
         break_total = f_shift["break_hours"].sum(skipna=True)
-        # Calculate WFH days (weekdays with no shift entry) - treat as 8-hour shifts
+        # Calculate WFH days per employee (weekdays with no shift for that person) - treat as 8-hour shifts each
         all_dates_kpi = pd.date_range(start=pd.Timestamp(d1_blip), end=pd.Timestamp(d2_blip), freq="D")
         weekday_dates_kpi = [pd.Timestamp(d).date() for d in all_dates_kpi if getattr(d, "dayofweek", d.weekday()) < 5]
-        dates_with_shifts = set(pd.to_datetime(f_shift["date"]).dt.date.unique()) if not f_shift.empty else set()
-        wfh_days_count = sum(1 for d in weekday_dates_kpi if d not in dates_with_shifts)
-        # Total worked hours incl. WFH (WFH days = 8-hour shifts)
-        total_worked_incl_wfh = worked_total + (wfh_days_count * WFH_ASSUMED_HOURS)
+        # Use (y, m, d) tuples so set operations work regardless of date type from pandas
+        weekday_set = {(d.year, d.month, d.day) for d in weekday_dates_kpi}
+        person_wfh_days = 0
+        if not f_shift.empty and "employee" in f_shift.columns:
+            shift_dates_norm = pd.to_datetime(f_shift["date"]).dt.normalize()
+            for emp in f_shift["employee"].dropna().unique():
+                emp = str(emp).strip()
+                if not emp:
+                    continue
+                mask = (f_shift["employee"].astype(str).str.strip() == emp)
+                emp_dates_raw = shift_dates_norm.loc[mask].dt.date.dropna().unique()
+                emp_dates = set((d.year, d.month, d.day) for d in emp_dates_raw)
+                # Weekdays in range where this employee had no shift = their WFH days
+                person_wfh_days += len(weekday_set - emp_dates)
+        # Total worked hours incl. WFH (each person-WFH day = 8-hour shift)
+        total_worked_incl_wfh = worked_total + (person_wfh_days * WFH_ASSUMED_HOURS)
         # Avg worked / shift: include WFH days as 8-hour shifts in the average
-        total_shifts_incl_wfh = len(f_shift) + wfh_days_count
+        total_shifts_incl_wfh = len(f_shift) + person_wfh_days
         avg_worked_shift = total_worked_incl_wfh / total_shifts_incl_wfh if total_shifts_incl_wfh > 0 else 0.0
 
         k1, k2, k3, k4, k5 = st.columns(5)
@@ -1933,7 +1937,7 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
         st.markdown(" ")
 
         soft_card("Shift totals in selected range", shift_totals_body)
-        st.caption("Recorded totals above (clock-in only). KPIs above include WFH: weekdays with no entry = 8 hrs each. Daily utilisation below shows % (TH = 100%, i.e. 8h).")
+        st.caption("Recorded totals above (clock-in only). KPIs above include WFH: per-person weekdays with no shift = 8 hrs each. Daily utilisation below shows % (TH = 100%, i.e. 8h).")
         st.markdown(" ------------------------------------------------------------ ")
 
         st.markdown('<h3 class="eg-section-title">Daily Utilisation (incl. WFH, weekdays only)</h3>', unsafe_allow_html=True)
@@ -1986,7 +1990,7 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
         
         def _blip_day_type(row):
             if row.get("IsWFHDay") is True and row["Employees"] == 0:
-                return "WFH / On leave"
+                return "WFH"
             u = row["Utilisation"]
             if pd.isna(u):
                 return "Workday (<100%)"  # Default to <100% if calculation failed
@@ -2061,13 +2065,18 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                 weekday_dates_emp = [d for d in all_dates_emp if getattr(d, "dayofweek", d.weekday()) < 5]
                 rows_seg = []
                 
-                # Check for WFH days from Notes column
+                # Check for WFH days from Notes column (blue = WFH only)
                 emp_all_notes = emp_all.get("Notes", pd.Series(index=emp_all.index, dtype=object)).fillna("").astype(str).str.upper()
                 emp_all["_is_wfh_note"] = emp_all_notes.str.contains("WFH", na=False)
                 wfh_dates_emp = set()
                 if emp_all["_is_wfh_note"].any():
                     wfh_dates_emp = {pd.Timestamp(d).normalize() for d in emp_all.loc[emp_all["_is_wfh_note"], "date"].dt.date.unique()}
-                
+                # Leave dates from absence data (gray = Leave only)
+                leave_dates_emp = set()
+                if daily_filt is not None and not daily_filt.empty and "employee" in daily_filt.columns and "date" in daily_filt.columns:
+                    emp_match = daily_filt["employee"].astype(str).str.strip() == str(sel_emp).strip()
+                    if emp_match.any():
+                        leave_dates_emp = set(pd.to_datetime(daily_filt.loc[emp_match, "date"]).dt.normalize().dt.date)
                 # Add segments for days with valid clock-in/out data (weekdays only)
                 if not emp_all_valid.empty:
                     emp_all_valid["day"] = emp_all_valid["clockin_dt"].dt.date
@@ -2075,9 +2084,9 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                         d_ts = pd.Timestamp(day).normalize()
                         if getattr(d_ts, "dayofweek", d_ts.weekday()) >= 5:
                             continue  # skip Sat/Sun
-                        # If this day is marked as WFH in Notes, add as WFH instead of segments
+                        # If this day is marked as WFH in Notes, add as WFH (blue)
                         if d_ts in wfh_dates_emp:
-                            rows_seg.append({"date": pd.to_datetime(day), "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0, "start": None, "end": None})
+                            rows_seg.append({"date": pd.to_datetime(day), "Segment": "WFH", "Kind": "WFH", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0, "start": None, "end": None})
                         else:
                             segs = _blip_build_authentic_day_segments(day_df)
                             for idx, s in enumerate(segs, start=1):
@@ -2086,7 +2095,7 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                                     continue
                                 rows_seg.append({"date": pd.to_datetime(day), "Segment": f"{idx:02d} {s['kind']}", "Kind": s["kind"], "Hours": hrs, "SegIndex": idx, "start": s["start"], "end": s["end"]})
                 
-                # Add missing weekdays only (WFH / On leave) - no weekends in graph
+                # Add missing weekdays: Leave (gray) if on leave, else WFH (blue)
                 if not emp_all_valid.empty:
                     dates_with_segments = {pd.Timestamp(d).normalize() for d in emp_all_valid["clockin_dt"].dt.date.unique()}
                 else:
@@ -2095,7 +2104,8 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                     d_ts = pd.Timestamp(d).normalize()
                     if d_ts in dates_with_segments or d_ts in wfh_dates_emp:
                         continue
-                    rows_seg.append({"date": d_ts, "Segment": "WFH / On leave", "Kind": "WFH / On leave", "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0, "start": None, "end": None})
+                    kind = "Leave" if d_ts.date() in leave_dates_emp else "WFH"
+                    rows_seg.append({"date": d_ts, "Segment": kind, "Kind": kind, "Hours": WFH_ASSUMED_HOURS, "SegIndex": 0, "start": None, "end": None})
                 
                 seg_df = pd.DataFrame(rows_seg)
                 if seg_df.empty:
@@ -2103,13 +2113,18 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                 else:
                     seg_df["date"] = pd.to_datetime(seg_df["date"])
                     seg_df = seg_df[seg_df["date"].dt.dayofweek < 5].copy()
+                    # Reclassify WFH -> Leave when employee has absence/leave on that date (Leave takes precedence)
+                    if leave_dates_emp:
+                        mask_leave = (seg_df["Kind"] == "WFH") & (seg_df["date"].dt.normalize().dt.date.isin(leave_dates_emp))
+                        seg_df.loc[mask_leave, "Kind"] = "Leave"
+                        seg_df.loc[mask_leave, "Segment"] = "Leave"
                     seg_df["TimeLabel"] = seg_df["Hours"].apply(fmt_hours_minutes)
                     # Compute bar position: y-axis = time of day 8am-7pm; bar starts at clock-in and has height = duration
                     Y_MIN, Y_MAX = 8.0, 19.0  # 08:00 to 19:00
 
                     def row_base_and_duration(row):
-                        # WFH / On leave: always 9am-5pm (8h), regardless of start/end in row
-                        if row.get("Kind") == "WFH / On leave":
+                        # WFH / Leave: always 9am-5pm (8h), regardless of start/end in row
+                        if row.get("Kind") in ("WFH", "Leave"):
                             return 9.0, 8.0
                         start_val, end_val = row.get("start"), row.get("end")
                         if pd.notna(start_val) and pd.notna(end_val):
@@ -2135,16 +2150,17 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                     _kind_colors = {
                         "Work": "#16a34a",
                         "Break": "#f59e0b",
-                        "WFH / On leave": "#93c5fd"
+                        "WFH": "#93c5fd",
+                        "Leave": "#94a3b8"
                     }
                     fig_seg = go.Figure()
-                    legend_added = {"Work": False, "Break": False, "WFH / On leave": False}
+                    legend_added = {"Work": False, "Break": False, "WFH": False, "Leave": False}
 
                     for date in sorted(seg_df["date"].unique()):
                         date_segs = seg_df[seg_df["date"] == date].sort_values("SegIndex")
                         for _, row in date_segs.iterrows():
                             kind = row["Kind"]
-                            show_legend = not legend_added[kind]
+                            show_legend = not legend_added.get(kind, False)
                             legend_added[kind] = True
                             fig_seg.add_trace(go.Bar(
                                 x=[row["date"]],
@@ -2155,7 +2171,7 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                                 textposition="inside",
                                 textfont=dict(size=10),
                                 insidetextanchor="middle",
-                                marker_color=_kind_colors[kind],
+                                marker_color=_kind_colors.get(kind, "#94a3b8"),
                                 legendgroup=kind,
                                 showlegend=show_legend,
                                 width=86400000 * 0.7,  # bar width: 70% of a day (thicker bars)
@@ -2189,8 +2205,8 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                         )
                     fig_seg.update_xaxes(rangebreaks=[dict(bounds=["sat", "mon"])])
 
-                    # Deviation from 8hrs below each bar (per date) - show for all weekday dates in range
-                    seg_work = seg_df[seg_df["Kind"].isin(["Work", "WFH / On leave"])].copy()
+                    # Deviation from 8hrs below each bar (per date) - show for all weekday dates in range (Leave counts same as WFH)
+                    seg_work = seg_df[seg_df["Kind"].isin(["Work", "WFH", "Leave"])].copy()
                     seg_work["_date_norm"] = seg_work["date"].dt.normalize()
                     daily_work = seg_work.groupby("_date_norm")["Hours"].sum()
                     overall_dev_sum = 0.0
