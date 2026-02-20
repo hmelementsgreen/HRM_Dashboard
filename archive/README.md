@@ -1,16 +1,13 @@
-# Archive
+# archive
 
-These files are **not required** to run the BrightHR & BLIP Dashboard. They are kept for reference or historical analysis.
+Archived/redundant files. The main project only needs: app, data ingestion pipeline, and cumulative sheet.
 
-| Contents | Description |
-|----------|-------------|
-| **CSVs** | Raw/alternate absence data, org mapping tables |
-| **Excel** | BrightHR absence report (Nov–Dec) |
-| **Power BI** | `PowerBI_Step_by_Step.md`, `PowerBI_Replication_Guide.md`, `PowerBI_Cleanup.ipynb` — archived; Power BI integration is not in active use |
-| **Notebooks** | Analysis and cleaning (Jupyter) |
-| **blip_integration/BlipAppNew.py** | Standalone BLIP script; logic is now in `app.py` |
+## Required by pipeline (do not remove)
 
-To run the dashboard you only need, in the project root (or paths set in the app sidebar):
+- **blip_cleanup.py** — Called by `run_ingestion.py` for BLIP data cleanup and append to `blip_cumulative.csv`.
 
-- `AbsenseReport_Cleaned_Final.csv` (Absence tab)
-- BLIP Excel from the ingestion pipeline output
+## Archived (reference only)
+
+- **blip_cleanup_simple.py** — Simpler BLIP preprocessor (root had a duplicate; pipeline uses this folder's blip_cleanup.py).
+- **blip_shift_anomaly_check.py** — Standalone anomaly check script.
+- **misc/** — Old notebooks, Power BI docs, alternative app versions, sample data.

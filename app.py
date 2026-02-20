@@ -71,7 +71,7 @@ st.markdown(
 # Constants
 # ----------------------------
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_PATH_DEFAULT = os.path.join(_APP_DIR, "misc", "19th_Feb_2026_output", "Absence report_20260219_1039_output.csv")
+CSV_PATH_DEFAULT = os.path.join(_APP_DIR, "AbsenseReport_Cleaned_Final.csv")
 METRIC_COL = "Absence duration for period in days"
 
 TYPE_ORDER = [
@@ -145,7 +145,7 @@ BLIP_COL_OUT_LOC = "Clock Out Location"
 BLIP_COL_DURATION = "Total Duration"
 BLIP_COL_WORKED = "Total Excluding Breaks"
 # Cumulative BLIP sheet: app loads this; preprocessing appends to it (no overlap, missing data can be added).
-BLIP_XLSX_DEFAULT = os.path.join(_APP_DIR, "misc", "19th_Feb_2026_output", "blip_cleaned.csv")
+BLIP_XLSX_DEFAULT = os.path.join(_APP_DIR, "blip_cumulative.csv")
 WFH_ASSUMED_HOURS = 8.0  # 9 to 5
 
 def _blip_clean_plot(fig, y_title=None, x_title=None, show_legend=None):
@@ -372,6 +372,32 @@ def expand_to_daily(df_in: pd.DataFrame) -> pd.DataFrame:
     out["date"] = pd.to_datetime(out["date"], errors="coerce")
     out["week_start"] = pd.to_datetime(out["week_start"], errors="coerce")
     return out
+
+def _normalize_employee(s: str) -> str:
+    """Normalize employee name for matching: strip, collapse whitespace."""
+    return " ".join(str(s).strip().split()) if s else ""
+
+def _blip_leave_daily_for_range(df_absence: pd.DataFrame, d1, d2) -> pd.DataFrame:
+    """
+    Build daily absence rows for BLIP date range [d1, d2] from full absence data.
+    Used so BLIP Employee View gets leave dates regardless of Leave Management month selection.
+    Returns daily DataFrame with employee, date, absence_category (excl. WFH).
+    """
+    if df_absence is None or df_absence.empty or "start_dt" not in df_absence.columns or "end_dt" not in df_absence.columns:
+        return pd.DataFrame()
+    d1_ts = pd.Timestamp(d1).normalize()
+    d2_ts = pd.Timestamp(d2).normalize()
+    has_start = df_absence["start_dt"].notna() & (df_absence["start_dt"].dt.normalize() <= d2_ts)
+    has_end_ok = df_absence["end_dt"].isna() | (df_absence["end_dt"].dt.normalize() >= d1_ts)
+    overlap = df_absence[has_start & has_end_ok].copy()
+    if overlap.empty:
+        return pd.DataFrame()
+    daily = expand_to_daily(overlap)
+    if daily.empty or "date" not in daily.columns:
+        return pd.DataFrame()
+    daily["date_norm"] = pd.to_datetime(daily["date"]).dt.normalize()
+    daily = daily[(daily["date_norm"] >= d1_ts) & (daily["date_norm"] <= d2_ts)].copy()
+    return daily.drop(columns=["date_norm"], errors="ignore")
 
 def _process_absence_df(df_raw: pd.DataFrame) -> pd.DataFrame:
     """Apply BrightHR absence parsing and derived fields to a raw CSV DataFrame."""
@@ -2071,12 +2097,18 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                 wfh_dates_emp = set()
                 if emp_all["_is_wfh_note"].any():
                     wfh_dates_emp = {pd.Timestamp(d).normalize() for d in emp_all.loc[emp_all["_is_wfh_note"], "date"].dt.date.unique()}
-                # Leave dates from absence data (gray = Leave only)
+                # Leave dates from Leave Management for BLIP range (not LM month scope). Actual leave only; exclude WFH.
+                # Cross-check: days BLIP marks WFH — if LM says leave, change to slate; if LM says WFH, keep blue.
+                daily_leave_blip = _blip_leave_daily_for_range(df, d1_blip, d2_blip)
                 leave_dates_emp = set()
-                if daily_filt is not None and not daily_filt.empty and "employee" in daily_filt.columns and "date" in daily_filt.columns:
-                    emp_match = daily_filt["employee"].astype(str).str.strip() == str(sel_emp).strip()
-                    if emp_match.any():
-                        leave_dates_emp = set(pd.to_datetime(daily_filt.loc[emp_match, "date"]).dt.normalize().dt.date)
+                sel_emp_norm = _normalize_employee(sel_emp)
+                if not daily_leave_blip.empty and "employee" in daily_leave_blip.columns and "date" in daily_leave_blip.columns:
+                    emp_match = daily_leave_blip["employee"].apply(_normalize_employee) == sel_emp_norm
+                    leave_rows = daily_leave_blip.loc[emp_match]
+                    if "absence_category" in leave_rows.columns:
+                        leave_rows = leave_rows[leave_rows["absence_category"] != "WFH"]
+                    if not leave_rows.empty:
+                        leave_dates_emp = set(pd.to_datetime(leave_rows["date"]).dt.normalize().dt.date)
                 # Add segments for days with valid clock-in/out data (weekdays only)
                 if not emp_all_valid.empty:
                     emp_all_valid["day"] = emp_all_valid["clockin_dt"].dt.date
@@ -2113,7 +2145,7 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                 else:
                     seg_df["date"] = pd.to_datetime(seg_df["date"])
                     seg_df = seg_df[seg_df["date"].dt.dayofweek < 5].copy()
-                    # Reclassify WFH -> Leave when employee has absence/leave on that date (Leave takes precedence)
+                    # Cross-check: days BLIP marks as WFH — if LM says leave for that date, change to slate Leave
                     if leave_dates_emp:
                         mask_leave = (seg_df["Kind"] == "WFH") & (seg_df["date"].dt.normalize().dt.date.isin(leave_dates_emp))
                         seg_df.loc[mask_leave, "Kind"] = "Leave"

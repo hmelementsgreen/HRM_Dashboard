@@ -2,17 +2,14 @@
 Data ingestion pipeline: run both preprocessing scripts in order.
 
 Folder mode (recommended for weekly runs):
-  Point to a folder containing both raw CSVs (absence + BLIP). Outputs go to
-  a folder named {foldername}_output, with files named {inputsheet}_output.
+  Point to a folder containing both raw CSVs (absence + BLIP).
 
   python run_ingestion.py --input-folder "path/to/week_12_feb"
 
-  - Input folder must contain two CSVs: one absence (filename contains "absence"/"absense"),
-    one BLIP (filename contains "blip"/"timesheet"). Override with --absence-name and --blip-name.
-  - Output folder: week_12_feb_output
-  - Output files: AbsenseReportRaw_output.csv, blipTimesheet_output.xlsx (stem of input + _output)
-
-Then point the app (sidebar) to the output folder paths for Absence CSV and BLIP Excel.
+  - Absence: full replace -> {foldername}_output/{absence_stem}_output.csv
+  - BLIP: by default appends to blip_cumulative.csv in project root (no overlap; missing data can be added).
+    The app loads this same file. Use --no-blip-append to write BLIP to output folder instead.
+  - Input folder must contain two CSVs: one absence, one BLIP (auto-detected by name). Override with --absence-name, --blip-name.
 
 Alternative: pass individual paths or use ingestion_config.json (see --help).
 """
@@ -74,16 +71,16 @@ def run_absence(absence_in: str, absence_out: str) -> int:
     return absence_cleanup.run(absence_in, absence_out)
 
 
-def run_blip(blip_in: str, blip_out: str) -> int:
-    """Run BLIP cleanup."""
+def run_blip(blip_in: str, blip_out: str, append: bool = False) -> int:
+    """Run BLIP cleanup. If append=True, new data is appended to blip_out (must be .csv)."""
     blip_script = os.path.join(_PROJECT_ROOT, "archive", "blip_cleanup.py")
     if not os.path.exists(blip_script):
         print(f"Error: BLIP script not found: {blip_script}", file=sys.stderr)
         return 1
-    result = subprocess.run(
-        [sys.executable, blip_script, "--input", blip_in, "--output", blip_out],
-        cwd=_PROJECT_ROOT,
-    )
+    cmd = [sys.executable, blip_script, "--input", blip_in, "--output", blip_out]
+    if append:
+        cmd.append("--append")
+    result = subprocess.run(cmd, cwd=_PROJECT_ROOT)
     return result.returncode
 
 
@@ -99,7 +96,10 @@ def main():
     parser.add_argument("--absence-in", help="Input path for absence (raw BrightHR CSV)")
     parser.add_argument("--absence-out", help="Output path for absence (cleaned CSV)")
     parser.add_argument("--blip-in", help="Input path for BLIP (raw timesheet CSV)")
-    parser.add_argument("--blip-out", help="Output path for BLIP (Excel)")
+    parser.add_argument("--blip-out", help="Output path for BLIP (Excel or CSV; use CSV with --blip-append for cumulative)")
+    parser.add_argument("--blip-append", action="store_true", help="Append BLIP to cumulative CSV (default in folder mode)")
+    parser.add_argument("--no-blip-append", action="store_true", help="Do not append BLIP; write to output folder instead (folder mode)")
+    parser.add_argument("--blip-cumulative-path", help="Path to cumulative BLIP CSV (default: project blip_cumulative.csv); must be .csv")
     parser.add_argument("--config", default=_CONFIG_PATH, help=f"Path to JSON config (default: {os.path.basename(_CONFIG_PATH)})")
     args = parser.parse_args()
 
@@ -129,11 +129,18 @@ def main():
         parent = os.path.dirname(input_folder_norm)
         output_folder = os.path.join(parent, base_name + "_output")
 
-        # Output files: input stem + _output
+        # Output files: absence = full replace; BLIP = append to cumulative CSV by default (same file app loads)
         absence_stem = os.path.splitext(os.path.basename(absence_in))[0]
         blip_stem = os.path.splitext(os.path.basename(blip_in))[0]
         absence_out = os.path.join(output_folder, absence_stem + "_output.csv")
-        blip_out = os.path.join(output_folder, blip_stem + "_output.xlsx")
+        default_cumulative = os.path.join(_PROJECT_ROOT, "blip_cumulative.csv")
+        blip_append = config.get("blip_append", True) if "blip_append" not in config else config.get("blip_append")
+        blip_append = (blip_append and not args.no_blip_append) or args.blip_append
+        blip_cumulative_path = config.get("blip_cumulative_path") or args.blip_cumulative_path or default_cumulative
+        if blip_append:
+            blip_out = blip_cumulative_path if blip_cumulative_path.lower().endswith(".csv") else (blip_cumulative_path.rstrip("/\\") + ".csv")
+        else:
+            blip_out = os.path.join(output_folder, blip_stem + "_output.xlsx")
 
         os.makedirs(output_folder, exist_ok=True)
 
@@ -141,8 +148,8 @@ def main():
         print("-" * 40)
         print(f"Input folder:  {args.input_folder}")
         print(f"Output folder: {output_folder}")
-        print(f"Absence: {os.path.basename(absence_in)} -> {os.path.basename(absence_out)}")
-        print(f"BLIP:    {os.path.basename(blip_in)} -> {os.path.basename(blip_out)}")
+        print(f"Absence: {os.path.basename(absence_in)} -> {os.path.basename(absence_out)} (full replace)")
+        print(f"BLIP:    {os.path.basename(blip_in)} -> {os.path.basename(blip_out)}" + (" (append)" if blip_append else " (replace)"))
         print("-" * 40)
 
         if not args.blip_only:
@@ -155,7 +162,7 @@ def main():
 
         if not args.absence_only:
             print("\n[2/2] BLIP cleanup...")
-            exit_blip = run_blip(blip_in, blip_out)
+            exit_blip = run_blip(blip_in, blip_out, append=blip_append)
             if exit_blip != 0:
                 print("BLIP cleanup failed.", file=sys.stderr)
                 return exit_blip
@@ -165,7 +172,7 @@ def main():
         print("Pipeline finished successfully.")
         print("Point the app to:")
         print(f"  Absence CSV: {absence_out}")
-        print(f"  BLIP Excel:  {blip_out}")
+        print(f"  BLIP:        {blip_out}" + (" (cumulative; app default)" if blip_append else ""))
         return 0
 
     # ---- Individual paths / config mode ----
@@ -213,12 +220,16 @@ def main():
 
     if run_both or args.blip_only:
         blip_in = get_blip_in()
-        blip_out = get_blip_out()
+        blip_out = get_blip_out() or (config.get("blip_cumulative_path") if (config.get("blip_append") or args.blip_append) else None)
         if not blip_in or not blip_out:
             print("Error: BLIP paths required. Use --input-folder, or --blip-in and --blip-out, or set in ingestion_config.json.", file=sys.stderr)
             return 1
-        print("\n[2/2] BLIP cleanup...")
-        exit_blip = run_blip(blip_in, blip_out)
+        blip_append = config.get("blip_append", False) or args.blip_append
+        if blip_append and not blip_out.lower().endswith(".csv"):
+            print("Error: BLIP append mode requires output path to be .csv (cumulative file).", file=sys.stderr)
+            return 1
+        print("\n[2/2] BLIP cleanup..." + (" (append to cumulative CSV)" if blip_append else ""))
+        exit_blip = run_blip(blip_in, blip_out, append=blip_append)
         if exit_blip != 0:
             print("BLIP cleanup failed.", file=sys.stderr)
             return exit_blip

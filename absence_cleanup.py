@@ -6,6 +6,7 @@ Pipeline:
 - Maps Team names -> Organisation / Suborganisation (AG/EG/UG)
 - WFH detection from Absence type + description (keyword-based)
 - Final categories: Annual, Medical, Work from home, External & additional assignments, Others
+- Double-layer: minimise Others by reclassifying from description (Medical, Annual, External, WFH).
 - Safe encoding fix (ftfy) on First/Last name; exact-dedupe; audit print.
 
 Output is consumed by app.py (Leave Management).
@@ -117,9 +118,45 @@ def run(input_path: str, output_path: str) -> int:
     ]
     wfh_pattern = build_pattern(wfh_keywords)
 
+    # External & additional assignments: type + description (locations, travel, training, events, birthday)
+    external_keywords = [
+        "travel", "business trip", "offsite", "onsite", "client visit", "site visit",
+        "birthday", "birthday leave",
+        "training", "event", "events", "conference", "workshop", "course", "training day",
+        "hamburg", "london", "berlin", "munich", "frankfurt", "cologne", "düsseldorf", "dusseldorf",
+        "brussels", "amsterdam", "paris", "visit", "assignment", "external",
+    ]
+    external_pattern = build_pattern(external_keywords)
+
+    sick_keywords = [
+        "sick", "sickness", "medical", "ill", "flu", "gp", "doctor", "hospital", "injury",
+        "migraine", "sick-note", "sick note", "unwell", "incapacity",
+    ]
+    sick_pattern = build_pattern(sick_keywords)
+
+    annual_keywords = ["annual", "holiday", "vacation", "pto"]
+    annual_pattern = build_pattern(annual_keywords)
+
+    def reclassify_others_from_description(abs_type: str, desc: str) -> str:
+        """Classify 'Others' using description only. Priority: Sick > External > WFH > Annual > Others."""
+        combined = f"{normalise_text(pd.Series([abs_type])).iloc[0]} {normalise_text(pd.Series([desc])).iloc[0]}"
+        if re.search(sick_pattern, combined):
+            return "Medical"
+        if re.search(external_pattern, combined):
+            return "External & additional assignments"
+        if re.search(wfh_pattern, combined):
+            return "Work from home"
+        if re.search(annual_pattern, combined):
+            return "Annual"
+        return "Others"
+
     df["Is_WFH"] = (
         type_norm.str.contains(wfh_pattern, regex=True)
         | desc_norm.str.contains(wfh_pattern, regex=True)
+    )
+    df["Is_External"] = (
+        type_norm.str.contains(external_pattern, regex=True)
+        | desc_norm.str.contains(external_pattern, regex=True)
     )
 
     df["Absence_Category_Clean"] = np.select(
@@ -130,6 +167,8 @@ def run(input_path: str, output_path: str) -> int:
         ["Annual leave", "WFH"],
         default=df[TYPE_COL],
     )
+    # Override: description/type contains location, travel, training, event, birthday -> External & additional assignments
+    df.loc[df["Is_External"], "Absence_Category_Clean"] = "Travel"
 
     final_category_map = {
         "Annual leave": "Annual",
@@ -154,8 +193,25 @@ def run(input_path: str, output_path: str) -> int:
     )
 
     df[TYPE_COL] = df["Absence Category Final"]
+
+    # Double-layer: minimise Others by reclassifying from all description text (Medical, Annual, External, WFH)
+    others_mask = df[TYPE_COL] == "Others"
+    if others_mask.any():
+        extra_desc_cols = [c for c in ["Reason", "Notes", "Description", "Comment", "Absence reason", "Absence notes"] if c in df.columns and c != DESC_COL]
+        def _desc_for_reclass(r):
+            parts = [str(r.get(DESC_COL, "") or "")]
+            for c in extra_desc_cols:
+                parts.append(str(r.get(c, "") or ""))
+            return " ".join(p.strip() for p in parts if p.strip())
+        df.loc[others_mask, TYPE_COL] = df.loc[others_mask].apply(
+            lambda r: reclassify_others_from_description(
+                r.get(TYPE_COL, ""), _desc_for_reclass(r)
+            ),
+            axis=1,
+        )
+
     df = df.drop(
-        columns=["Is_WFH", "Absence_Category_Clean", "Absence Category Final"],
+        columns=["Is_WFH", "Is_External", "Absence_Category_Clean", "Absence Category Final"],
         errors="ignore",
     )
 

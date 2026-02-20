@@ -3,5 +3,7 @@
   "absence_input": "path/to/this_week_absence_export.csv",
   "absence_output": "AbsenseReport_Cleaned_Final.csv",
   "blip_input": "path/to/this_week_blip_timesheet.csv",
-  "blip_output": "path/to/blip_clean.xlsx"
+  "blip_output": "path/to/blip_clean.xlsx",
+  "blip_append": true,
+  "blip_cumulative_path": "path/to/blip_cumulative.csv"
 }

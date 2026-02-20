@@ -1,12 +1,16 @@
 """
-BLIP data cleanup: raw CSV -> dashboard-ready Excel.
+BLIP data cleanup: raw CSV -> dashboard-ready Excel or CSV.
+
 - Data from START_DATE (weekdays only).
 - Aggregates multiple shift rows per person-day (earliest in, latest out).
 - Multi-day shifts: cap to same-day end (17:30).
 - Valid break 25-60 min or synthetic; MIN_WORK 7h30.
 - WFH: for each employee, weekdays in range with no data get one Shift+Break (09:00-17:00, 8h).
-Output is self-contained; dashboard does not need to infer WFH.
-Pass --input and --output each run (e.g. fresh weekly timesheet).
+
+Modes:
+- Default: process full input -> overwrite output (Excel or CSV).
+- --append: process only new input -> append to existing CSV (cumulative). Output must be .csv.
+  Use the same --output path every run so new data is appended; dedupe by (First Name, Last Name, Clock In Date, Blip Type) keeps latest.
 """
 import pandas as pd
 import numpy as np
@@ -82,15 +86,25 @@ def _make_row(fn, ln, day, job_title, team_val, location, blip_type, clock_in, c
     }
 
 
+# Columns used for dedupe when appending (same person, same date, same type = one row, keep latest)
+BLIP_DEDUPE_COLS = ["First Name", "Last Name", "Clock In Date", "Blip Type"]
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="BLIP data cleanup: raw timesheet CSV -> dashboard Excel. Pass paths to your fresh data."
+        description="BLIP data cleanup: raw timesheet CSV -> dashboard Excel or CSV. Use --append for incremental (append to CSV)."
     )
-    parser.add_argument("--input", "-i", required=True, help="Input CSV path (e.g. this week's BLIP timesheet export)")
-    parser.add_argument("--output", "-o", required=True, help="Output Excel path (dashboard will use this file)")
+    parser.add_argument("--input", "-i", required=True, help="Input CSV path (this week's or new BLIP timesheet export)")
+    parser.add_argument("--output", "-o", required=True, help="Output path: Excel (.xlsx) or CSV (.csv). For --append must be CSV.")
+    parser.add_argument("--append", "-a", action="store_true", help="Append new data to existing CSV (incremental); output must be .csv")
     args = parser.parse_args()
     input_path = args.input
     output_path = args.output
+    append_mode = args.append
+
+    if append_mode and not output_path.lower().endswith(".csv"):
+        print("Error: With --append, output path must be a .csv file.", file=__import__("sys").stderr)
+        return 1
 
     if not os.path.exists(input_path):
         print(f"Error: Input file '{input_path}' not found.")
@@ -249,19 +263,57 @@ def main():
     final_df["Total Duration"] = final_df["Total Duration"].astype(str)
     final_df["Total Excluding Breaks"] = final_df["Total Excluding Breaks"].astype(str)
 
-    final_df = final_df.sort_values(["Clock In Date", "First Name", "Last Name", "Blip Type"])
+    new_df = final_df.sort_values(["Clock In Date", "First Name", "Last Name", "Blip Type"])
 
+    if append_mode:
+        # Append to existing CSV; dedupe by person + date + type (keep latest)
+        out_dir = os.path.dirname(output_path)
+        if out_dir:
+            os.makedirs(out_dir, exist_ok=True)
+        if os.path.exists(output_path):
+            try:
+                existing = pd.read_csv(output_path)
+                for c in new_df.columns:
+                    if c not in existing.columns:
+                        existing[c] = "" if c not in ["Clock In Date", "Clock Out Date"] else pd.NaT
+                existing = existing[new_df.columns]
+                combined = pd.concat([existing, new_df], ignore_index=True)
+            except Exception as e:
+                print(f"Warning: Could not read existing CSV, writing new only: {e}")
+                combined = new_df
+        else:
+            combined = new_df
+
+        # Dedupe: same person, date, blip type -> keep last (new overwrites old)
+        dedupe_cols = [c for c in BLIP_DEDUPE_COLS if c in combined.columns]
+        if dedupe_cols:
+            combined["Clock In Date"] = pd.to_datetime(combined["Clock In Date"], errors="coerce").dt.date
+            combined = combined.drop_duplicates(subset=dedupe_cols, keep="last")
+        combined = combined.sort_values(["Clock In Date", "First Name", "Last Name", "Blip Type"])
+        try:
+            combined.to_csv(output_path, index=False)
+            print(f"Appended to {output_path} (rows now: {len(combined)})")
+            return 0
+        except Exception as e:
+            print(f"Error writing CSV: {e}")
+            return 1
+
+    # Non-append: write Excel (or CSV if path ends with .csv)
     try:
         out_dir = os.path.dirname(output_path)
         if out_dir:
             os.makedirs(out_dir, exist_ok=True)
-        with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-            final_df.to_excel(writer, sheet_name="Sheet1", startrow=1, index=False)
-            writer.sheets["Sheet1"]["A1"] = "Export generated for Dashboard (skiprows=1)"
-        print(f"Output saved to {output_path}")
+        if output_path.lower().endswith(".csv"):
+            new_df.to_csv(output_path, index=False)
+            print(f"Output saved to {output_path}")
+        else:
+            with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+                new_df.to_excel(writer, sheet_name="Sheet1", startrow=1, index=False)
+                writer.sheets["Sheet1"]["A1"] = "Export generated for Dashboard (skiprows=1)"
+            print(f"Output saved to {output_path}")
         return 0
     except Exception as e:
-        print(f"Error writing Excel: {e}")
+        print(f"Error writing output: {e}")
         return 1
 
 
