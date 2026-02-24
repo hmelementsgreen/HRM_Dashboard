@@ -1091,17 +1091,32 @@ with main_leave:
         if employee_balance is not None and not employee_balance.empty:
             eb = employee_balance.copy()
             eb["Entitlement (days)"] = pd.to_numeric(eb["Entitlement (days)"], errors="coerce").fillna(0)
+            eb["employee"] = eb["employee"].fillna("").astype(str).str.strip()
+
+            # Restrict to filtered scope only when user has applied dept/country/employee filters.
+            # When no filters: include all full-time from balance (including those with no leave in period).
+            filters_applied = bool(
+                selected_depts_global or selected_countries_global or (employee_q or "").strip()
+            )
+            scope_emps = set()
+            if filters_applied and not daily_filt.empty and "employee" in daily_filt.columns:
+                scope_emps = set(daily_filt["employee"].astype(str).str.strip().unique())
 
             full_time_emps = (
                 eb.loc[eb["Entitlement (days)"] > 0, "employee"]
-                .fillna("")
-                .astype(str)
+                .drop_duplicates()
                 .tolist()
             )
-            full_time_emps = [e for e in full_time_emps if e.strip()]
+            full_time_emps = [e for e in full_time_emps if e]
+            if scope_emps:
+                full_time_emps = [e for e in full_time_emps if e in scope_emps]
 
-            full_time = int((eb["Entitlement (days)"] > 0).sum())
-            external_consultants = int((eb["Entitlement (days)"] == 0).sum())
+            ext_emps = eb.loc[eb["Entitlement (days)"] == 0, "employee"].drop_duplicates().tolist()
+            ext_emps = [e for e in ext_emps if e]
+            if scope_emps:
+                ext_emps = [e for e in ext_emps if e in scope_emps]
+            external_consultants = len(ext_emps)
+            full_time = len(full_time_emps)
 
         # -----------------------------------------------------
         # Period bounds + weeks in selected period (for WFH allowance)
@@ -1115,11 +1130,11 @@ with main_leave:
         weeks_in_period = int(pd.Series(week_starts).nunique())  # strict: 1 WFH per week
 
         # -----------------------------------------------------
-        # Firmwide daily scope (full-time only)
+        # Firmwide daily scope (full-time only) — use daily_filt so KPIs respect filters
         # -----------------------------------------------------
-        firm_daily = daily_scope.copy()
+        firm_daily = daily_filt.copy()
         if full_time_emps:
-            firm_daily = firm_daily[firm_daily["employee"].isin(full_time_emps)].copy()
+            firm_daily = firm_daily[firm_daily["employee"].astype(str).str.strip().isin(full_time_emps)].copy()
 
         taken_fw = {}
         if not firm_daily.empty and "absence_category" in firm_daily.columns:
@@ -1132,7 +1147,7 @@ with main_leave:
         other_taken_fw = int(taken_fw.get("Other (excl. WFH, Travel)", 0))
 
         # -----------------------------------------------------
-        # Annual entitled + remaining (firmwide) from employee_balance (full-time)
+        # Annual entitled + remaining (firmwide) from employee_balance (full-time, in scope)
         # -----------------------------------------------------
         annual_entitled_fw = 0.0
         annual_remaining_fw = 0.0
@@ -1141,7 +1156,10 @@ with main_leave:
             balance_ft["Entitlement (days)"] = pd.to_numeric(
                 balance_ft["Entitlement (days)"], errors="coerce"
             ).fillna(0)
+            balance_ft["employee"] = balance_ft["employee"].fillna("").astype(str).str.strip()
             balance_ft = balance_ft[balance_ft["Entitlement (days)"] > 0].copy()
+            if full_time_emps:
+                balance_ft = balance_ft[balance_ft["employee"].isin(full_time_emps)].copy()
 
             annual_entitled_fw = float(
                 pd.to_numeric(balance_ft["Entitlement (days)"], errors="coerce").fillna(0).sum()
@@ -1311,7 +1329,7 @@ with main_leave:
             st.info("No full-time employees with leave entitlement found in the current scope.")
         else:
             emp_taken = (
-                daily_scope[daily_scope["employee"].isin(full_time_emps)]
+                daily_filt[daily_filt["employee"].astype(str).str.strip().isin(full_time_emps)]
                 .groupby(["employee", "absence_category"])
                 .size()
                 .unstack(fill_value=0)
@@ -2271,7 +2289,7 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
                     ))
                     fig_seg.update_layout(
                         annotations=annotations_list,
-                        height=620,
+                        height=930,
                         margin=dict(t=60, b=50, l=50, r=30),
                     )
                     st.plotly_chart(_blip_clean_plot(fig_seg, y_title="Time of day", x_title="Date", show_legend=True), use_container_width=True)
@@ -2317,7 +2335,14 @@ Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_ho
         shift_export["generated_at"] = export_ts
         st.download_button("Download Shift-level table (CSV)", data=shift_export.to_csv(index=False).encode("utf-8"), file_name="blip_shift_table.csv", mime="text/csv", key="blip_export_shift")
 
-        
+        st.markdown("---")
+        st.markdown('<h3 class="eg-section-title">Assumptions</h3>', unsafe_allow_html=True)
+        st.markdown("""
+        1. **WFH = 8 hours** — Weekdays with no BLIP clock-in are treated as full WFH (8h). Leave Management is used to distinguish leave (gray) from WFH (blue).  
+        2. **Weekdays only** — Analyses use Mon–Fri; weekends are excluded.  
+        3. **BLIP data handling** — Overnight and negative durations are corrected. Missing clock-outs are inferred (17:25–17:45). Missing or invalid breaks (outside 25–60 min) get a synthetic 30–45 min lunch.  
+        4. **Employee matching** — Names are matched across Absence and BLIP by First + Last name; extra spaces ignored.
+        """)
         st.markdown("")
 
 st.markdown("")
