@@ -800,103 +800,102 @@ with st.sidebar:
                 st.warning(f"Failed to load BLIP: {e}")
                 df_blip, f_blip, f_shift = None, None, None
 
+# ----- Compute leave firmwide (for Summary and Leave tab) -----
+employee_balance, _, _ = compute_annual_employee_balance(df, daily_filt, weekday_only=True)
+full_time_emps = []
+full_time = 0
+external_consultants = 0
+if employee_balance is not None and not employee_balance.empty:
+    eb = employee_balance.copy()
+    eb["Entitlement (days)"] = pd.to_numeric(eb["Entitlement (days)"], errors="coerce").fillna(0)
+    full_time_emps = (
+        eb.loc[eb["Entitlement (days)"] > 0, "employee"]
+        .fillna("")
+        .astype(str)
+        .str.strip()
+        .drop_duplicates()
+        .tolist()
+    )
+    full_time_emps = [e for e in full_time_emps if e]
+    full_time = int((eb["Entitlement (days)"] > 0).sum())
+    external_consultants = int((eb["Entitlement (days)"] == 0).sum())
+periods = [pd.Period(m, freq="M") for m in months_in_scope]
+period_start = min(p.start_time for p in periods).normalize()
+period_end = max(p.end_time for p in periods).normalize()
+all_days = pd.date_range(period_start, period_end, freq="D")
+week_starts = (all_days - pd.to_timedelta(all_days.weekday, unit="D")).normalize()
+weeks_in_period = int(pd.Series(week_starts).nunique())
+firm_daily = daily_scope.copy()
+if full_time_emps:
+    firm_daily = firm_daily[firm_daily["employee"].astype(str).str.strip().isin(full_time_emps)].copy()
+taken_fw = firm_daily.groupby("absence_category").size().to_dict() if not firm_daily.empty and "absence_category" in firm_daily.columns else {}
+wfh_taken_fw = int(taken_fw.get("WFH", 0) or 0)
+annual_taken_fw = int(taken_fw.get("Annual Leave", 0) or 0)
+sick_taken_fw = int(taken_fw.get("Medical + Sickness", 0) or 0)
+ext_assign_taken_fw = int(taken_fw.get("External & additional assignments", 0) or 0)
+other_taken_fw = int(taken_fw.get("Other (excl. WFH, Travel)", 0) or 0)
+annual_entitled_fw = 0.0
+annual_remaining_fw = 0.0
+if employee_balance is not None and not employee_balance.empty:
+    balance_ft = employee_balance.copy()
+    balance_ft["Entitlement (days)"] = pd.to_numeric(balance_ft["Entitlement (days)"], errors="coerce").fillna(0)
+    balance_ft = balance_ft[balance_ft["Entitlement (days)"] > 0].copy()
+    balance_ft["Remaining (days)"] = pd.to_numeric(balance_ft["Remaining (days)"], errors="coerce").fillna(0)
+    if full_time_emps:
+        balance_ft = balance_ft[balance_ft["employee"].astype(str).str.strip().isin(full_time_emps)].copy()
+    annual_entitled_fw = float(balance_ft["Entitlement (days)"].sum())
+    annual_remaining_fw = float(balance_ft["Remaining (days)"].sum())
+wfh_allowed_fw = int(weeks_in_period * len(full_time_emps))
+wfh_pct_fw = 0.0 if wfh_allowed_fw == 0 else min(100.0, (wfh_taken_fw / wfh_allowed_fw) * 100.0)
+
+def _fmt_int(x):
+    try: return f"{int(x):,}"
+    except Exception: return str(x)
+def _fmt_days(x):
+    try: return f"{float(x):,.1f}d"
+    except Exception: return str(x)
+
 # Main tabs
 main_leave, main_time = st.tabs(["Leave Management", "Time Utilisation"])
 
 # =========================================================
-# LEAVE MANAGEMENT (simplified): 4 tabs, bar chart each
+# LEAVE MANAGEMENT: Summary + Individual, Department, Country, Group / ExCo
 # =========================================================
 with main_leave:
-    # ----- Option A: Firmwide KPIs (replicated from app.py) -----
-    employee_balance, _, _ = compute_annual_employee_balance(df, daily_filt, weekday_only=True)
-    full_time_emps = []
-    full_time = 0
-    external_consultants = 0
-    if employee_balance is not None and not employee_balance.empty:
-        eb = employee_balance.copy()
-        eb["Entitlement (days)"] = pd.to_numeric(eb["Entitlement (days)"], errors="coerce").fillna(0)
-        full_time_emps = (
-            eb.loc[eb["Entitlement (days)"] > 0, "employee"]
-            .fillna("")
-            .astype(str)
-            .str.strip()
-            .drop_duplicates()
-            .tolist()
-        )
-        full_time_emps = [e for e in full_time_emps if e]
-        full_time = int((eb["Entitlement (days)"] > 0).sum())
-        external_consultants = int((eb["Entitlement (days)"] == 0).sum())
-    periods = [pd.Period(m, freq="M") for m in months_in_scope]
-    period_start = min(p.start_time for p in periods).normalize()
-    period_end = max(p.end_time for p in periods).normalize()
-    all_days = pd.date_range(period_start, period_end, freq="D")
-    week_starts = (all_days - pd.to_timedelta(all_days.weekday, unit="D")).normalize()
-    weeks_in_period = int(pd.Series(week_starts).nunique())
-    # Use daily_scope (like app.py) so firmwide KPIs include all full-time employees in period
-    firm_daily = daily_scope.copy()
-    if full_time_emps:
-        firm_daily = firm_daily[firm_daily["employee"].astype(str).str.strip().isin(full_time_emps)].copy()
-    taken_fw = firm_daily.groupby("absence_category").size().to_dict() if not firm_daily.empty and "absence_category" in firm_daily.columns else {}
-    wfh_taken_fw = int(taken_fw.get("WFH", 0) or 0)
-    annual_taken_fw = int(taken_fw.get("Annual Leave", 0) or 0)
-    sick_taken_fw = int(taken_fw.get("Medical + Sickness", 0) or 0)
-    ext_assign_taken_fw = int(taken_fw.get("External & additional assignments", 0) or 0)
-    other_taken_fw = int(taken_fw.get("Other (excl. WFH, Travel)", 0) or 0)
-    annual_entitled_fw = 0.0
-    annual_remaining_fw = 0.0
-    if employee_balance is not None and not employee_balance.empty:
-        balance_ft = employee_balance.copy()
-        balance_ft["Entitlement (days)"] = pd.to_numeric(balance_ft["Entitlement (days)"], errors="coerce").fillna(0)
-        balance_ft = balance_ft[balance_ft["Entitlement (days)"] > 0].copy()
-        balance_ft["Remaining (days)"] = pd.to_numeric(balance_ft["Remaining (days)"], errors="coerce").fillna(0)
-        if full_time_emps:
-            balance_ft = balance_ft[balance_ft["employee"].astype(str).str.strip().isin(full_time_emps)].copy()
-        annual_entitled_fw = float(balance_ft["Entitlement (days)"].sum())
-        annual_remaining_fw = float(balance_ft["Remaining (days)"].sum())
-    wfh_allowed_fw = int(weeks_in_period * len(full_time_emps))
-    wfh_pct_fw = 0.0 if wfh_allowed_fw == 0 else min(100.0, (wfh_taken_fw / wfh_allowed_fw) * 100.0)
+    tab_summary, tab_individual, tab_department, tab_country, tab_group = st.tabs(["Summary", "Individual", "Department", "Country", "Group / ExCo"])
 
-    def _fmt_int(x):
-        try: return f"{int(x):,}"
-        except Exception: return str(x)
-    def _fmt_days(x):
-        try: return f"{float(x):,.1f}d"
-        except Exception: return str(x)
-
-    st.markdown('<h3 class="eg-section-title">Firmwide KPIs</h3>', unsafe_allow_html=True)
-    st.caption("Quick snapshot for the selected period and filters (full-time employees only).")
-    h1, h2, h3, h4 = st.columns([1.2, 1.2, 1.2, 1.2])
-    with h1: kpi_tile("Full-time employees", _fmt_int(full_time), "Entitlement > 0 days")
-    with h2: kpi_tile("External consultants", _fmt_int(external_consultants), "Entitlement = 0 days")
-    with h3: kpi_tile("Absence days taken", _fmt_int(len(firm_daily)) if not firm_daily.empty else "0", "Daily rows in scope")
-    with h4: kpi_tile("Weeks in period", _fmt_int(weeks_in_period), f"{period_start.strftime('%d/%m/%Y')} to {period_end.strftime('%d/%m/%Y')}")
-    st.markdown('<div class="eg-spacer-md"></div>', unsafe_allow_html=True)
-    row_a, row_b = st.columns([1.35, 1.65])
-    with row_a:
-        progress_html = f"""<div style="display:flex; gap:14px; align-items:flex-end; margin-bottom:10px;">
+    with tab_summary:
+        st.markdown('<h3 class="eg-section-title">Firmwide KPIs</h3>', unsafe_allow_html=True)
+        st.caption("Quick snapshot for the selected period and filters (full-time employees only).")
+        h1, h2, h3, h4 = st.columns([1.2, 1.2, 1.2, 1.2])
+        with h1: kpi_tile("Full-time employees", _fmt_int(full_time), "Entitlement > 0 days")
+        with h2: kpi_tile("External consultants", _fmt_int(external_consultants), "Entitlement = 0 days")
+        with h3: kpi_tile("Absence days taken", _fmt_int(len(firm_daily)) if not firm_daily.empty else "0", "Daily rows in scope")
+        with h4: kpi_tile("Weeks in period", _fmt_int(weeks_in_period), f"{period_start.strftime('%d/%m/%Y')} to {period_end.strftime('%d/%m/%Y')}")
+        st.markdown('<div class="eg-spacer-md"></div>', unsafe_allow_html=True)
+        row_a, row_b = st.columns([1.35, 1.65])
+        with row_a:
+            progress_html = f"""<div style="display:flex; gap:14px; align-items:flex-end; margin-bottom:10px;">
 <div style="flex:1;"><div style="font-size:0.85rem; color:#6b7280; font-weight:600;">WFH utilisation</div><div style="font-size:1.6rem; font-weight:900; color:#111827;">{wfh_pct_fw:.0f}%</div></div>
 <div style="text-align:right;"><div style="font-size:0.85rem; color:#6b7280;">Allowed</div><div style="font-size:1.1rem; font-weight:800;">{_fmt_int(wfh_allowed_fw)}</div>
 <div style="font-size:0.85rem; color:#6b7280; margin-top:6px;">Taken</div><div style="font-size:1.1rem; font-weight:800;">{_fmt_int(wfh_taken_fw)}</div></div></div>"""
-        soft_card("Work-from-home", progress_html)
-        st.progress(wfh_pct_fw / 100.0)
-    with row_b:
-        body = f"""<div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
+            soft_card("Work-from-home", progress_html)
+            st.progress(wfh_pct_fw / 100.0)
+        with row_b:
+            body = f"""<div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
 <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;"><div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual entitled</div><div style="font-size:1.25rem; font-weight:900;">{_fmt_days(annual_entitled_fw)}</div></div>
 <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;"><div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual taken</div><div style="font-size:1.25rem; font-weight:900;">{_fmt_int(annual_taken_fw)}d</div></div>
 <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;"><div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Annual remaining</div><div style="font-size:1.25rem; font-weight:900; color:var(--eg-accent);">{_fmt_days(annual_remaining_fw)}</div></div></div>
 <div style="margin-top:10px; font-size:0.85rem; color:#6b7280;">Remaining from employee balances (full-time only).</div>"""
-        soft_card("Annual leave", body)
-    st.markdown('<div class="eg-spacer-md"></div>', unsafe_allow_html=True)
-    left_card, right_card = st.columns([1.05, 1.95])
-    with left_card:
-        body = f"""<div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
+            soft_card("Annual leave", body)
+        st.markdown('<div class="eg-spacer-md"></div>', unsafe_allow_html=True)
+        left_card, right_card = st.columns([1.05, 1.95])
+        with left_card:
+            body = f"""<div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px;">
 <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;"><div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Sick</div><div style="font-size:1.25rem; font-weight:900;">{_fmt_int(sick_taken_fw)}d</div></div>
 <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;"><div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Ext. assignments</div><div style="font-size:1.25rem; font-weight:900;">{_fmt_int(ext_assign_taken_fw)}d</div></div>
 <div style="border:1px solid #eef2f7; border-radius:var(--eg-radius); padding:10px 12px; background:#fbfbfb;"><div style="font-size:0.8rem; color:var(--eg-muted); font-weight:600;">Other</div><div style="font-size:1.25rem; font-weight:900;">{_fmt_int(other_taken_fw)}d</div></div></div>"""
-        soft_card("Other leave taken", body)
-    st.markdown("---")
-
-    tab_individual, tab_department, tab_country, tab_group = st.tabs(["Individual", "Department", "Country", "Group / ExCo"])
+            soft_card("Other leave taken", body)
 
     with tab_individual:
         st.markdown('<h3 class="eg-section-title">Individual</h3>', unsafe_allow_html=True)
@@ -1110,7 +1109,6 @@ with main_time:
         entries_all = len(f_blip)
         entries_shift = len(f_shift)
         employees_blip = f_shift["employee"].nunique()
-        teams_blip = f_shift[BLIP_COL_TEAM].nunique() if BLIP_COL_TEAM in f_shift.columns else 0
         missing_clockouts = (~f_shift["has_clockout"]).sum()
         worked_total = f_shift["worked_hours"].sum(skipna=True)
         duration_total = f_shift["duration_hours"].sum(skipna=True)
@@ -1138,7 +1136,6 @@ with main_time:
         with k3: kpi_tile("Employees", f"{employees_blip:,}", "In selected range")
         with k4: kpi_tile("Worked hours (incl. WFH)", fmt_hours_minutes(total_worked_incl_wfh), "Weekdays only")
         with k5: kpi_tile("Avg worked / shift", fmt_hours_minutes(avg_worked_shift), "Incl. WFH as shifts")
-
         st.markdown('<div class="eg-spacer-md"></div>', unsafe_allow_html=True)
         shift_totals_body = f"""<div style="font-size:0.9rem;">Total Duration = <b>{fmt_hours_minutes(duration_total)}</b> | Break = <b>{fmt_hours_minutes(break_total)}</b> | Worked = <b>{fmt_hours_minutes(worked_total)}</b></div>"""
         soft_card("Shift totals", shift_totals_body)
