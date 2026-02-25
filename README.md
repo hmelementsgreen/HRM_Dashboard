@@ -78,6 +78,17 @@ Cumulative CSV (or Excel) with:
 
 Defaults to `blip_cumulative.csv` in the project folder (same file preprocessing appends to). The app accepts Excel or CSV.
 
+### One Excel with both refined sheets
+
+One workbook containing the same refined data the dashboard uses: **Absence** (processed leave) and **BLIP** (processed time & attendance).
+
+```bash
+python build_dashboard_excel.py [--absence-csv PATH] [--blip PATH] [--out PATH]
+```
+
+- **Output:** `dashboard_data.xlsx` (or `--out` path) with two sheets: **Absence**, **BLIP**.
+- Same processing as the dashboard: absence CSV → process (dates, employee, categories, org); BLIP CSV/Excel → process (clock in/out, worked/duration/break hours, anomalies).
+
 ## Defaults
 
 - **Absence CSV**: `AbsenseReport_Cleaned_Final.csv` in the project directory (or use **Upload Absence CSV** in the sidebar).
