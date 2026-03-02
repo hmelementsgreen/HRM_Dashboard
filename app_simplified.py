@@ -700,7 +700,7 @@ def render_leave_bar_chart(data_df, title, height=1080, allowed_taken=None, yaxi
 # Main app
 # ----------------------------
 st.markdown('<h1 class="eg-title">Leave & Time Utilisation</h1>', unsafe_allow_html=True)
-st.markdown('<div class="eg-subtitle">Individual · Department · Country · Group · Time utilisation</div>', unsafe_allow_html=True)
+st.markdown('<div class="eg-subtitle">Individual · Department · Country · Group · Time utilisation · Variance</div>', unsafe_allow_html=True)
 
 # Sidebar
 with st.sidebar:
@@ -713,12 +713,17 @@ with st.sidebar:
         st.error(f"Failed to load Absence CSV: {e}")
         st.stop()
 
+    # Filter to leave year from Jan 1 2026
+    LEAVE_YEAR_START = pd.Timestamp("2026-01-01")
+    if "start_dt" in df.columns:
+        df = df[df["start_dt"].notna() & (df["start_dt"] >= LEAVE_YEAR_START)].copy()
+
     months_available = sorted([m for m in df["month"].dropna().unique().tolist() if m != "NaT"])
     if not months_available:
         st.error("No valid months found.")
         st.stop()
 
-    preferred_m1 = "2025-11"
+    preferred_m1 = "2026-01"
     default_m1 = months_available.index(preferred_m1) if preferred_m1 in months_available else max(len(months_available) - 2, 0)
     month_1 = st.selectbox("Month", options=months_available, index=default_m1)
 
@@ -800,6 +805,37 @@ with st.sidebar:
                 st.warning(f"Failed to load BLIP: {e}")
                 df_blip, f_blip, f_shift = None, None, None
 
+    with st.expander("Variance / Entitlement", expanded=False):
+        entitlement_uploaded = st.file_uploader("Upload Holiday Summary Report (Excel/CSV)", type=["xlsx", "xls", "csv"], key="entitlement_upload")
+        _default_ent = os.path.expanduser(os.path.join("~", "Downloads", "annualLeave_Feb 26.csv"))
+        entitlement_path = st.text_input("Or entitlement file path", value=_default_ent if os.path.isfile(_default_ent) else "", placeholder="e.g. annualLeave_Feb 26.csv", disabled=entitlement_uploaded is not None, key="entitlement_path")
+        st.caption("Uses leave entitlement from Holiday Summary for Variance report. Leave empty to use Absence CSV entitlement.")
+
+    df_entitlement = None
+    if entitlement_uploaded:
+        try:
+            from holiday_summary_loader import load_holiday_summary
+            import tempfile
+            with tempfile.NamedTemporaryFile(suffix=".xlsx" if (entitlement_uploaded.name or "").lower().endswith((".xlsx", ".xls")) else ".csv", delete=False) as tmp:
+                tmp.write(entitlement_uploaded.read())
+                tmp_path = tmp.name
+            df_entitlement, err = load_holiday_summary(tmp_path)
+            os.unlink(tmp_path)
+            if err:
+                st.warning(f"Entitlement: {err}")
+                df_entitlement = None
+        except Exception as e:
+            st.warning(f"Entitlement load failed: {e}")
+    elif entitlement_path and str(entitlement_path).strip():
+        try:
+            from holiday_summary_loader import load_holiday_summary
+            df_entitlement, err = load_holiday_summary(str(entitlement_path).strip())
+            if err:
+                st.warning(f"Entitlement: {err}")
+                df_entitlement = None
+        except Exception as e:
+            st.warning(f"Entitlement load failed: {e}")
+
 # ----- Compute leave firmwide (for Summary and Leave tab) -----
 employee_balance, _, _ = compute_annual_employee_balance(df, daily_filt, weekday_only=True)
 full_time_emps = []
@@ -856,7 +892,7 @@ def _fmt_days(x):
     except Exception: return str(x)
 
 # Main tabs
-main_leave, main_time = st.tabs(["Leave Management", "Time Utilisation"])
+main_leave, main_time, main_variance = st.tabs(["Leave Management", "Time Utilisation", "Variance"])
 
 # =========================================================
 # LEAVE MANAGEMENT: Summary + Individual, Department, Country, Group / ExCo
@@ -1330,6 +1366,201 @@ with main_time:
         3. **BLIP data handling** — Overnight and negative durations corrected. Missing clock-outs inferred (17:25–17:45). Missing/invalid breaks get synthetic 30–45 min lunch.  
         4. **Employee matching** — Names matched across Absence and BLIP by First + Last name; extra spaces ignored.
         """)
+
+# =========================================================
+# VARIANCE TAB: Replicates Excel 8-sheet layout (Leave + Time by Employee, Department, Country, Group)
+# =========================================================
+with main_variance:
+    st.markdown('<h3 class="eg-section-title">Variance Report</h3>', unsafe_allow_html=True)
+    st.caption("Annual Leave and WFH allowance vs taken. Time variance = worked hours vs expected (7.5h/day). WFH allowed = 9 days. Entitlement from Holiday Summary when provided.")
+    try:
+        from build_dashboard_excel import build_employee_summary
+        from build_dashboard_views import (
+            build_variance_individual_df, build_variance_rollup,
+            build_hours_view_data, build_time_rollup, _break_hrs_to_hhmm, variance_bg_color, var_hrs_to_hours_str,
+        )
+        df_blip_for_var = df_blip if df_blip is not None and not (hasattr(df_blip, "empty") and df_blip.empty) else pd.DataFrame()
+        df_ent_for_var = df_entitlement if df_entitlement is not None and not (hasattr(df_entitlement, "empty") and df_entitlement.empty) else None
+        df_employees_var = build_employee_summary(df, df_blip_for_var, df_entitlement=df_ent_for_var)
+        df_var = build_variance_individual_df(df_employees_var, df_blip_for_var, df_absence=df, wfh_allowance_override=9)
+    except Exception as e:
+        df_var = pd.DataFrame()
+        st.warning(f"Could not build variance data: {e}")
+
+    expected_hours_var = st.number_input("Expected hours per day (for Time variance)", 0.0, 24.0, 7.5, 0.5, key="var_expected_hours")
+
+    if df_var.empty:
+        st.info("No variance data. Ensure Absence data is loaded; BLIP optional for WFH fallback.")
+    else:
+        def _style_variance_df(df_in, variance_cols):
+            """Apply green/red/yellow conditional formatting to variance columns."""
+            if df_in.empty:
+                return df_in.style
+            subset = [c for c in variance_cols if c in df_in.columns]
+            if not subset:
+                return df_in.style
+            def _apply(s):
+                if s.name in subset:
+                    return s.apply(lambda x: variance_bg_color(x) if pd.notna(x) and str(x).strip() != "" else "")
+                return [""] * len(s)
+            return df_in.style.apply(_apply)
+
+        def _fmt_leave(x):
+            """Format leave values: whole numbers as int, else one decimal (no trailing zeros)."""
+            if x is None or (isinstance(x, str) and str(x).strip() == ""):
+                return ""
+            try:
+                v = float(x)
+            except (TypeError, ValueError):
+                return str(x)
+            return f"{int(v)}" if abs(v - round(v)) < 1e-6 else f"{v:.1f}".rstrip("0").rstrip(".")
+
+        def _fmt_pct(x):
+            if x is None or (isinstance(x, str) and str(x).strip() == ""):
+                return ""
+            try:
+                v = float(x)
+            except (TypeError, ValueError):
+                return str(x)
+            return f"{v:.1f}%" if pd.notna(v) else ""
+
+        leave_num_cols = [
+            "Annual Leave Allowance", "Annual Leave Taken", "% YTD", "Annual Leave Remaining",
+            "WFH Allowance", "WFH Taken", "WFH Variance",
+            "Medical/Sick Taken", "External Assignments Taken", "Other Taken",
+        ]
+        fmt_leave_map = {c: _fmt_leave for c in leave_num_cols if c != "% YTD"}
+        fmt_leave_map["% YTD"] = _fmt_pct
+        variance_cols_leave = ["Annual Leave Remaining", "WFH Variance"]
+
+        tab_leave, tab_time = st.tabs(["Leave variance", "Time variance"])
+
+        with tab_leave:
+            tab_var_ind, tab_var_dept, tab_var_country, tab_var_group = st.tabs(["Leave by Employee", "Leave by Department", "Leave by Country", "Leave by Group"])
+            with tab_var_ind:
+                st.markdown("**Leave by Employee** — One row per employee.")
+                styled = _style_variance_df(df_var, variance_cols_leave)
+                fmt_leave = {c: fmt_leave_map[c] for c in leave_num_cols if c in df_var.columns and c in fmt_leave_map}
+                if fmt_leave:
+                    styled = styled.format(fmt_leave)
+                st.dataframe(styled, use_container_width=True, hide_index=True)
+                st.download_button("Download Individual (CSV)", data=df_var.to_csv(index=False).encode("utf-8"), file_name="variance_individual.csv", mime="text/csv", key="dl_var_ind")
+            with tab_var_dept:
+                by_dept = build_variance_rollup(df_var, "Team", "Department")
+                if by_dept.empty:
+                    st.info("No department roll-up.")
+                else:
+                    styled = _style_variance_df(by_dept, variance_cols_leave)
+                    fmt_leave = {c: fmt_leave_map[c] for c in leave_num_cols if c in by_dept.columns and c in fmt_leave_map}
+                    if fmt_leave:
+                        styled = styled.format(fmt_leave)
+                    st.dataframe(styled, use_container_width=True, hide_index=True)
+                    st.download_button("Download By Department (CSV)", data=by_dept.to_csv(index=False).encode("utf-8"), file_name="variance_by_department.csv", mime="text/csv", key="dl_var_dept")
+            with tab_var_country:
+                by_country = build_variance_rollup(df_var, "Country", "Country")
+                if by_country.empty:
+                    st.info("No country roll-up.")
+                else:
+                    styled = _style_variance_df(by_country, variance_cols_leave)
+                    fmt_leave = {c: fmt_leave_map[c] for c in leave_num_cols if c in by_country.columns and c in fmt_leave_map}
+                    if fmt_leave:
+                        styled = styled.format(fmt_leave)
+                    st.dataframe(styled, use_container_width=True, hide_index=True)
+                    st.download_button("Download By Country (CSV)", data=by_country.to_csv(index=False).encode("utf-8"), file_name="variance_by_country.csv", mime="text/csv", key="dl_var_country")
+            with tab_var_group:
+                by_group = build_variance_rollup(df_var, "Group", "Group")
+                if by_group.empty:
+                    st.info("No group roll-up.")
+                else:
+                    styled = _style_variance_df(by_group, variance_cols_leave)
+                    fmt_leave = {c: fmt_leave_map[c] for c in leave_num_cols if c in by_group.columns and c in fmt_leave_map}
+                    if fmt_leave:
+                        styled = styled.format(fmt_leave)
+                    st.dataframe(styled, use_container_width=True, hide_index=True)
+                    st.download_button("Download By Group (CSV)", data=by_group.to_csv(index=False).encode("utf-8"), file_name="variance_by_group.csv", mime="text/csv", key="dl_var_group")
+
+        with tab_time:
+            if df_blip_for_var.empty:
+                st.info("Load BLIP data (in BLIP Utilisation expander) to see Time variance views.")
+            else:
+                dates_list, employees_list, hours_lookup = build_hours_view_data(df_blip_for_var, expected_hours=expected_hours_var)
+                emp_options = ["All employees"] + list(employees_list)
+                selected_emp = st.selectbox(
+                    "Filter by employee (one at a time)",
+                    options=emp_options,
+                    index=0,
+                    key="var_time_emp_filter",
+                )
+                emps_to_show = [selected_emp] if selected_emp != "All employees" else employees_list
+                time_by_dept = build_time_rollup(df_employees_var, hours_lookup, dates_list, emps_to_show, "Team", "Department")
+                time_by_country = build_time_rollup(df_employees_var, hours_lookup, dates_list, emps_to_show, "Country", "Country")
+                time_by_group = build_time_rollup(df_employees_var, hours_lookup, dates_list, emps_to_show, "Group", "Group")
+
+                tab_time_emp, tab_time_dept, tab_time_country, tab_time_group = st.tabs(["Time by Employee", "Time by Department", "Time by Country", "Time by Group"])
+
+                def _fmt_time_var(x):
+                    if x is None or (isinstance(x, str) and str(x).strip() == ""):
+                        return ""
+                    try:
+                        return var_hrs_to_hours_str(float(x))
+                    except (TypeError, ValueError):
+                        return str(x)
+
+                with tab_time_emp:
+                    st.markdown("**Time by Employee** — Dates × employees (In, Out, Break HH:MM, Var in hours).")
+                    if emps_to_show and dates_list:
+                        cols = ["Date"]
+                        for emp in emps_to_show:
+                            cols.extend([f"{emp}_In", f"{emp}_Out", f"{emp}_Break", f"{emp}_Var"])
+                        rows = []
+                        for dt in dates_list:
+                            row = [pd.Timestamp(dt).strftime("%Y-%m-%d") if hasattr(dt, "strftime") else str(dt)]
+                            for emp in emps_to_show:
+                                key = (emp, pd.Timestamp(dt).normalize() if hasattr(dt, "normalize") else dt)
+                                rec = hours_lookup.get(key, {})
+                                row.extend([
+                                    rec.get("in", ""),
+                                    rec.get("out", ""),
+                                    _break_hrs_to_hhmm(rec.get("break_hrs", 0)),
+                                    round(rec.get("var_hrs", 0), 2),
+                                ])
+                            rows.append(row)
+                        df_time_emp = pd.DataFrame(rows, columns=cols)
+                        total_row = ["Total Var"] + [""] * (len(cols) - 1)
+                        for j, emp in enumerate(emps_to_show):
+                            total_var = sum(hours_lookup.get((emp, pd.Timestamp(dt).normalize()), {}).get("var_hrs", 0) for dt in dates_list)
+                            var_col_idx = 1 + j * 4 + 3
+                            total_row[var_col_idx] = round(total_var, 2)
+                        df_time_emp = pd.concat([df_time_emp, pd.DataFrame([total_row], columns=cols)], ignore_index=True)
+                        var_cols_time = [c for c in df_time_emp.columns if c.endswith("_Var")]
+                        styled = _style_variance_df(df_time_emp, var_cols_time)
+                        fmt_dict = {c: _fmt_time_var for c in var_cols_time}
+                        styled = styled.format(fmt_dict)
+                        st.dataframe(styled, use_container_width=True, hide_index=True)
+                        st.download_button("Download Time by Employee (CSV)", data=df_time_emp.to_csv(index=False).encode("utf-8"), file_name="time_by_employee.csv", mime="text/csv", key="dl_time_emp")
+                    else:
+                        st.info("No BLIP shift data or no employees.")
+                with tab_time_dept:
+                    if time_by_dept.empty:
+                        st.info("No department roll-up.")
+                    else:
+                        styled = _style_variance_df(time_by_dept, ["Total Var"]).format({"Total Var": _fmt_time_var})
+                        st.dataframe(styled, use_container_width=True, hide_index=True)
+                        st.download_button("Download Time by Department (CSV)", data=time_by_dept.to_csv(index=False).encode("utf-8"), file_name="time_by_department.csv", mime="text/csv", key="dl_time_dept")
+                with tab_time_country:
+                    if time_by_country.empty:
+                        st.info("No country roll-up.")
+                    else:
+                        styled = _style_variance_df(time_by_country, ["Total Var"]).format({"Total Var": _fmt_time_var})
+                        st.dataframe(styled, use_container_width=True, hide_index=True)
+                        st.download_button("Download Time by Country (CSV)", data=time_by_country.to_csv(index=False).encode("utf-8"), file_name="time_by_country.csv", mime="text/csv", key="dl_time_country")
+                with tab_time_group:
+                    if time_by_group.empty:
+                        st.info("No group roll-up.")
+                    else:
+                        styled = _style_variance_df(time_by_group, ["Total Var"]).format({"Total Var": _fmt_time_var})
+                        st.dataframe(styled, use_container_width=True, hide_index=True)
+                        st.download_button("Download Time by Group (CSV)", data=time_by_group.to_csv(index=False).encode("utf-8"), file_name="time_by_group.csv", mime="text/csv", key="dl_time_group")
 
 st.markdown("")
 st.markdown('<div style="text-align:center; font-size:0.8rem; color:#6b7280; padding:0.5rem 0;">Leave Management & Time Utilisation - UnitedGreen (Simplified)</div>', unsafe_allow_html=True)

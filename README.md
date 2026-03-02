@@ -86,7 +86,7 @@ One workbook containing the same refined data the dashboard uses: **Absence** (p
 python build_dashboard_excel.py [--absence-csv PATH] [--blip PATH] [--out PATH]
 ```
 
-- **Output:** `dashboard_data.xlsx` (or `--out` path) with two sheets: **Absence**, **BLIP**.
+- **Output:** `Variance_Excel.xlsx` (or `--out` path) with two sheets: **Absence**, **BLIP**.
 - Same processing as the dashboard: absence CSV → process (dates, employee, categories, org); BLIP CSV/Excel → process (clock in/out, worked/duration/break hours, anomalies).
 
 ## Defaults
