@@ -24,6 +24,7 @@ import os
 # =================================================
 START_DATE = date(2026, 1, 27)
 MIN_WORK = timedelta(hours=7, minutes=30)
+LATE_CLOCKIN_THRESHOLD = time(10, 30)
 WFH_HOURS = 8
 WFH_CLOCK_IN = time(9, 0)
 WFH_CLOCK_OUT = time(17, 0)
@@ -162,13 +163,17 @@ def main():
             shift_out = shifts["clock_out_dt"].max()
             clock_in = shift_in.time() if pd.notna(shift_in) else rand_time(8, 55, 9, 10)
 
+            if clock_in > LATE_CLOCKIN_THRESHOLD:
+                clock_in = rand_time(9, 0, 10, 0)
+                notes = "ADJUSTED (late clock-in >10:30)"
+
             if pd.isna(shift_out):
                 clock_out = rand_time(17, 25, 17, 45)
             else:
                 out_date = shift_out.date() if hasattr(shift_out, "date") else shift_out
                 in_date = shift_in.date() if hasattr(shift_in, "date") else shift_in
                 if out_date != in_date:
-                    clock_out = time(17, 30)
+                    clock_out = rand_time(17, 25, 17, 45)
                     notes = "ADJUSTED (multi-day shift; first day only)"
                 else:
                     clock_out = shift_out.time()

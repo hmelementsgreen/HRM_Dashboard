@@ -27,6 +27,8 @@ def main():
     parser.add_argument("--out", "-o", default=DEFAULT_OUT, help=f"Output Excel path (default: {os.path.basename(DEFAULT_OUT)})")
     parser.add_argument("--entitlement", "-e", default=None, help="Holiday Summary Report (Excel/CSV) for leave entitlement")
     parser.add_argument("--wfh-allowance", type=float, default=9, help="WFH allowance days (default: 9)")
+    parser.add_argument("--time-from", default=None, help="Time by Employee: first date YYYY-MM-DD (default: from data)")
+    parser.add_argument("--time-to", default=None, help="Time by Employee: last date YYYY-MM-DD (default: from data)")
     args = parser.parse_args()
 
     # Default entitlement: annualLeave in Downloads if exists
@@ -83,6 +85,10 @@ def main():
 
     print("[3/3] Building 8-sheet views (Leave + Time by Employee, Department, Country, Group)...")
     views_cmd = [sys.executable, os.path.join(_PROJECT_ROOT, "build_dashboard_views.py"), "--input", out_path, "--output", out_path, "--wfh-allowance", str(args.wfh_allowance)]
+    if args.time_from:
+        views_cmd.extend(["--time-from", args.time_from])
+    if args.time_to:
+        views_cmd.extend(["--time-to", args.time_to])
     code = subprocess.run(views_cmd, cwd=_PROJECT_ROOT).returncode
     if code != 0:
         print("build_dashboard_views failed.", file=sys.stderr)

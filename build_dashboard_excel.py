@@ -275,6 +275,18 @@ def main():
         df_blip = pd.read_excel(args.blip, skiprows=1, engine="openpyxl")
     df_blip = process_blip_df(df_blip, update_source_for_export=False)
 
+    # Exclude fully remote employees (0 WFH) from BLIP data
+    from build_dashboard_views import FULLY_REMOTE_EMPLOYEES
+    if FULLY_REMOTE_EMPLOYEES and "employee" in df_blip.columns:
+        _emp_short = df_blip["employee"].fillna("").astype(str).apply(_normalize_employee).apply(_first_last)
+        _is_remote = _emp_short.str.lower().apply(
+            lambda x: any(x == r or x.startswith(r + " ") or x.endswith(" " + r) for r in FULLY_REMOTE_EMPLOYEES)
+        )
+        n_removed = _is_remote.sum()
+        if n_removed:
+            print(f"Excluded {n_removed} BLIP rows for fully remote employees")
+        df_blip = df_blip[~_is_remote].reset_index(drop=True)
+
     # Optional: load entitlement from Holiday Summary Report
     df_entitlement = None
     if args.entitlement and os.path.isfile(args.entitlement):

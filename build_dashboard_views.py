@@ -14,7 +14,7 @@ from datetime import date
 import argparse
 import pandas as pd
 from openpyxl import load_workbook, Workbook
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font
 
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_INPUT = os.path.join(_PROJECT_ROOT, "Variance_Excel.xlsx")
@@ -22,18 +22,25 @@ EXPECTED_HOURS_PER_DAY = 7.5
 WFH_ALLOWANCE_DEFAULT = None  # None = compute from BLIP (weeks from first entry to today)
 # Per-person WFH allowance overrides: working remotely (0), special arrangements (2 or 3), else default 9
 WFH_ALLOWANCE_OVERRIDES = {
-    "Albano": 0,
+    "Albano Limas": 0,
     "John Hetherton": 0,
     "Elizabeth Kinnear-Mellor": 0,
+    "Jamie Rixton": 0,
+    "Ryan Holland": 0,
     "Otto Carlisle": 2,
     "Mark Turner": 3,
     "Elias": 3,
     "Fabian": 3,
-    "William Bets": 3,
+    "William Betts": 3,
 }
 WFH_ALLOWANCE_DEFAULT_WHEN_OVERRIDE = 9
 # Period is Jan 1 to date (~9 weeks). Override 2 = 2/week → 18, 3 = 3/week → 27. 0 and 9 (1/week) stay as-is.
 WFH_WEEKS = 9
+
+# Fully remote employees (0 WFH allowance) — exclude from all BLIP / Time sheets
+FULLY_REMOTE_EMPLOYEES = frozenset(
+    k.lower() for k, v in WFH_ALLOWANCE_OVERRIDES.items() if v == 0
+)
 
 # Formatting: 4-step gradient (positive=green, negative=red, zero=neutral gray)
 # Better contrast and smoother magnitude mapping
@@ -49,6 +56,213 @@ FILL_NEUTRAL = PatternFill(start_color="FAFAFA", end_color="FAFAFA", fill_type="
 
 # Gradient thresholds (absolute value)
 VARIANCE_T1, VARIANCE_T2, VARIANCE_T3 = 0.5, 2.0, 5.0
+
+
+def _first_last(s):
+    """Reduce to First + Last name for matching (align with build_dashboard_excel)."""
+    parts = str(s).strip().split() if s else []
+    if len(parts) >= 2:
+        return parts[0] + " " + parts[-1]
+    return parts[0] if parts else ""
+
+
+def _uk_holidays_for_year(year):
+    """UK England & Wales bank holidays for the given year. Returns set of pd.Timestamp dates (normalized)."""
+    # Fixed and variable dates for 2026, 2027 (extend as needed)
+    holidays = set()
+    # New Year
+    holidays.add(pd.Timestamp(year, 1, 1))
+    # Early May (first Monday May)
+    d = pd.Timestamp(year, 5, 1)
+    while d.weekday() != 0:
+        d += pd.Timedelta(days=1)
+    holidays.add(d)
+    # Spring (last Monday May)
+    d = pd.Timestamp(year, 5, 31)
+    while d.weekday() != 0:
+        d -= pd.Timedelta(days=1)
+    holidays.add(d)
+    # Summer (last Monday August)
+    d = pd.Timestamp(year, 8, 31)
+    while d.weekday() != 0:
+        d -= pd.Timedelta(days=1)
+    holidays.add(d)
+    # Christmas / Boxing Day
+    holidays.add(pd.Timestamp(year, 12, 25))
+    holidays.add(pd.Timestamp(year, 12, 26))
+    # Good Friday / Easter Monday (simplified: use datetime or hardcode for 2026/2027)
+    if year == 2026:
+        holidays.add(pd.Timestamp(2026, 4, 3))
+        holidays.add(pd.Timestamp(2026, 4, 6))
+    elif year == 2027:
+        holidays.add(pd.Timestamp(2027, 3, 26))
+        holidays.add(pd.Timestamp(2027, 3, 29))
+    return {pd.Timestamp(d).normalize() for d in holidays}
+
+
+def _get_time_sheet_date_range(df_blip, df_absence, time_from_arg=None, time_to_arg=None):
+    """Return (start, end) as pd.Timestamp for the Time by Employee continuous calendar. Prefer args; else derive from BLIP then Absence."""
+    if time_from_arg and time_to_arg:
+        start = pd.Timestamp(time_from_arg).normalize()
+        end = pd.Timestamp(time_to_arg).normalize()
+        if start > end:
+            start, end = end, start
+        return start, end
+    start, end = None, None
+    if not df_blip.empty:
+        date_col = None
+        if "date" in df_blip.columns:
+            date_col = df_blip["date"]
+        elif "Clock In Date" in df_blip.columns:
+            date_col = df_blip["Clock In Date"]
+        if date_col is not None:
+            dt = pd.to_datetime(date_col, errors="coerce").dropna()
+            if not dt.empty:
+                start = pd.Timestamp(dt.min()).normalize()
+                end = pd.Timestamp(dt.max()).normalize()
+    if (start is None or end is None) and not df_absence.empty:
+        for col in ["start_dt", "Absence start date"]:
+            if col in df_absence.columns:
+                s = pd.to_datetime(df_absence[col], errors="coerce").dropna()
+                if not s.empty and start is None:
+                    start = pd.Timestamp(s.min()).normalize()
+                break
+        for col in ["end_dt", "Absence end date"]:
+            if col in df_absence.columns:
+                e = pd.to_datetime(df_absence[col], errors="coerce").dropna()
+                if not e.empty and end is None:
+                    end = pd.Timestamp(e.max()).normalize()
+                break
+    if start is None or end is None:
+        # Default: current month
+        today = pd.Timestamp.now().normalize()
+        start = today.replace(day=1)
+        end = today
+    if start > end:
+        end = start
+    return start, end
+
+
+def _build_absence_daily_lookup(df_absence):
+    """Build (employee_short, date) -> set of absence_category. Uses First+Last for employee. Returns dict."""
+    if df_absence is None or df_absence.empty:
+        return {}
+    df = df_absence.copy()
+    if "employee" not in df.columns:
+        return {}
+    df["employee"] = df["employee"].fillna("").astype(str).apply(_normalize_employee).apply(_first_last)
+    start_col = next((c for c in ["start_dt", "Absence start date"] if c in df.columns), None)
+    end_col = next((c for c in ["end_dt", "Absence end date"] if c in df.columns), None)
+    if not start_col:
+        return {}
+    df["start_dt"] = pd.to_datetime(df[start_col], errors="coerce")
+    df["end_dt"] = pd.to_datetime(df[end_col], errors="coerce") if end_col else df["start_dt"]
+    df["end_dt"] = df["end_dt"].fillna(df["start_dt"])
+    df.loc[df["end_dt"] < df["start_dt"], "end_dt"] = df["start_dt"]
+    cat_col = next((c for c in ["absence_category", "Absence type"] if c in df.columns), None)
+    if not cat_col:
+        return {}
+    try:
+        from absence_daily import expand_to_daily
+        expanded = expand_to_daily(df[["employee", "start_dt", "end_dt", cat_col]].copy())
+    except Exception:
+        return {}
+    if expanded.empty:
+        return {}
+    expanded["date"] = pd.to_datetime(expanded["date"], errors="coerce").dt.normalize()
+    lookup = {}
+    def _norm_cat(raw_val):
+        c = (str(raw_val) or "").strip().lower()
+        if "medical" in c or "sick" in c:
+            return "Medical + Sickness"
+        if "annual" in c or "holiday" in c:
+            return "Annual Leave"
+        return None
+
+    for _, r in expanded.iterrows():
+        emp = r["employee"].strip()
+        dt = r["date"]
+        if pd.isna(dt) or not emp:
+            continue
+        key = (emp, pd.Timestamp(dt).normalize())
+        raw = str(r.get(cat_col, "") or "").strip()
+        cat = _norm_cat(raw) if raw else None
+        if key not in lookup:
+            lookup[key] = set()
+        if cat:
+            lookup[key].add(cat)
+    return lookup
+
+
+def _working_days_in_range(start_ts, end_ts, national_holidays):
+    """Count weekdays (Mon=0 .. Fri=4) in [start_ts, end_ts] excluding national_holidays."""
+    n = 0
+    d = pd.Timestamp(start_ts).normalize()
+    end = pd.Timestamp(end_ts).normalize()
+    while d <= end:
+        if d.weekday() < 5 and d not in national_holidays:
+            n += 1
+        d += pd.Timedelta(days=1)
+    return n
+
+
+def _build_time_summary_rows(employees_list, time_sheet_dates, hours_lookup, absence_lookup, national_holidays, expected_hours_per_day=EXPECTED_HOURS_PER_DAY):
+    """
+    Build rows for Time Summary sheet: Employee, Current Week hours, %, MTD, %, YTD, %.
+    Uses same var logic as Time by Employee (weekend/holiday exclude, sick exclude, annual leave=0).
+    """
+    if not time_sheet_dates or not employees_list:
+        return []
+    time_sheet_end = pd.Timestamp(time_sheet_dates[-1]).normalize()
+
+    def var_value(emp, dt):
+        ts = pd.Timestamp(dt).normalize()
+        if ts.weekday() >= 5 or ts in national_holidays:
+            return None
+        cats = absence_lookup.get((emp, ts), set())
+        if "Medical + Sickness" in cats:
+            return None
+        if "Annual Leave" in cats:
+            return 0.0
+        return float(hours_lookup.get((emp, ts), {}).get("var_hrs", 0) or 0)
+
+    # Current week (Mon-Sun containing time_sheet_end)
+    week_start = time_sheet_end - pd.Timedelta(days=time_sheet_end.weekday())
+    week_end = week_start + pd.Timedelta(days=6)
+    dates_in_week = [d for d in time_sheet_dates if week_start <= pd.Timestamp(d).normalize() <= week_end]
+    working_days_week = _working_days_in_range(week_start, week_end, national_holidays)
+    expected_week = working_days_week * expected_hours_per_day if working_days_week else None
+
+    # MTD: first of month to time_sheet_end
+    month_start = time_sheet_end.replace(day=1)
+    dates_mtd = [d for d in time_sheet_dates if month_start <= pd.Timestamp(d).normalize() <= time_sheet_end]
+    working_days_mtd = _working_days_in_range(month_start, time_sheet_end, national_holidays)
+    expected_mtd = working_days_mtd * expected_hours_per_day if working_days_mtd else None
+
+    # YTD: Jan 1 to time_sheet_end
+    year_start = time_sheet_end.replace(month=1, day=1)
+    dates_ytd = [d for d in time_sheet_dates if year_start <= pd.Timestamp(d).normalize() <= time_sheet_end]
+    working_days_ytd = _working_days_in_range(year_start, time_sheet_end, national_holidays)
+    expected_ytd = working_days_ytd * expected_hours_per_day if working_days_ytd else None
+
+    rows = []
+    for emp in employees_list:
+        cw_sum = sum(v for d in dates_in_week for v in [var_value(emp, d)] if v is not None)
+        mtd_sum = sum(v for d in dates_mtd for v in [var_value(emp, d)] if v is not None)
+        ytd_sum = sum(v for d in dates_ytd for v in [var_value(emp, d)] if v is not None)
+        cw_pct = round((cw_sum / expected_week * 100)) if expected_week and expected_week != 0 else None
+        mtd_pct = round((mtd_sum / expected_mtd * 100)) if expected_mtd and expected_mtd != 0 else None
+        ytd_pct = round((ytd_sum / expected_ytd * 100)) if expected_ytd and expected_ytd != 0 else None
+        rows.append({
+            "Employee": emp,
+            "Current Week hours": round(cw_sum, 2),
+            "Current Week %": cw_pct,
+            "MTD": round(mtd_sum, 2),
+            "MTD %": mtd_pct,
+            "YTD": round(ytd_sum, 2),
+            "YTD %": ytd_pct,
+        })
+    return rows
 
 
 def _round_to_half(x):
@@ -213,13 +427,16 @@ def wfh_allowed_per_employee_from_first_absence(df_absence, df_blip):
 
 
 def _wfh_allowance_for_employee(emp, default_val):
-    """Look up per-person WFH override (exact match, or prefix match for first-name-only keys like Elias, Fabian)."""
+    """Look up per-person WFH override. Case-insensitive exact match; single-word keys also prefix-match (e.g. 'Elias' matches 'Elias Zimmerman')."""
     emp_norm = (_normalize_employee(emp) if isinstance(emp, str) else "") or ""
+    emp_lower = emp_norm.lower()
     for key, val in WFH_ALLOWANCE_OVERRIDES.items():
         key_norm = _normalize_employee(key)
-        if emp_norm == key_norm:
+        key_lower = key_norm.lower()
+        if emp_lower == key_lower:
             return val
-        if key in ("Elias", "Fabian") and (emp_norm.startswith(key + " ") or emp_norm == key):
+        # Single-word keys (first name only) → prefix match
+        if " " not in key_norm and emp_lower.startswith(key_lower + " "):
             return val
     return default_val
 
@@ -284,13 +501,25 @@ def build_variance_individual_df(df_employees, df_blip, df_absence=None, wfh_all
 
 def build_hours_view_data(df_blip, expected_hours=EXPECTED_HOURS_PER_DAY):
     """
-    From BLIP sheet: group by employee and date (shift rows only). Return (dates_sorted, employees_sorted, list of dicts per (emp, date): in_time, out_time, break_hrs, var_hrs).
+    From BLIP sheet: group by employee (First+Last) and date (shift rows only).
+    Return (dates_sorted, employees_sorted, lookup (emp_short, date) -> {in, out, break_hrs, var_hrs}).
     """
     if df_blip.empty:
         return [], [], {}
 
     df = df_blip.copy()
     df["employee"] = df["employee"].fillna("").astype(str).apply(_normalize_employee)
+    df["employee_short"] = df["employee"].apply(_first_last)
+
+    # Exclude fully remote employees from Time sheets
+    if FULLY_REMOTE_EMPLOYEES:
+        _is_remote = df["employee_short"].str.lower().apply(
+            lambda x: any(x == r or x.startswith(r + " ") or x.endswith(" " + r) for r in FULLY_REMOTE_EMPLOYEES)
+        )
+        df = df[~_is_remote]
+        if df.empty:
+            return [], [], {}
+
     if "date" not in df.columns and "Clock In Date" in df.columns:
         df["date"] = pd.to_datetime(df["Clock In Date"], errors="coerce")
     else:
@@ -305,7 +534,7 @@ def build_hours_view_data(df_blip, expected_hours=EXPECTED_HOURS_PER_DAY):
 
     if "date_norm" not in blip.columns:
         blip["date_norm"] = pd.to_datetime(blip["date"]).dt.normalize()
-    daily = blip.groupby(["employee", "date_norm"], as_index=False).agg(
+    daily = blip.groupby(["employee_short", "date_norm"], as_index=False).agg(
         clockin_dt=("clockin_dt", "min"),
         clockout_dt=("clockout_dt", "max"),
         worked_hours=("worked_hours", "sum"),
@@ -315,14 +544,13 @@ def build_hours_view_data(df_blip, expected_hours=EXPECTED_HOURS_PER_DAY):
     daily["var_hours"] = daily["worked_hours"] - expected_hours
 
     dates_sorted = sorted(daily["date_norm"].dropna().unique())
-    employees_sorted = sorted(daily["employee"].dropna().unique())
+    employees_sorted = sorted(daily["employee_short"].dropna().unique())
     if not employees_sorted:
         return [], [], {}
 
-    # Build lookup (emp, date) -> {in_time, out_time, break_hrs, var_hrs}
     lookup = {}
     for _, r in daily.iterrows():
-        emp = r["employee"]
+        emp = r["employee_short"]
         dt = r["date_norm"]
         if pd.isna(dt):
             continue
@@ -439,6 +667,8 @@ def main():
     parser.add_argument("--output", "-o", help="Output workbook (default: same as input)")
     parser.add_argument("--expected-hours", type=float, default=EXPECTED_HOURS_PER_DAY, help="Expected hours per day for Var")
     parser.add_argument("--wfh-allowance", type=float, default=None, help="Override WFH allowance (default: weeks from first BLIP date to today)")
+    parser.add_argument("--time-from", default=None, help="Time by Employee sheet: first date (YYYY-MM-DD). Default: from BLIP/Absence")
+    parser.add_argument("--time-to", default=None, help="Time by Employee sheet: last date (YYYY-MM-DD). Default: from BLIP/Absence")
     args = parser.parse_args()
 
     in_path = os.path.abspath(args.input)
@@ -465,13 +695,28 @@ def main():
     by_country = build_variance_rollup(df_var, "Country", "Country") if not df_var.empty else pd.DataFrame()
     by_group = build_variance_rollup(df_var, "Group", "Group") if not df_var.empty else pd.DataFrame()
 
-    # Hours view data
+    # Hours view data (employees and lookup use First+Last)
     dates_list, employees_list, hours_lookup = build_hours_view_data(df_blip, expected_hours=args.expected_hours)
 
-    # Time roll-ups (Department, Country, Group)
-    time_by_dept = build_time_rollup(df_employees, hours_lookup, dates_list, employees_list, "Team", "Department")
-    time_by_country = build_time_rollup(df_employees, hours_lookup, dates_list, employees_list, "Country", "Country")
-    time_by_group = build_time_rollup(df_employees, hours_lookup, dates_list, employees_list, "Group", "Group")
+    # Time by Employee: continuous date range (from args or BLIP/Absence)
+    time_sheet_start, time_sheet_end = _get_time_sheet_date_range(
+        df_blip, df_absence, args.time_from, args.time_to
+    )
+    time_sheet_dates = pd.date_range(time_sheet_start, time_sheet_end, freq="D").tolist()
+    years_in_range = set()
+    for d in time_sheet_dates:
+        t = pd.Timestamp(d)
+        years_in_range.add(t.year)
+    national_holidays = set()
+    for y in years_in_range:
+        national_holidays.update(_uk_holidays_for_year(y))
+    absence_lookup = _build_absence_daily_lookup(df_absence)
+
+    # Roll-ups use same period as Time by Employee sheet
+    dates_for_rollup = time_sheet_dates if time_sheet_dates else dates_list
+    time_by_dept = build_time_rollup(df_employees, hours_lookup, dates_for_rollup, employees_list, "Team", "Department")
+    time_by_country = build_time_rollup(df_employees, hours_lookup, dates_for_rollup, employees_list, "Country", "Country")
+    time_by_group = build_time_rollup(df_employees, hours_lookup, dates_for_rollup, employees_list, "Group", "Group")
 
     # New workbook with exactly 8 sheets (no Absence/BLIP/Employees)
     wb = Workbook()
@@ -481,10 +726,10 @@ def main():
     ws1 = wb.create_sheet("Leave by Employee", 0)
     _write_variance_sheet(ws1, df_var, "Leave by Employee", variance_col_indices=[8, 11])
 
-    # 2. Time by Employee (one column gap between each employee; conditional formatting on Var)
+    # 2. Time by Employee: continuous calendar, status rules, weekly/monthly/YTD subtotals
     ws2 = wb.create_sheet("Time by Employee", 1)
     ws2["A1"] = "Time by Employee"
-    if employees_list and dates_list:
+    if employees_list and time_sheet_dates:
         col = 2
         emp_col_start = {}
         COLS_PER_EMP = 5  # In, Out, Break, Var, gap
@@ -495,35 +740,110 @@ def main():
                 ws2.cell(row=3, column=col, value=sub)
                 col += 1
             col += 1  # gap
-        for ri, dt in enumerate(dates_list):
-            row = 4 + ri
-            ws2.cell(row=row, column=1, value=pd.Timestamp(dt).strftime("%Y-%m-%d") if hasattr(dt, "strftime") else str(dt))
-            for emp in employees_list:
-                key = (emp, pd.Timestamp(dt).normalize() if hasattr(dt, "normalize") else dt)
-                rec = hours_lookup.get(key, {})
-                c0 = emp_col_start[emp]
-                ws2.cell(row=row, column=c0, value=rec.get("in", ""))
-                ws2.cell(row=row, column=c0 + 1, value=rec.get("out", ""))
-                ws2.cell(row=row, column=c0 + 2, value=_break_hrs_to_hhmm(rec.get("break_hrs", 0)))
-                var_hrs = rec.get("var_hrs", 0)
-                var_cell = ws2.cell(row=row, column=c0 + 3, value=round(var_hrs, 2))
-                fill = _fill_for_variance(var_hrs)
-                if fill:
-                    var_cell.fill = fill
-        total_row = 4 + len(dates_list)
-        ws2.cell(row=total_row, column=1, value="Total Var")
-        for emp in employees_list:
-            c0 = emp_col_start[emp] + 3
-            total_var = sum(
-                hours_lookup.get((emp, pd.Timestamp(dt).normalize()), {}).get("var_hrs", 0)
-                for dt in dates_list
+
+        # Precompute var value per (emp, date) for subtotals: None=exclude, 0=annual leave, float=BLIP
+        def _var_value_for_subtotal(emp, dt):
+            ts = pd.Timestamp(dt).normalize()
+            if ts.weekday() >= 5 or ts in national_holidays:
+                return None
+            cats = absence_lookup.get((emp, ts), set())
+            if "Medical + Sickness" in cats:
+                return None
+            if "Annual Leave" in cats:
+                return 0.0
+            rec = hours_lookup.get((emp, ts), {})
+            return float(rec.get("var_hrs", 0) or 0)
+
+        def _cell_value_for_row(emp, dt):
+            ts = pd.Timestamp(dt).normalize()
+            if ts.weekday() >= 5 or ts in national_holidays:
+                return "", "", "", None
+            cats = absence_lookup.get((emp, ts), set())
+            if "Medical + Sickness" in cats:
+                return "no show", "no show", "", None
+            if "Annual Leave" in cats:
+                return "", "", "", 0.0
+            rec = hours_lookup.get((emp, ts), {})
+            v = float(rec.get("var_hrs", 0) or 0)
+            return (
+                rec.get("in", ""),
+                rec.get("out", ""),
+                _break_hrs_to_hhmm(rec.get("break_hrs", 0)),
+                v,
             )
-            cell = ws2.cell(row=total_row, column=c0, value=round(total_var, 2))
-            fill = _fill_for_variance(total_var)
+
+        current_row = 4
+        for di, dt in enumerate(time_sheet_dates):
+            ts = pd.Timestamp(dt).normalize()
+            ws2.cell(row=current_row, column=1, value=ts.strftime("%Y-%m-%d"))
+            for emp in employees_list:
+                c0 = emp_col_start[emp]
+                in_val, out_val, break_val, var_val = _cell_value_for_row(emp, ts)
+                ws2.cell(row=current_row, column=c0, value=in_val)
+                ws2.cell(row=current_row, column=c0 + 1, value=out_val)
+                ws2.cell(row=current_row, column=c0 + 2, value=break_val)
+                if var_val is not None:
+                    cell = ws2.cell(row=current_row, column=c0 + 3, value=round(var_val, 2))
+                    fill = _fill_for_variance(var_val)
+                    if fill:
+                        cell.fill = fill
+            current_row += 1
+
+            # Weekly cumulative (after each Sunday)
+            if ts.weekday() == 6:
+                week_end = ts
+                week_start = week_end - pd.Timedelta(days=6)
+                ws2.cell(row=current_row, column=1, value=f"Weekly Cumulative (to {week_end.strftime('%Y-%m-%d')})")
+                for emp in employees_list:
+                    total = 0.0
+                    for d in time_sheet_dates:
+                        t = pd.Timestamp(d).normalize()
+                        if week_start <= t <= week_end:
+                            v = _var_value_for_subtotal(emp, t)
+                            if v is not None:
+                                total += v
+                    c0 = emp_col_start[emp] + 3
+                    cell = ws2.cell(row=current_row, column=c0, value=round(total, 2))
+                    fill = _fill_for_variance(total)
+                    if fill:
+                        cell.fill = fill
+                current_row += 1
+
+            # Monthly cumulative (after last day of month)
+            last_of_month = (ts + pd.offsets.MonthEnd(0)).normalize()
+            if ts == last_of_month:
+                month_name = ts.strftime("%B")
+                ws2.cell(row=current_row, column=1, value=f"{month_name} Cumulative")
+                for emp in employees_list:
+                    total = 0.0
+                    for d in time_sheet_dates:
+                        t = pd.Timestamp(d).normalize()
+                        if t.month == ts.month and t.year == ts.year:
+                            v = _var_value_for_subtotal(emp, t)
+                            if v is not None:
+                                total += v
+                    c0 = emp_col_start[emp] + 3
+                    cell = ws2.cell(row=current_row, column=c0, value=round(total, 2))
+                    fill = _fill_for_variance(total)
+                    if fill:
+                        cell.fill = fill
+                current_row += 1
+
+        # YTD / Period cumulative (final row)
+        ws2.cell(row=current_row, column=1, value="YTD Cumulative Variation")
+        for emp in employees_list:
+            total = 0.0
+            for d in time_sheet_dates:
+                v = _var_value_for_subtotal(emp, d)
+                if v is not None:
+                    total += v
+            c0 = emp_col_start[emp] + 3
+            cell = ws2.cell(row=current_row, column=c0, value=round(total, 2))
+            fill = _fill_for_variance(total)
             if fill:
                 cell.fill = fill
     else:
-        ws2["A2"] = "No BLIP data or no shift rows."
+        ws2["A2"] = "No BLIP data or no employees; or no date range for Time sheet."
 
     # 3. Leave by Department (cols: Name, Headcount, Allowance, Taken, % YTD, Remaining, ... WFH Variance)
     ws3 = wb.create_sheet("Leave by Department", 2)
@@ -549,16 +869,48 @@ def main():
     ws8 = wb.create_sheet("Time by Group", 7)
     _write_time_rollup_sheet(ws8, time_by_group, "Time by Group")
 
+    # 9. Time Summary: Current Week hours, %, MTD, %, YTD, % (separate report)
+    ws9 = wb.create_sheet("Time Summary", 8)
+    ws9["A1"] = "Time Summary"
+    summary_rows = _build_time_summary_rows(
+        employees_list, time_sheet_dates, hours_lookup, absence_lookup, national_holidays, expected_hours_per_day=args.expected_hours
+    )
+    if summary_rows:
+        headers = ["Employee", "Current Week hours", "%", "MTD", "%", "YTD", "%"]
+        for c, h in enumerate(headers, 1):
+            cell = ws9.cell(row=2, column=c, value=h)
+            cell.fill = PatternFill(start_color="E8F5E9", end_color="E8F5E9", fill_type="solid")
+        for ri, row in enumerate(summary_rows, 3):
+            ws9.cell(row=ri, column=1, value=row["Employee"])
+            ws9.cell(row=ri, column=2, value=row["Current Week hours"])
+            pct_cw = row["Current Week %"]
+            ws9.cell(row=ri, column=3, value=f"{pct_cw}%" if pct_cw is not None else "")
+            if pct_cw is not None and pct_cw < 0:
+                ws9.cell(row=ri, column=3).font = Font(color="C62828")
+            ws9.cell(row=ri, column=4, value=row["MTD"])
+            pct_mtd = row["MTD %"]
+            ws9.cell(row=ri, column=5, value=f"{pct_mtd}%" if pct_mtd is not None else "")
+            if pct_mtd is not None and pct_mtd < 0:
+                ws9.cell(row=ri, column=5).font = Font(color="C62828")
+            ws9.cell(row=ri, column=6, value=row["YTD"])
+            pct_ytd = row["YTD %"]
+            ws9.cell(row=ri, column=7, value=f"{pct_ytd}%" if pct_ytd is not None else "")
+            if pct_ytd is not None and pct_ytd < 0:
+                ws9.cell(row=ri, column=7).font = Font(color="C62828")
+    else:
+        ws9["A2"] = "No data (need BLIP and date range for Time sheet)."
+
     wb.save(out_path)
-    print(f"Wrote 8-sheet workbook: {out_path}")
+    print(f"Wrote 9-sheet workbook: {out_path}")
     print(f"  1. Leave by Employee: {len(df_var)} rows")
-    print(f"  2. Time by Employee: {len(dates_list)} dates, {len(employees_list)} employees (with column gap)")
+    print(f"  2. Time by Employee: {len(time_sheet_dates)} dates, {len(employees_list)} employees (with column gap)")
     print(f"  3. Leave by Department: {len(by_dept)} rows")
     print(f"  4. Time by Department: {len(time_by_dept)} rows")
     print(f"  5. Leave by Country: {len(by_country)} rows")
     print(f"  6. Time by Country: {len(time_by_country)} rows")
     print(f"  7. Leave by Group: {len(by_group)} rows")
     print(f"  8. Time by Group: {len(time_by_group)} rows")
+    print(f"  9. Time Summary: {len(summary_rows)} rows")
     return 0
 
 

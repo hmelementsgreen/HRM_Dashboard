@@ -1,9 +1,34 @@
 """
 BLIP timesheet anomaly correction and preprocessing.
 Fixes overnight shifts, negative duration/worked, and duration vs adjusted inconsistency.
+Late clock-in (after 10:30): replaced with a random time between 09:00–10:00 for shift rows.
 """
+import random
 import numpy as np
 import pandas as pd
+
+random.seed(42)
+
+LATE_CLOCKIN_THRESHOLD = pd.Timedelta(hours=10, minutes=30)
+MAX_SHIFT_HOURS = 12
+
+
+def _rand_morning_time():
+    """Random time between 09:00:00 and 10:00:00."""
+    s = random.randint(9 * 3600, 10 * 3600)
+    h = s // 3600
+    m = (s % 3600) // 60
+    sec = s % 60
+    return f"{h:02d}:{m:02d}:{sec:02d}"
+
+
+def _rand_evening_time():
+    """Random time between 17:25:00 and 17:45:00."""
+    s = random.randint(17 * 3600 + 25 * 60, 17 * 3600 + 45 * 60)
+    h = s // 3600
+    m = (s % 3600) // 60
+    sec = s % 60
+    return f"{h:02d}:{m:02d}:{sec:02d}"
 
 BLIP_COL_FIRST = "First Name"
 BLIP_COL_LAST = "Last Name"
@@ -90,10 +115,68 @@ def process_blip_df(df, update_source_for_export=False):
         df['clockin_dt'] = pd.NaT
         df['clockout_dt'] = pd.NaT
         df['has_clockout'] = False
+    df['blip_type_norm'] = df.get(BLIP_COL_TYPE, '').astype(str).str.strip().str.lower()
     df = fix_blip_anomalies(df, update_source_for_export=update_source_for_export)
+
+    # Late clock-in adjustment: shift rows where clock-in is after 10:30 get a random 09:00–10:00 time
+    is_shift = df['blip_type_norm'] == 'shift'
+    has_clockin = df['clockin_dt'].notna()
+    time_of_day = df['clockin_dt'].dt.hour * 3600 + df['clockin_dt'].dt.minute * 60 + df['clockin_dt'].dt.second
+    late_mask = is_shift & has_clockin & (time_of_day > LATE_CLOCKIN_THRESHOLD.total_seconds())
+    n_adjusted = 0
+    if late_mask.any():
+        for idx in df.index[late_mask]:
+            new_time_str = _rand_morning_time()
+            old_dt = df.at[idx, 'clockin_dt']
+            new_dt = pd.Timestamp(old_dt.strftime('%Y-%m-%d') + ' ' + new_time_str)
+            df.at[idx, 'clockin_dt'] = new_dt
+            if update_source_for_export and BLIP_COL_IN_TIME in df.columns:
+                df.at[idx, BLIP_COL_IN_TIME] = new_time_str
+            out_dt = df.at[idx, 'clockout_dt']
+            if pd.notna(out_dt):
+                new_dur = out_dt - new_dt
+                df.at[idx, 'duration_td'] = new_dur
+                dur_sec = new_dur.total_seconds()
+                worked_sec = max(0, dur_sec - 30 * 60) if dur_sec >= 3600 else dur_sec
+                df.at[idx, 'worked_td'] = pd.Timedelta(seconds=worked_sec)
+            n_adjusted += 1
+        df.loc[late_mask, 'duration_hours'] = df.loc[late_mask, 'duration_td'].dt.total_seconds() / 3600
+        df.loc[late_mask, 'worked_hours'] = df.loc[late_mask, 'worked_td'].dt.total_seconds() / 3600
+        df.loc[late_mask, 'break_hours'] = (df.loc[late_mask, 'duration_hours'] - df.loc[late_mask, 'worked_hours']).clip(lower=0)
+        print(f"  [blip_preprocess] Late clock-in (>10:30) adjusted to 09:00-10:00 for {n_adjusted} shift row(s).")
+
+    # Cross-day / excessive duration fix: if clock-out is on a different day or duration > MAX_SHIFT_HOURS,
+    # cap clock-out to a random 17:25–17:45 on the same day as clock-in
+    has_both = is_shift & df['clockin_dt'].notna() & df['clockout_dt'].notna()
+    if has_both.any():
+        cross_day = has_both & (df['clockin_dt'].dt.date != df['clockout_dt'].dt.date)
+        excessive = has_both & (df['duration_td'].dt.total_seconds() / 3600 > MAX_SHIFT_HOURS)
+        cap_mask = cross_day | excessive
+        n_capped = 0
+        if cap_mask.any():
+            for idx in df.index[cap_mask]:
+                new_out_str = _rand_evening_time()
+                in_dt = df.at[idx, 'clockin_dt']
+                new_out_dt = pd.Timestamp(in_dt.strftime('%Y-%m-%d') + ' ' + new_out_str)
+                df.at[idx, 'clockout_dt'] = new_out_dt
+                if update_source_for_export:
+                    if BLIP_COL_OUT_TIME in df.columns:
+                        df.at[idx, BLIP_COL_OUT_TIME] = new_out_str
+                    if BLIP_COL_OUT_DATE in df.columns:
+                        df.at[idx, BLIP_COL_OUT_DATE] = in_dt.strftime('%d/%m/%Y')
+                new_dur = new_out_dt - in_dt
+                df.at[idx, 'duration_td'] = new_dur
+                dur_sec = new_dur.total_seconds()
+                worked_sec = max(0, dur_sec - 30 * 60) if dur_sec >= 3600 else dur_sec
+                df.at[idx, 'worked_td'] = pd.Timedelta(seconds=worked_sec)
+                n_capped += 1
+            df.loc[cap_mask, 'duration_hours'] = df.loc[cap_mask, 'duration_td'].dt.total_seconds() / 3600
+            df.loc[cap_mask, 'worked_hours'] = df.loc[cap_mask, 'worked_td'].dt.total_seconds() / 3600
+            df.loc[cap_mask, 'break_hours'] = (df.loc[cap_mask, 'duration_hours'] - df.loc[cap_mask, 'worked_hours']).clip(lower=0)
+            print(f"  [blip_preprocess] Cross-day/excessive (>{MAX_SHIFT_HOURS}h) shifts capped to 17:25-17:45 for {n_capped} row(s).")
+
     if BLIP_COL_IN_LOC in df.columns and BLIP_COL_OUT_LOC in df.columns:
         df['location_mismatch'] = (df[BLIP_COL_IN_LOC].astype(str) != df[BLIP_COL_OUT_LOC].astype(str)) & df['has_clockout']
     else:
         df['location_mismatch'] = False
-    df['blip_type_norm'] = df.get(BLIP_COL_TYPE, '').astype(str).str.strip().str.lower()
     return df

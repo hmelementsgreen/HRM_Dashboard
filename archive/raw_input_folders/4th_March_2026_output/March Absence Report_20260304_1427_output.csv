@@ -1,0 +1,151 @@
+First name,Last name,Team names,Leave allowance,Leave entitlement,Absence type,Absence duration total in days,Absence duration for period in days,Absence description,Absence start date,Absence end date,Organisation,Suborganisation
+Stefanie,Lenehan,HR,,20.0,Work from home,1.0,1.0,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Stefanie,Lenehan,HR,,20.0,Work from home,1.0,1.0,WFH,04 Feb 2026 00:00:00,04 Feb 2026 00:00:00,AG,EG
+Stefanie,Lenehan,HR,,20.0,Work from home,1.0,1.0,wfh,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Lisa,Ter-Berg,Operations,,20.0,Annual,1.0,1.0,halfterm hols,18 Feb 2026 00:00:00,18 Feb 2026 00:00:00,AG,EG
+Lisa,Ter-Berg,Operations,,20.0,Others,1.0,1.0,upset tummy  think food poisioning,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,AG,EG
+Lisa,Ter-Berg,Operations,,20.0,Annual,1.0,1.0,Boiler broke down ,23 Feb 2026 00:00:00,23 Feb 2026 00:00:00,AG,EG
+Lisa,Ter-Berg,Operations,,20.0,Medical,1.0,1.0,,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,AG,EG
+Lisa,Ter-Berg,Operations,,20.0,Annual,1.0,1.0,Hospital appointment,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,AG,EG
+Lisa,Ter-Berg,Operations,,20.0,Annual,1.0,1.0,Hospital appointment,03 Feb 2026 00:00:00,03 Feb 2026 00:00:00,AG,EG
+Ecaterina,Turcanu,Operations,,28.5,Work from home,1.0,1.0,WFH,24 Feb 2026 00:00:00,24 Feb 2026 00:00:00,AG,EG
+Ecaterina,Turcanu,Operations,,28.5,External & additional assignments,2.0,2.0,Travel to Hamburg (team workshop),19 Feb 2026 00:00:00,20 Feb 2026 00:00:00,AG,EG
+Ecaterina,Turcanu,Operations,,28.5,Annual,1.0,1.0,,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Shafraz,Chatur,Operations,,21.0,Annual,1.5,1.5,,26 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Shafraz,Chatur,Operations,,21.0,Annual,1.0,1.0,,03 Feb 2026 00:00:00,03 Feb 2026 00:00:00,AG,EG
+Shafraz,Chatur,Operations,,21.0,Work from home,1.0,1.0,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Shafraz,Chatur,Operations,,21.0,Work from home,1.0,1.0,WFH (unwell),03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,AG,EG
+Shafraz,Chatur,Operations,,21.0,Work from home,1.0,1.0,WFH (unwell),02 Mar 2026 00:00:00,02 Mar 2026 00:00:00,AG,EG
+Philip,Woolfson,Finance,,20.0,Work from home,1.0,1.0,WFH,24 Feb 2026 00:00:00,24 Feb 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Work from home,1.0,1.0,WFH,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Work from home,1.0,1.0,WFH,03 Feb 2026 00:00:00,03 Feb 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Work from home,1.0,1.0,WFH,17 Feb 2026 00:00:00,17 Feb 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Work from home,1.0,1.0,WFH as agreed with RF,25 Feb 2026 00:00:00,25 Feb 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Annual,1.0,1.0,,20 Feb 2026 00:00:00,20 Feb 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Annual,1.0,1.0,,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,,
+Philip,Woolfson,Finance,,20.0,Work from home,1.0,1.0,WFH,10 Feb 2026 00:00:00,10 Feb 2026 00:00:00,,
+Florina,Stamate,Finance,,20.5,Work from home,1.0,1.0,WFH,26 Feb 2026 00:00:00,26 Feb 2026 00:00:00,,
+Florina,Stamate,Finance,,20.5,Annual,1.0,1.0,,18 Feb 2026 00:00:00,18 Feb 2026 00:00:00,,
+Florina,Stamate,Finance,,20.5,Work from home,1.0,1.0,WFH,03 Feb 2026 00:00:00,03 Feb 2026 00:00:00,,
+Florina,Stamate,Finance,,20.5,Annual,0.5,0.5,,20 Feb 2026 00:00:00,20 Feb 2026 00:00:00,,
+Florina,Stamate,Finance,,20.5,Work from home,1.0,1.0,WFH,11 Feb 2026 00:00:00,11 Feb 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Work from home,1.0,1.0,WFH,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Work from home,1.0,1.0,WFH,18 Feb 2026 00:00:00,18 Feb 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Annual,0.5,0.5,"Will work from home in the morning, however would like day off in the afternoon for an appointment. Thanks",24 Feb 2026 00:00:00,24 Feb 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Work from home,1.0,1.0,WFH,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Work from home,1.0,1.0,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Work from home,1.0,1.0,WFH,23 Feb 2026 00:00:00,23 Feb 2026 00:00:00,,
+Rupal,Sutar,Finance,,20.0,Medical,1.0,1.0,Unwell,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,,
+Senthurgan,Kulendran,Finance,,20.0,Work from home,1.0,1.0,WFH,24 Feb 2026 00:00:00,24 Feb 2026 00:00:00,,
+Senthurgan,Kulendran,Finance,,20.0,Work from home,1.0,1.0,WFH,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,,
+Senthurgan,Kulendran,Finance,,20.0,Work from home,1.0,1.0,WFH,17 Feb 2026 00:00:00,17 Feb 2026 00:00:00,,
+Senthurgan,Kulendran,Finance,,20.0,Work from home,1.0,1.0,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,,
+Senthurgan,Kulendran,Finance,,20.0,Annual,1.0,1.0,,20 Feb 2026 00:00:00,20 Feb 2026 00:00:00,,
+Senthurgan,Kulendran,Finance,,20.0,Annual,3.0,3.0,,27 Feb 2026 00:00:00,03 Mar 2026 00:00:00,,
+Valentina,Testa,Finance,,21.0,Annual,0.5,0.5,,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,,
+Valentina,Testa,Finance,,21.0,Work from home,1.0,1.0,WFH,02 Mar 2026 00:00:00,02 Mar 2026 00:00:00,,
+Valentina,Testa,Finance,,21.0,Work from home,0.5,0.5,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,,
+Valentina,Testa,Finance,,21.0,Work from home,0.5,0.5,WFH,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,,
+Valentina,Testa,Finance,,21.0,Annual,0.5,0.5,,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,,
+Otto,Carlisle,Engineering,,25.0,Annual,5.0,5.0,,16 Feb 2026 00:00:00,20 Feb 2026 00:00:00,AG,EG
+Barış,Akyüz,Engineering,,21.0,Medical,2.0,2.0,,09 Feb 2026 00:00:00,10 Feb 2026 00:00:00,AG,EG
+Barış,Akyüz,Engineering,,21.0,Work from home,3.0,3.0,WFH - feeling a bit better but not going to come to the office until 100% better,11 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+John,Hetherton,UK BDM,,22.0,Annual,0.5,0.5,Car day! ,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Medical,0.2,0.2,Dental Appointment ,23 Feb 2026 16:00:00,23 Feb 2026 17:30:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Others,1.0,1.0,At Newark - Staythorpe BESS,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Work from home,1.0,1.0,wfh and travelling to Newark in the afternoon for the GNR hearings ,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Work from home,1.0,1.0,wfh,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Annual,1.0,1.0,,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Work from home,1.0,1.0,wfh,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Annual,1.0,1.0,,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Work from home,1.0,1.0,wfh,19 Feb 2026 00:00:00,19 Feb 2026 00:00:00,AG,EG
+Elena,Sarieva,UK BDM,,22.0,Others,3.0,3.0,Working from Newark for GNR hearings,03 Feb 2026 00:00:00,05 Feb 2026 00:00:00,AG,EG
+Elizabeth,Kinnear-Mellor,UK BDM,,16.0,Annual,3.0,3.0,Ski!!,09 Feb 2026 00:00:00,12 Feb 2026 00:00:00,AG,EG
+Elizabeth,Kinnear-Mellor,UK BDM,,16.0,Annual,3.0,3.0,Ski!!,16 Feb 2026 00:00:00,19 Feb 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,Work from home,1.0,1.0,wfh,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,External & additional assignments,1.0,1.0,Site Visit - Staythorpe BESS,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,Work from home,1.0,1.0,wfh,05 Feb 2026 00:00:00,05 Feb 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,Work from home,1.0,1.0,wfh,19 Feb 2026 00:00:00,19 Feb 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,Work from home,1.0,1.0,wfh,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Michael ,Zimmerman,DE BDM,,28.0,Annual,3.0,3.0,,04 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,Work from home,1.0,1.0,wfh / travelling to Newark,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Lizzie,Atkin,UK BDM,,20.5,Others,2.0,2.0,Newark hearings,03 Feb 2026 00:00:00,04 Feb 2026 00:00:00,AG,EG
+Charles,Jones,UK BDM,,20.0,Annual,2.0,2.0,,19 Feb 2026 00:00:00,20 Feb 2026 00:00:00,AG,EG
+Charles,Jones,UK BDM,,20.0,Work from home,1.0,1.0,WFH,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Charles,Jones,UK BDM,,20.0,Work from home,1.0,1.0,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Charles,Jones,UK BDM,,20.0,Work from home,1.0,1.0,WFH,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Ryan,Holland,UK BDM,,20.0,Annual,3.0,2.0,,30 Jan 2026 00:00:00,03 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,"Good morning, feeling well enough to work but still feel ill so think it's wise if I wfh ",11 Feb 2026 00:00:00,11 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,Still have flu - WFH,12 Feb 2026 00:00:00,12 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Medical,1.0,1.0,"Hi, apologies, feeling really ill and think it's best i go on sick leave tomorrow (10/02). ",10 Feb 2026 00:00:00,10 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,0.5,0.5,"feeling ill, would like to wfh ",09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Medical,1.0,1.0,,10 Feb 2026 00:00:00,10 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,wfh,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,Flu still hanging on - WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,wfh,05 Feb 2026 00:00:00,05 Feb 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,wfh ,02 Mar 2026 00:00:00,02 Mar 2026 00:00:00,AG,EG
+Tom,Richold,UK BDM,,20.0,Work from home,1.0,1.0,wfh,19 Feb 2026 00:00:00,19 Feb 2026 00:00:00,AG,EG
+Dominic,Richardson,UK BDM,,20.0,Work from home,1.0,1.0,WFH- Resting ankle,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Dominic,Richardson,UK BDM,,20.0,Work from home,1.0,1.0,wfh,19 Feb 2026 00:00:00,19 Feb 2026 00:00:00,AG,EG
+Dominic,Richardson,UK BDM,,20.0,Work from home,1.0,1.0,DR- WFH- dentist appt,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Dominic,Richardson,UK BDM,,20.0,Work from home,1.0,1.0,wfh,12 Feb 2026 00:00:00,12 Feb 2026 00:00:00,AG,EG
+Dominic,Richardson,UK BDM,,20.0,Medical,0.1333,0.1333,Ankle Surgery appointment and ultrasound,13 Feb 2026 15:10:00,13 Feb 2026 16:10:00,AG,EG
+Dominic,Richardson,UK BDM,,20.0,Medical,0.1333,0.1333,,06 Feb 2026 14:30:00,06 Feb 2026 15:30:00,AG,EG
+Dominick,Mahon,Investment,,21.0,Work from home,1.0,1.0,"WFH- Shoulder dislocation, After I found I was in a lot of pain on Tuesday spoke to James and it was agreed I wfh wednesday",18 Feb 2026 00:00:00,18 Feb 2026 00:00:00,AG,EG
+Dominick,Mahon,Investment,,21.0,Work from home,1.0,1.0,WFH - Dislocated Shoulder,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,AG,EG
+Dominick,Mahon,Investment,,21.0,Work from home,1.0,1.0,WFH,20 Feb 2026 00:00:00,20 Feb 2026 00:00:00,AG,EG
+Dominick,Mahon,Investment,,21.0,Annual,5.0,5.0,"5 days of folie douce in Morzine, Open invite as always",09 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Dominick,Mahon,Investment,,21.0,Work from home,1.0,1.0,WFH,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Rasmus ,Friis,Management,,20.0,Annual,5.0,5.0,,23 Feb 2026 00:00:00,27 Feb 2026 00:00:00,,
+Mark,Turner,Management,,22.0,Annual,2.0,2.0,,03 Feb 2026 00:00:00,04 Feb 2026 00:00:00,,
+Maria ,Titova,Finance,,21.0,Work from home,1.0,1.0,WFH,20 Feb 2026 00:00:00,20 Feb 2026 00:00:00,,
+Maria ,Titova,Finance,,21.0,Work from home,1.0,1.0,WFH,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,,
+Maria ,Titova,Finance,,21.0,Work from home,1.0,1.0,WFH,02 Mar 2026 00:00:00,02 Mar 2026 00:00:00,,
+Maria ,Titova,Finance,,21.0,Medical,1.0,1.0,sick leave,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,,
+Maria ,Titova,Finance,,21.0,Work from home,1.0,1.0,WFH,05 Feb 2026 00:00:00,05 Feb 2026 00:00:00,,
+Maria ,Titova,Finance,,21.0,Work from home,1.0,1.0,WFH,25 Feb 2026 00:00:00,25 Feb 2026 00:00:00,,
+Michaela ,Gerber,DE BDM,,28.0,Annual,2.0,2.0,,17 Feb 2026 00:00:00,18 Feb 2026 00:00:00,AG,EG
+Michaela ,Gerber,DE BDM,,28.0,Others,1.0,1.0,Moving date,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,AG,EG
+Michaela ,Gerber,DE BDM,,28.0,Work from home,1.0,1.0,WFH,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Michaela ,Gerber,DE BDM,,28.0,Work from home,1.0,1.0,WFH - Strike,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Michaela ,Gerber,DE BDM,,28.0,Work from home,1.0,1.0,WFH due to Strike,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Stefanie,Dimke,DE BDM,,28.0,Annual,1.0,1.0,,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Stefanie,Dimke,DE BDM,,28.0,Work from home,0.5,0.5,WFH,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Stefanie,Dimke,DE BDM,,28.0,Work from home,1.0,1.0,WFH,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Verena,Stüwe,DE BDM,,16.0,Work from home,1.0,1.0,WFH,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Verena,Stüwe,DE BDM,,16.0,Work from home,1.0,1.0,WFH,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Verena,Stüwe,DE BDM,,16.0,Medical,4.0,4.0,,10 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Verena,Stüwe,DE BDM,,16.0,Work from home,1.0,1.0,WFH,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Verena,Stüwe,DE BDM,,16.0,Medical,22.0,12.0,,16 Feb 2026 00:00:00,17 Mar 2026 00:00:00,AG,EG
+Norman ,Dressler,DE BDM,,28.0,Annual,4.0,4.0,,11 Feb 2026 00:00:00,16 Feb 2026 00:00:00,AG,EG
+Fabian,Tippelt,DE BDM,,16.0,Annual,1.0,1.0,,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Charlotta,Personn,DE BDM,,23.5,Work from home,1.0,1.0,WFH,23 Feb 2026 00:00:00,23 Feb 2026 00:00:00,AG,EG
+Charlotta,Personn,DE BDM,,23.5,Medical,3.0,3.0,,25 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
+Charlotta,Personn,DE BDM,,23.5,Work from home,1.0,1.0,WFH,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Charlotta,Personn,DE BDM,,23.5,Work from home,1.0,1.0,WFH,16 Feb 2026 00:00:00,16 Feb 2026 00:00:00,AG,EG
+Charlotta,Personn,DE BDM,,23.5,Others,2.0,2.0,Trade fair - E-World,10 Feb 2026 00:00:00,11 Feb 2026 00:00:00,AG,EG
+Charlotta,Personn,DE BDM,,23.5,Work from home,1.0,1.0,WFH,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Elias ,Zimmerman,DE BDM,,0.0,Annual,1.0,0.0,,13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Elias ,Zimmerman,DE BDM,,0.0,Annual,1.0,0.0,,06 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,EG
+Elias ,Zimmerman,DE BDM,,0.0,Annual,0.5,0.0,,03 Feb 2026 00:00:00,03 Feb 2026 00:00:00,AG,EG
+Elias ,Zimmerman,DE BDM,,0.0,Annual,0.5,0.0,,05 Feb 2026 00:00:00,05 Feb 2026 00:00:00,AG,EG
+Benjamin,Hahn,DE BDM,,7.0,Work from home,1.0,1.0,WFH,02 Feb 2026 00:00:00,02 Feb 2026 00:00:00,AG,EG
+Benjamin,Hahn,DE BDM,,7.0,External & additional assignments,1.0,1.0,Supplier Visit Dortmund,26 Feb 2026 00:00:00,26 Feb 2026 00:00:00,AG,EG
+Benjamin,Hahn,DE BDM,,7.0,Work from home,1.0,1.0,WFH,12 Feb 2026 00:00:00,12 Feb 2026 00:00:00,AG,EG
+Benjamin,Hahn,DE BDM,,7.0,Medical,2.0,2.0,,03 Feb 2026 00:00:00,04 Feb 2026 00:00:00,AG,EG
+Hyfa,Azeez,Group Legal,,21.5,Annual,5.0,5.0,Holiday,09 Feb 2026 00:00:00,13 Feb 2026 00:00:00,UG,UG
+George,Hanna,Group Legal,,20.0,Annual,4.0,4.0,,05 Feb 2026 00:00:00,10 Feb 2026 00:00:00,UG,UG
+George,Hanna,Group Legal,,20.0,Annual,1.0,1.0,,26 Feb 2026 00:00:00,26 Feb 2026 00:00:00,UG,UG
+William ,Betts,Agri,,20.0,Annual,5.0,5.0,,02 Feb 2026 00:00:00,06 Feb 2026 00:00:00,AG,AG
+Andreea,Cartianu ,UG Business Support,,0.0,Annual,5.0,5.0,,09 Feb 2026 00:00:00,13 Feb 2026 00:00:00,UG,UG
+Kelly,Lima,UG Business Support,,0.0,Annual,0.5,0.5,Take my Daughter to the Health Review appointment.,26 Feb 2026 00:00:00,26 Feb 2026 00:00:00,UG,UG
+Eugene,Sun,Engineering,,20.0,Annual,4.0,4.0,"To celebrate the Spring Festival. If business workload permits, I’d be grateful for the opportunity to extend the leave to 20 February.",16 Feb 2026 00:00:00,19 Feb 2026 00:00:00,AG,EG
+Hamza ,Aissani,Agri,,20.0,Work from home,1.0,1.0,(WFH) Work from home,20 Feb 2026 00:00:00,20 Feb 2026 00:00:00,AG,AG
+Harsh,Malhotra,Operations,,20.0,Medical,1.0,1.0,,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,AG,EG
+Harsh,Malhotra,Operations,,20.0,Medical,1.0,1.0,Feeling Sick,03 Mar 2026 00:00:00,03 Mar 2026 00:00:00,AG,EG
+Alex,McGregor,Investment,,20.0,Annual,10.0,7.0,,23 Feb 2026 00:00:00,06 Mar 2026 00:00:00,AG,EG
+Alex,McGregor,Investment,,20.0,Work from home,1.0,1.0,WFH,05 Feb 2026 00:00:00,05 Feb 2026 00:00:00,AG,EG
+Alex,McGregor,Investment,,20.0,Work from home,1.0,1.0,"WFH, due to feeling under the weather",13 Feb 2026 00:00:00,13 Feb 2026 00:00:00,AG,EG
+Alex,McGregor,Investment,,20.0,Work from home,1.0,1.0,WFH,09 Feb 2026 00:00:00,09 Feb 2026 00:00:00,AG,EG
+Alex,McGregor,Investment,,20.0,Work from home,1.0,1.0,WFH,17 Feb 2026 00:00:00,17 Feb 2026 00:00:00,AG,EG
+Lydia,Kerbel,DE BDM,,0.0,Work from home,1.0,1.0,WFH,27 Feb 2026 00:00:00,27 Feb 2026 00:00:00,AG,EG
