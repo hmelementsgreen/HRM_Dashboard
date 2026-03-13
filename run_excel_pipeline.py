@@ -95,7 +95,33 @@ def main():
         return code
 
     print("-" * 40)
-    print(f"Done. Workbook: {out_path} (8 sheets)")
+    print(f"Done. Workbook: {out_path} (9 sheets, 7.5h variance)")
+
+    # Step 4: Generate a second workbook with 7.45-hour expected variance
+    out_745 = out_path.replace(".xlsx", "_7.45hr.xlsx")
+    # Rebuild intermediate base for the 8hr copy
+    build_cmd_745 = [sys.executable, os.path.join(_PROJECT_ROOT, "build_dashboard_excel.py"), "--absence-csv", absence_csv, "--blip", blip_path, "--out", out_745, "--filter-from", "2026-01-01"]
+    if entitlement_path:
+        build_cmd_745.extend(["--entitlement", os.path.abspath(entitlement_path)])
+    print()
+    print("[4/4] Building 7.45-hour variance workbook...")
+    code = subprocess.run(build_cmd_745, cwd=_PROJECT_ROOT).returncode
+    if code != 0:
+        print("build_dashboard_excel (7.45hr) failed.", file=sys.stderr)
+        return code
+
+    views_cmd_745 = [sys.executable, os.path.join(_PROJECT_ROOT, "build_dashboard_views.py"), "--input", out_745, "--output", out_745, "--wfh-allowance", str(args.wfh_allowance), "--expected-hours", "7.45"]
+    if args.time_from:
+        views_cmd_745.extend(["--time-from", args.time_from])
+    if args.time_to:
+        views_cmd_745.extend(["--time-to", args.time_to])
+    code = subprocess.run(views_cmd_745, cwd=_PROJECT_ROOT).returncode
+    if code != 0:
+        print("build_dashboard_views (7.45hr) failed.", file=sys.stderr)
+        return code
+
+    print("-" * 40)
+    print(f"Done. 7.45hr workbook: {out_745} (9 sheets, 7.45h variance)")
     return 0
 
 

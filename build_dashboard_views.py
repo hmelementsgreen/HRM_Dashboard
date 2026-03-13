@@ -670,6 +670,8 @@ def main():
     parser.add_argument("--time-from", default=None, help="Time by Employee sheet: first date (YYYY-MM-DD). Default: from BLIP/Absence")
     parser.add_argument("--time-to", default=None, help="Time by Employee sheet: last date (YYYY-MM-DD). Default: from BLIP/Absence")
     args = parser.parse_args()
+    if args.expected_hours != EXPECTED_HOURS_PER_DAY:
+        print(f"  Using expected hours: {args.expected_hours} (Var = worked - {args.expected_hours})")
 
     in_path = os.path.abspath(args.input)
     out_path = os.path.abspath(args.output or args.input)
